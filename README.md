@@ -26,3 +26,5 @@ cmake --build build
 cd build
 ./hello
 ```
+
+**6.** If you previous step gave you a *Hello World* in a window you can now clone the repo and open it in Visual Code and start programming.

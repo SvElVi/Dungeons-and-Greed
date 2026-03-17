@@ -28,3 +28,15 @@ cd build
 ```
 
 **6.** If you previous step gave you a *Hello World* in a window you can now clone the repo and open it in Visual Code and start programming.
+
+## Visual Code Syntax 
+Extra steps if you want syntax handling in Visual Studio Code.
+
+**1.** Enable or install the C/C++ extension in Visual Code.
+
+**2.** Open your project in Visual Code and after that select the top search bar. Search and select *Show and Run Commands*, then *C/C++: Select a Configuration*, select *Edit Configuration (JSON)*.
+
+**3.** You should now have a .vscode folder in your project with a file named *c_cpp_properties.json*. In that file under includepath and below *workspacefolder* add the code below, remeber to add a comma after workspacefolder.
+```
+C:/msys64/ucrt64/include"
+```

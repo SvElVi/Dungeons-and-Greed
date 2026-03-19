@@ -40,3 +40,8 @@ Extra steps if you want syntax handling in Visual Studio Code.
 ```
 "C:/msys64/ucrt64/include"
 ```
+## SDL libraries
+The following command can be used in UCRT64 to install SDL_IMAGE and SDL_TTF.
+```
+pacman -S mingw-w64-ucrt-x86_64-sdl3-image mingw-w64-ucrt-x86_64-sdl3-ttf
+```

@@ -21,10 +21,13 @@ pacman -S mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-ninja mingw-w64-ucrt-x
 ```
 git clone https://github.com/libsdl-org/SDL.git vendored/SDL
 git clone https://github.com/libsdl-org/SDL_image.git vendored/SDL_image
-git clone https://github.com/libsdl-org/SDL_ttf.git vendored/SDL_ttf
+git clone https://github.com/libsdl-org/SDL_net.git vendored/SDL_net
 git clone https://github.com/libsdl-org/SDL_mixer.git vendored/SDL_mixer
 ```
-
+Keep in mind that ttf also exists and can be used with the command down below but has issues with adding vendored repos.
+```
+git clone https://github.com/libsdl-org/SDL_ttf.git vendored/SDL_ttf
+```
 6. Now use the commands below seperately below in order to compile.
 ```
 cmake -S . -B build

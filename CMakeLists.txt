@@ -1,13 +1,19 @@
-cmake_minimum_required(VERSION 3.26)
-project(hello C CXX)
+cmake_minimum_required(VERSION 3.16)
+project(hello)
 
-find_package(SDL3 REQUIRED)
+# set the output directory for built objects.
+# This makes sure that the dynamic library goes into the build directory automatically.
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 
-add_executable(hello)
+# This assumes the SDL source is available in vendored/SDL
+add_subdirectory(vendored/SDL EXCLUDE_FROM_ALL)
 
-target_sources(hello
-PRIVATE
-    hello.c
-)
+# This assumes the SDL_mixer source is available in vendored/SDL_mixer
+add_subdirectory(vendored/SDL_mixer EXCLUDE_FROM_ALL)
 
-target_link_libraries(hello SDL3::SDL3)
+# Create your game executable target as usual
+add_executable(hello WIN32 hello.c)
+
+# Link to the actual SDL3 library.
+target_link_libraries(hello PRIVATE SDL3_mixer::SDL3_mixer SDL3::SDL3)

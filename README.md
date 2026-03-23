@@ -1,4 +1,4 @@
-# Dungeons-and-Greed
+# Greedy Delvers
 
 Welcome to the WIP game project with the codename Dungeons and Greed.
 

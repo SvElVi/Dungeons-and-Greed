@@ -36,7 +36,7 @@ cd build
 ./hello
 ```
 
-**7.** If you previous step gave you a *Hello World* in a window you can now clone the repo and open it in Visual Code and start programming.
+**7.** If you previous step gave you a *Hello World* in a window you can now clone the repo and open it in Visual Code and start programming. Remember to always add your libraries to your *CMakelists.txt* and your *.c* files if you use them.
 
 ## Visual Code Syntax 
 Extra steps if you want syntax handling in Visual Studio Code.

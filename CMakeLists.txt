@@ -13,12 +13,13 @@ set(SDLTTF_VENDORED ON)
 add_subdirectory(vendored/SDL EXCLUDE_FROM_ALL)
 
 # This assumes all sources are available in vendored/[source]
+add_subdirectory(vendored/SDL_ttf EXCLUDE_FROM_ALL)
 add_subdirectory(vendored/SDL_image EXCLUDE_FROM_ALL)
 add_subdirectory(vendored/SDL_mixer EXCLUDE_FROM_ALL)
 add_subdirectory(vendored/SDL_net EXCLUDE_FROM_ALL)
 
 # Create your game executable target as usual
-add_executable(hello WIN32 hello.c)
+add_executable(hello WIN32 src/hello.c)
 
 # Link to the actual SDL3 library.
-target_link_libraries(hello PRIVATE SDL3_net::SDL3_net SDL3_mixer::SDL3_mixer SDL3_image::SDL3_image SDL3::SDL3)
+target_link_libraries(hello PRIVATE SDL3_net::SDL3_net SDL3_mixer::SDL3_mixer SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf SDL3::SDL3)

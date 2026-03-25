@@ -28,14 +28,7 @@ Keep in mind that ttf also exists and can be used with the command down below bu
 ```
 git clone https://github.com/libsdl-org/SDL_ttf.git vendored/SDL_ttf
 ```
-To fix this you will need to download the dependencies for ttf manualy with the following commands.
-```
-git clone https://github.com/libsdl-org/freetype.git vendored/SDL_ttf/external/freetype
-git clone https://github.com/libsdl-org/harfbuzz.git vendored/SDL_ttf/external/harfbuzz
-git clone https://github.com/libsdl-org/plutosvg.git vendored/SDL_ttf/external/plutosvg
-git clone https://github.com/libsdl-org/plutovg.git vendored/SDL_ttf/external/plutovg
-```
-Though there may be issues with *harfbuzz* not being able to find *freetype*. Use *ttf* on your own discretion and find the full solution to this issue.
+To fix this you will need to download the dependencies for ttf manualy with commands in windows powershell admin mode. Remember to jump to the files with *cd* and execute with *./*.
 
 6. Now use the commands below seperately below in order to compile.
 ```

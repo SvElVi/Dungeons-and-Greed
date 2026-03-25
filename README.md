@@ -28,7 +28,7 @@ Keep in mind that ttf also exists and can be used with the command down below bu
 ```
 git clone https://github.com/libsdl-org/SDL_ttf.git vendored/SDL_ttf
 ```
-To fix this you will need to download the dependencies for ttf manualy with commands in windows powershell admin mode. Remember to jump to the files with *cd* and execute with *./*.
+To fix this you will need to download the dependencies for ttf manualy with commands in windows powershell admin mode. Remember to jump to the files with *cd* and execute the *.ps1* file with *./*[file].
 
 6. Now use the commands below seperately below in order to compile.
 ```

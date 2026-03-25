@@ -10,7 +10,7 @@ Here are some simple steps to follow in order to get ready to start developing. 
 
 **2.** Now open the program MSYS2 UCRT64 and writre the following command below using the default installation and picking yes.
 ```
-pacman -S mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-ninja mingw-w64-ucrt-x86_64-cmake
+pacman -S mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-ninja mingw-w64-ucrt-x86_64-cmake mingw-w64-ucrt-x86_64-freetype
 ```
 
 **3.** Go to you windows search bar and open *Edit the system environment variables*, go to *Environment variables*, select *path* and click edit and add *C:\msys64\ucrt64\bin* or a diffrent directory if you chose it during installation. 
@@ -22,20 +22,13 @@ pacman -S mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-ninja mingw-w64-ucrt-x
 git clone https://github.com/libsdl-org/SDL.git vendored/SDL
 git clone https://github.com/libsdl-org/SDL_image.git vendored/SDL_image
 git clone https://github.com/libsdl-org/SDL_net.git vendored/SDL_net
-git clone https://github.com/libsdl-org/SDL_mixer.git vendored/SDL_mixer
 ```
-Keep in mind that ttf also exists and can be used with the command down below but has issues with adding vendored repos.
+Keep in mind that ttf and mixer also exists and can be used with the command down below but has issues with adding vendored repos.
 ```
 git clone https://github.com/libsdl-org/SDL_ttf.git vendored/SDL_ttf
+git clone https://github.com/libsdl-org/SDL_mixer.git vendored/SDL_mixer
 ```
-To fix this you will need to download the dependencies for ttf manualy with the following commands.
-```
-git clone https://github.com/libsdl-org/freetype.git vendored/SDL_ttf/external/freetype
-git clone https://github.com/libsdl-org/harfbuzz.git vendored/SDL_ttf/external/harfbuzz
-git clone https://github.com/libsdl-org/plutosvg.git vendored/SDL_ttf/external/plutosvg
-git clone https://github.com/libsdl-org/plutovg.git vendored/SDL_ttf/external/plutovg
-```
-Though there may be issues with *harfbuzz* not being able to find *freetype*. Use *ttf* on your own discretion and find the full solution to this issue.
+To fix this you will need to download the dependencies for ttf and mixer with commands in windows powershell admin mode. Remember to jump to the files with *cd [path]* and execute the *.ps1* file with *./[path]*.
 
 6. Now use the commands below seperately below in order to compile.
 ```

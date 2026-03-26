@@ -28,8 +28,10 @@ Keep in mind that ttf and mixer also exists and can be used with the command dow
 git clone https://github.com/libsdl-org/SDL_ttf.git vendored/SDL_ttf
 git clone https://github.com/libsdl-org/SDL_mixer.git vendored/SDL_mixer
 ```
-To fix this you will need to download the dependencies for ttf and mixer with commands in windows powershell admin mode. Remember to jump to the files with *cd [path]* and execute the *.ps1* file with *./[path]*.
-
+To fix this you will need to download the dependencies for ttf and mixer with commands in windows powershell admin mode, the executeble files can be found in *vendored/SDL_[ttf or mixer]/external/Get-GitModules.ps1*. Remember to jump to the files with *cd [path]* in powershell and execute the *.ps1* file with *./[path]*. If it does let you execute use the command below and it will work whilst you have the window up.
+```
+Set-ExecutionPolicy RemoteSigned -Scope Process
+```
 6. Now use the commands below seperately below in order to compile.
 ```
 cmake -S . -B build

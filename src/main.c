@@ -3,16 +3,6 @@
 #include <SDL3/SDL_main.h>
 #include "inits.h"
 
-typedef struct {
-    SDL_Window *window;
-    SDL_Renderer *renderer;
-    SDL_DisplayID displayID;
-    SDL_Rect displaySize;
-
-    bool running;
-} AppState;
-
-
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
     SDL_InitSubSystem(SDL_INIT_VIDEO);
@@ -20,16 +10,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     AppState* state = (AppState*)SDL_calloc(1, sizeof(AppState));
     if(!state) return SDL_APP_FAILURE;
 
-    if(!(state->displayID = SDL_GetPrimaryDisplay())) {
-        SDL_Log("Failed getting DisplayID: %s", SDL_GetError());
-        return SDL_APP_FAILURE;
-    } else if(!SDL_GetDisplayBounds(state->displayID, &(state->displaySize))) {
-        SDL_Log("Failed getting window bounds: %", SDL_GetError());
-        return SDL_APP_FAILURE;
-    } else if (!SDL_CreateWindowAndRenderer("GameWindow", state->displaySize.w, state->displaySize.h, SDL_WINDOW_RESIZABLE | SDL_WINDOW_BORDERLESS | SDL_WINDOW_MAXIMIZED, &(state->window), &(state->renderer))) {
-        SDL_Log("Couldn't create window and renderer: %s", SDL_GetError());
-        return SDL_APP_FAILURE;
-    }
+    if(initDisplay(state) == SDL_APP_FAILURE) return SDL_APP_FAILURE;
 
     state->running = true;
 

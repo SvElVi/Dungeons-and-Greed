@@ -1,6 +1,6 @@
 # Greedy Delvers
 
-Welcome to the WIP game project with the codename Greedy Delvers. When using this repository only setting up the environment is necessary.
+Welcome to the WIP game project with the codename Greedy Delvers. When using this repository, only setting up the environment is necessary.
 
 ## Setting up the environment 
 

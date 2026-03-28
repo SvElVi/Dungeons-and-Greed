@@ -6,3 +6,5 @@ typedef struct {
 
     bool running;
 } AppState;
+
+int initDisplay(AppState* state);

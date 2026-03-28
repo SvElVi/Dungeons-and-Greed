@@ -19,7 +19,7 @@ add_subdirectory(vendored/SDL_mixer EXCLUDE_FROM_ALL)
 add_subdirectory(vendored/SDL_net EXCLUDE_FROM_ALL)
 
 # Create your game executable target as usual
-add_executable(GreedyDelvers WIN32 src/main.c)
+add_executable(GreedyDelvers WIN32 src/main.c src/inits.c)
 
 # Link to the actual SDL3 library.
 target_link_libraries(GreedyDelvers PRIVATE SDL3_net::SDL3_net SDL3_mixer::SDL3_mixer SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf SDL3::SDL3)

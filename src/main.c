@@ -1,7 +1,6 @@
 #define SDL_MAIN_USE_CALLBACKS 1 //Flag to use callbacks
-#include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
-#include "events.h"
+#include "render.h" //All dependencies of render.h included
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once at the begining of the program
 {
@@ -13,6 +12,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
     if(initDisplay(state)) return SDL_APP_FAILURE; //Initiate and display window
 
     state->running = true; //Custom flag to mark the program as running
+    state->lastTime = 0;
 
     *appstate = state; //Share the appstate to callbacks below
 
@@ -30,9 +30,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
 {
     AppState* state = (AppState*)appstate;
 
-    SDL_SetRenderDrawColor(state->renderer,0,255,255,0);
-    SDL_RenderClear(state->renderer);
-    SDL_RenderPresent(state->renderer);
+    render(&(state->lastTime),&(state->deltaTime),&(state->renderer));
 
     return SDL_APP_CONTINUE;
 }

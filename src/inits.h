@@ -31,6 +31,8 @@ typedef struct {
     SDL_Renderer *renderer;
     SDL_DisplayID displayID;
     SDL_Rect displaySize;
+    Uint64 deltaTime;
+    Uint64 lastTime;
 
     bool running;
 } AppState;

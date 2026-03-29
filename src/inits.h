@@ -35,6 +35,7 @@ typedef struct {
     Uint64 lastTime;
 
     bool running;
+    //bool computedEvent;
 } AppState;
 
 int initDisplay(AppState* state);

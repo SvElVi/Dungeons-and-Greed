@@ -18,5 +18,8 @@ int checkEvents(AppState* state, SDL_Event* event) {
     int quitEvent = QuitEvent(state, event, keylist);
     if(quitEvent) return quitEvent;
 
+    //non quit functions
+    //if frame altering function then set state->computedEvent = true and add to the if statement in the render() function
+
     return SDL_APP_CONTINUE;
 }

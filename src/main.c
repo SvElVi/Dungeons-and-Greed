@@ -30,7 +30,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
 {
     AppState* state = (AppState*)appstate;
 
-    render(&(state->lastTime),&(state->deltaTime),&(state->renderer));
+    render(state);
 
     return SDL_APP_CONTINUE;
 }

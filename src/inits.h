@@ -1,3 +1,4 @@
+#include <SDL3/SDL.h>
 #define MAX_PLAYERS 5
 
 typedef enum {
@@ -18,6 +19,12 @@ typedef struct {
 } Stats;
 
 typedef struct {
+    int moveX;
+    int moveY;
+} Player_Flags;
+
+typedef struct {
+    Player_Flags flags;
     SDL_FRect renderBox;
     Player_Class class;
     Stats stats;
@@ -35,6 +42,7 @@ typedef struct {
     SDL_Rect displaySize;
     Uint64 deltaTime;
     Uint64 lastTime;
+    int renderFlag;
     Client clients [MAX_PLAYERS];
     Player players [MAX_PLAYERS];
 

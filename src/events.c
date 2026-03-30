@@ -11,6 +11,28 @@ int QuitEvent(AppState* state, SDL_Event* event, const bool* keylist) {
     return SDL_APP_CONTINUE;
 }
 
+void moveFlag(Player_Flags* flags, const bool* keylist, int* renderFlag) {
+    if(keylist[SDL_SCANCODE_W] && !keylist[SDL_SCANCODE_S]) {
+        flags->moveY = -1;
+        *renderFlag = 1;
+    } else if(keylist[SDL_SCANCODE_S] && !keylist[SDL_SCANCODE_W]) {
+        flags->moveY = 1;
+        *renderFlag = 1;
+    } else {
+        flags->moveY = 0;
+    }
+
+    if(keylist[SDL_SCANCODE_A] && !keylist[SDL_SCANCODE_D]) {
+        flags->moveX = -1;
+        *renderFlag = 1;
+    } else if(keylist[SDL_SCANCODE_D] && !keylist[SDL_SCANCODE_A]) {
+        flags->moveX = 1;
+        *renderFlag = 1;
+    } else {
+        flags->moveX = 0;
+    }
+}
+
 int checkEvents(AppState* state, SDL_Event* event) {
 
     const bool* keylist = SDL_GetKeyboardState(0);
@@ -18,7 +40,8 @@ int checkEvents(AppState* state, SDL_Event* event) {
     int quitEvent = QuitEvent(state, event, keylist);
     if(quitEvent) return quitEvent;
 
-    //non quit functions
+    //Non quit functions
+    moveFlag(&(state->players[0].flags), keylist, &(state->renderFlag));
     //if frame altering function then set state->computedEvent = true and add to the if statement in the render() function
 
     return SDL_APP_CONTINUE;

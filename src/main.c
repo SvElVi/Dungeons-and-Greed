@@ -1,6 +1,6 @@
 #define SDL_MAIN_USE_CALLBACKS 1 //Flag to use callbacks
 #include <SDL3/SDL_main.h>
-#include "render.h" //All dependencies of render.h included
+#include "player.h" //All dependencies of [x] included
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once at the begining of the program
 {

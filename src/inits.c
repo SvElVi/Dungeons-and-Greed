@@ -1,7 +1,13 @@
 #include <SDL3/SDL.h>
 #include "inits.h"
 
-int initDisplay(AppState* state) { //Temporatly here, waiting for potential fix
+int initArt(AppState* state) {
+    SDL_Surface* pArt = SDL_LoadPNG("./img/2D Pixel Dungeon Asset Pack/Character_animation/priests_idle/priest1/v1/priest1_v1_1.png");
+    state->clients[0].player.texture = SDL_CreateTextureFromSurface(state->renderer, pArt);
+    SDL_DestroySurface(pArt);
+}
+
+int initDisplay(AppState* state) {
     if(!(state->displayID = SDL_GetPrimaryDisplay())) {
         SDL_Log("Failed getting DisplayID: %s", SDL_GetError());
         return 1;

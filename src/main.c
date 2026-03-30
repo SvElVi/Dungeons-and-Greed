@@ -40,7 +40,10 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result) //Runs after returning AP
 {
     if(appstate != NULL) {
         AppState* state = (AppState*)appstate;
-        if(state->renderer) SDL_DestroyRenderer;
+        for (int x = 0; x < MAX_PLAYERS; x++) {
+            if(state->clients[x].player.texture) SDL_DestroyTexture(state->clients[x].player.texture);
+        }
+        if(state->renderer) SDL_DestroyRenderer(state->renderer);
         if(state->window) SDL_DestroyWindow(state->window);
         SDL_free(state);
     }

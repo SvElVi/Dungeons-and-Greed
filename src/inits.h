@@ -1,3 +1,5 @@
+#define MAX_PLAYERS 5
+
 typedef enum {
     CLASS_NONE, //0
     CLASS_MAGE,
@@ -24,7 +26,13 @@ typedef struct {
     Vector2D pos;
     Player_Class class;
     Stats stats;
+    SDL_Texture* texture;
 } Player;
+
+typedef struct {
+    Player player;
+    int temp;
+} Client;
 
 typedef struct {
     SDL_Window *window;
@@ -33,6 +41,7 @@ typedef struct {
     SDL_Rect displaySize;
     Uint64 deltaTime;
     Uint64 lastTime;
+    Client clients [MAX_PLAYERS];
 
     bool running;
     //bool computedEvent;

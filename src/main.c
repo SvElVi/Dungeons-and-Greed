@@ -16,6 +16,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
     state->lastTime = 0;
 
     *appstate = state; //Share the appstate to callbacks below
+    state->renderFlag = 1;
 
     return SDL_APP_CONTINUE;
 }

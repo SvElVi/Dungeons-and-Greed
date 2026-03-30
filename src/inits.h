@@ -30,7 +30,6 @@ typedef struct {
 } Player;
 
 typedef struct {
-    Player player;
     int temp;
 } Client;
 
@@ -42,6 +41,7 @@ typedef struct {
     Uint64 deltaTime;
     Uint64 lastTime;
     Client clients [MAX_PLAYERS];
+    Player players [MAX_PLAYERS];
 
     bool running;
     //bool computedEvent;

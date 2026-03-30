@@ -3,7 +3,7 @@
 
 int initArt(AppState* state) {
     SDL_Surface* pArt = SDL_LoadPNG("./img/2D Pixel Dungeon Asset Pack/Character_animation/priests_idle/priest1/v1/priest1_v1_1.png");
-    state->clients[0].player.texture = SDL_CreateTextureFromSurface(state->renderer, pArt);
+    state->players[0].texture = SDL_CreateTextureFromSurface(state->renderer, pArt);
     SDL_DestroySurface(pArt);
 }
 

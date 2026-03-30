@@ -10,6 +10,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
     if(!state) return SDL_APP_FAILURE;
 
     if(initDisplay(state)) return SDL_APP_FAILURE; //Initiate and display window
+    initArt(state);
 
     state->running = true; //Custom flag to mark the program as running
     state->lastTime = 0;
@@ -30,9 +31,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
 {
     AppState* state = (AppState*)appstate;
 
-    render(state);
-
-    return SDL_APP_CONTINUE;
+    return render(state);
 }
 
 

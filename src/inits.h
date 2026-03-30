@@ -10,11 +10,6 @@ typedef enum {
 } Player_Class;
 
 typedef struct {
-    int x;
-    int y;
-} Vector2D;
-
-typedef struct {
     int health;
     int mana;
     int defense;
@@ -23,7 +18,7 @@ typedef struct {
 } Stats;
 
 typedef struct {
-    Vector2D pos;
+    SDL_FRect renderBox;
     Player_Class class;
     Stats stats;
     SDL_Texture* texture;
@@ -48,3 +43,5 @@ typedef struct {
 } AppState;
 
 int initDisplay(AppState* state);
+
+void initArt(AppState* state);

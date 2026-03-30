@@ -1,4 +1,4 @@
 #include "events.h"
 
-void render(AppState* state);
+int render(AppState* state);
 

@@ -1,7 +1,6 @@
 // #include <SDL3/SDL.h>
 // #include "inits.h"
 #include "player.h"
-#define FRAMES_PER_SECOND 60
 
 int renderFrame(AppState* state) {
     int debug;
@@ -19,9 +18,9 @@ int renderFrame(AppState* state) {
 
 int render(AppState* state) { //current but should be changed to call back style, also with vsync and variable refreshrate
     Uint64 currentTime = SDL_GetTicks();
-    if(currentTime >= state->lastTime + (1000/FRAMES_PER_SECOND)){ //Should be (&& computedEvent) to avoid dublicate frames which should be set to true after a frame altering event in checkEvents()
+    if(currentTime >= state->lastTime + (1000/state->framerate)){ //Should be (&& computedEvent) to avoid dublicate frames which should be set to true after a frame altering event in checkEvents()
         state->deltaTime = currentTime - state->lastTime;
-        state->lastTime += 1000/FRAMES_PER_SECOND;
+        state->lastTime = currentTime;
         if(state->renderFlag) {
             //should be moved to a seperate callback function
             movement(&(state->players[0]), state->deltaTime);

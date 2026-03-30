@@ -39,7 +39,8 @@ typedef struct {
     SDL_Window *window;
     SDL_Renderer *renderer;
     SDL_DisplayID displayID;
-    SDL_Rect displaySize;
+    const SDL_DisplayMode* displayMode;
+    int framerate;
     Uint64 deltaTime;
     Uint64 lastTime;
     int renderFlag;

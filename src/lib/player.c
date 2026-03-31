@@ -34,8 +34,8 @@ void updateClass(Player* player, SDL_Renderer* renderer) {
 }
 
 void updatePlayer(Player* players, int plNb, Vector2D pos, Player_Class class, Stats stats, SDL_Renderer* renderer) {
-    if(&pos) players[plNb].pos = pos;
-    if(&class) players[plNb].class = class;
+    players[plNb].pos = pos;
+    players[plNb].class = class;
     updateClass(&(players[plNb]), renderer);
-    if(&stats) players[plNb].stats = stats;
+    players[plNb].stats = stats;
 }

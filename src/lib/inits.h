@@ -51,6 +51,7 @@ typedef struct {
     int currentFrame;
     float animTimer;
     Uint32 lastTick;
+    bool facingLeft;
 } Player;
 
 typedef struct {

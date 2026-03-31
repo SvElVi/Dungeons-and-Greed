@@ -34,7 +34,7 @@ int render(AppState* state) { //current but should be changed to call back style
             //should be moved to a seperate callback function
             movement(&(state->players[0]), state->deltaTime);
             playerAnimate(&(state->players[0]), &(state->animationTime));
-
+            SDL_Log("TIMER: %d", state->animationTime);
 
             !state->renderFlag;
             if(renderFrame(state)) return SDL_APP_FAILURE;

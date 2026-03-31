@@ -14,7 +14,9 @@ void movement(Player* player, int deltatime) {
 
 void playerAnimate(Player* player, Uint8* counter) {
     *counter++;
-    if(!(*counter < ANIMATION_TIME)) {
+    SDL_Log("TIMER: %d", *counter);
+    if(*counter >= ANIMATION_TIME) {
+        SDL_Log("Test");
         *counter = 0;
         switch(player->facing) {
             case WEST:
@@ -45,7 +47,7 @@ void playerAnimate(Player* player, Uint8* counter) {
                     player->aniBox.y = IDLE_SOUTH * PLAYER_SIZE;
                 }
                 break;
-    }
+        }
     }
 }
 

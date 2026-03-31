@@ -1,9 +1,9 @@
 #include <SDL3/SDL.h>
 #define MAX_PLAYERS 5
 #define PLAYER_SIZE 48
-#define PLAYER_RENDER_SCALE 1/3
+#define PLAYER_RENDER_SCALE 1
 #define TILE_SIZE 16
-#define TILE_RENDER_SCALE 1
+#define TILE_RENDER_SCALE 2
 #define ANIMATION_TIME 2
 
 typedef struct {

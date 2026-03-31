@@ -2,8 +2,8 @@
 #define SPEED 0.5
 
 void movement(Player* player, int deltatime) {
-    if(player->flags.moveX != 0) player->pos.x += player->flags.moveX * deltatime * SPEED;
-    if(player->flags.moveY != 0) player->pos.y += player->flags.moveY * deltatime * SPEED;
+    if(player->flags.moveX != 0) player->pos.x -= player->flags.moveX * deltatime * SPEED;
+    if(player->flags.moveY != 0) player->pos.y -= player->flags.moveY * deltatime * SPEED;
     // SDL_Log("PosX: %d PosY: %d", player->pos.x, player->pos.y);
 }
 
@@ -33,9 +33,10 @@ void updateClass(Player* player, SDL_Renderer* renderer) {
     SDL_DestroySurface(pArt);
 }
 
-void updatePlayer(Player* players, int plNb, Vector2D pos, Player_Class class, Stats stats, SDL_Renderer* renderer) {
-    players[plNb].pos = pos;
-    players[plNb].class = class;
-    updateClass(&(players[plNb]), renderer);
-    players[plNb].stats = stats;
+void updatePlayer(Player* player, Vector2D pos, Player_Class class, Stats stats, SDL_Renderer* renderer) {
+    player->pos = pos;
+    player->class = class;
+    updateClass(player, renderer);
+    player->stats = stats;
+    SDL_Log("Pos: %d Class: %d Stats: %d", pos, class, stats);
 }

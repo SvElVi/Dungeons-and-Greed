@@ -1,6 +1,7 @@
 #include <SDL3/SDL.h>
 #include "inits.h"
 #define FALLBACK_FRAMES_PER_SECOND 60
+#define TEMP_SPRITE_SIZE 16
 
 int initDisplay(AppState* state) {
     if(!(state->displayID = SDL_GetPrimaryDisplay())) {
@@ -25,12 +26,12 @@ int initDisplay(AppState* state) {
     return SDL_APP_CONTINUE;
 }
 
-void initArt(AppState* state) {
+void initArt(AppState* state) { //Init before the game, seperate event should be used later upon a class selection for the player
     SDL_Surface* pArt = SDL_LoadPNG("./img/2D Pixel Dungeon Asset Pack/Character_animation/priests_idle/priest1/v1/priest1_v1_1.png");
     state->players[0].texture = SDL_CreateTextureFromSurface(state->renderer, pArt);
     SDL_DestroySurface(pArt);
-    state->players[0].renderBox.x = 100;
-    state->players[0].renderBox.y = 100;
-    state->players[0].renderBox.w = 64;
-    state->players[0].renderBox.h = 64;
+    state->players[0].renderBox.x = (state->displayMode->w - TEMP_SPRITE_SIZE * RENDER_SCALE)/2;
+    state->players[0].renderBox.y = (state->displayMode->h - TEMP_SPRITE_SIZE * RENDER_SCALE)/2;
+    state->players[0].renderBox.w = TEMP_SPRITE_SIZE * RENDER_SCALE;
+    state->players[0].renderBox.h = TEMP_SPRITE_SIZE * RENDER_SCALE;
 }

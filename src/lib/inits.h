@@ -1,5 +1,6 @@
 #include <SDL3/SDL.h>
 #define MAX_PLAYERS 5
+#define RENDER_SCALE 4
 
 typedef enum {
     CLASS_NONE, //0

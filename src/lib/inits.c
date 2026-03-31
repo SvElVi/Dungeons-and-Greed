@@ -20,6 +20,8 @@ int initDisplay(AppState* state) {
         state->framerate = FALLBACK_FRAMES_PER_SECOND;
     }
 
+    SDL_SetDefaultTextureScaleMode(state->renderer, SDL_SCALEMODE_PIXELART);
+
     return SDL_APP_CONTINUE;
 }
 
@@ -29,6 +31,6 @@ void initArt(AppState* state) {
     SDL_DestroySurface(pArt);
     state->players[0].renderBox.x = 100;
     state->players[0].renderBox.y = 100;
-    state->players[0].renderBox.w = 16;
-    state->players[0].renderBox.h = 16;
+    state->players[0].renderBox.w = 64;
+    state->players[0].renderBox.h = 64;
 }

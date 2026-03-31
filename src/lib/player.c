@@ -12,18 +12,15 @@ void movement(Player* player, int deltatime) {
     }
 }
 
-void playerAnimate(Player* player, Uint8* counter) {
-    *counter++;
-    SDL_Log("TIMER: %d", *counter);
-    if(*counter >= ANIMATION_TIME) {
-        SDL_Log("Test");
-        *counter = 0;
+void playerAnimate(Player* player, Uint8* aTime, int framerate) {
+    (*aTime)++;
+    if((*aTime) >= (framerate/ANIMATION_TIME)) {
         switch(player->facing) {
             case WEST:
                 if(player->flags.moveX != 0) {
-                    player->aniBox.x = WALK_HORIZONTAL * PLAYER_SIZE;
+                    player->aniBox.y = WALK_HORIZONTAL * PLAYER_SIZE;
                 } else {
-                    player->aniBox.x = IDLE_HORIZONTAL * PLAYER_SIZE;
+                    player->aniBox.y = IDLE_HORIZONTAL * PLAYER_SIZE;
                 }
                 break;
             case NORTH:
@@ -35,9 +32,9 @@ void playerAnimate(Player* player, Uint8* counter) {
                 break;
             case EAST:
                 if(player->flags.moveX != 0) {
-                    player->aniBox.x = WALK_HORIZONTAL * PLAYER_SIZE;
+                    player->aniBox.y = WALK_HORIZONTAL * PLAYER_SIZE;
                 } else {
-                    player->aniBox.x = IDLE_HORIZONTAL * PLAYER_SIZE;
+                    player->aniBox.y = IDLE_HORIZONTAL * PLAYER_SIZE;
                 }
                 break;
             case SOUTH:
@@ -48,6 +45,7 @@ void playerAnimate(Player* player, Uint8* counter) {
                 }
                 break;
         }
+        player->aniBox.x = (int)(player->aniBox.x++) % (6 * PLAYER_SIZE);
     }
 }
 
@@ -78,8 +76,8 @@ void updateClass(Player* player, SDL_Renderer* renderer) {
 }
 
 void updatePlayer(Player* player, Vector2D pos, Player_Class class, Stats stats, SDL_Renderer* renderer) {
-    player->aniBox.w = PLAYER_SIZE * PLAYER_RENDER_SCALE;
-    player->aniBox.h = PLAYER_SIZE * PLAYER_RENDER_SCALE;
+    player->aniBox.w = PLAYER_SIZE;
+    player->aniBox.h = PLAYER_SIZE;
     player->aniBox.x = 0;
     player->aniBox.y = 0;
     player->pos = pos;

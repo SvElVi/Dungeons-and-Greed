@@ -30,15 +30,13 @@ int render(AppState* state) { //current but should be changed to call back style
     if(currentTime >= state->lastTime + (1000/state->framerate)){ //Should be (&& computedEvent) to avoid dublicate frames which should be set to true after a frame altering event in checkEvents()
         state->deltaTime = currentTime - state->lastTime;
         state->lastTime = currentTime;
-        if(state->renderFlag) {
-            //should be moved to a seperate callback function
-            movement(&(state->players[0]), state->deltaTime);
-            playerAnimate(&(state->players[0]), &(state->animationTime));
-            SDL_Log("TIMER: %d", state->animationTime);
+        // if(state->renderFlag) {
+        movement(&(state->players[0]), state->deltaTime);
+        playerAnimate(&(state->players[0]), &(state->animationTime), state->framerate);
 
-            !state->renderFlag;
-            if(renderFrame(state)) return SDL_APP_FAILURE;
-        }
+        !state->renderFlag;
+        if(renderFrame(state)) return SDL_APP_FAILURE;
+        // }
     }
     return SDL_APP_CONTINUE;
 }

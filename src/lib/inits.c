@@ -26,7 +26,7 @@ int initDisplay(AppState* state) {
 }
 
 void initArt(AppState* state) { //Init before the game, seperate event should be used later upon a class selection for the player
-    SDL_Surface* pArt = SDL_LoadPNG("./img/2D Pixel Dungeon Asset Pack/Character_animation/priests_idle/priest1/v1/priest1_v1_1.png");
+    SDL_Surface* pArt = SDL_LoadPNG("./img/2D Pixel Dungeon Asset Pack/player1_spritesheet.png");
     state->players[0].texture = SDL_CreateTextureFromSurface(state->renderer, pArt);
     SDL_DestroySurface(pArt);
     state->camera.x = (state->displayMode->w - SPRITE_SIZE * RENDER_SCALE)/2;

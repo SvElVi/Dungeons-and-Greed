@@ -28,6 +28,7 @@ void moveFlag(Player_Flags* flags, const bool* keylist, int* renderFlag) {
     } else if(keylist[SDL_SCANCODE_D] && !keylist[SDL_SCANCODE_A]) {
         flags->moveX = 1;
         *renderFlag = 1;
+        
     } else {
         flags->moveX = 0;
     }

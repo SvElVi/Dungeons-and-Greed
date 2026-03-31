@@ -1,11 +1,19 @@
 #include <SDL3/SDL.h>
 #define MAX_PLAYERS 5
-#define RENDER_SCALE 4
-#define SPRITE_SIZE 16
+#define RENDER_SCALE 1
+#define SPRITE_SIZE 32
 
 typedef struct {
     int x, y;
 } Vector2D;
+
+typedef enum{
+    ANIM_IDLE,
+    ANIM_TAKE_DAM,
+    ANIM_ATT,
+    ANIM_DEATH,
+    ANIM_WALK
+} AnimState;
 
 typedef enum {
     CLASS_NONE, //0
@@ -27,6 +35,8 @@ typedef struct {
 typedef struct {
     int moveX;
     int moveY;
+        bool facingLeft;
+
 } Player_Flags;
 
 typedef struct {
@@ -35,6 +45,12 @@ typedef struct {
     Player_Class class;
     Stats stats;
     SDL_Texture* texture;
+
+    AnimState animState;
+    AnimState previousAnimState;
+    int currentFrame;
+    float animTimer;
+    Uint32 lastTick;
 } Player;
 
 typedef struct {

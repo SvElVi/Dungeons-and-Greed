@@ -54,17 +54,17 @@ SDL_SetRenderDrawColor(state->renderer, 0, 255, 255, 0);
 
             // --- COMPUTE SOURCE & DEST RECT ---
             SDL_FRect src = {
-                p->currentFrame * SPRITE_SIZE,
-                currentRow * SPRITE_SIZE,
-                SPRITE_SIZE,
-                SPRITE_SIZE
+                p->currentFrame * PLAYER_SIZE,
+                currentRow * PLAYER_SIZE,
+                PLAYER_SIZE,
+                PLAYER_SIZE
             };
 
             SDL_FRect dst = {
                 state->camera.x + (state->players[0].pos.x - p->pos.x),
                 state->camera.y + (state->players[0].pos.y - p->pos.y),
-                SPRITE_SIZE * RENDER_SCALE,
-                SPRITE_SIZE * RENDER_SCALE
+                PLAYER_SIZE * PLAYER_RENDER_SCALE,
+                PLAYER_SIZE * PLAYER_RENDER_SCALE
             };
 
             SDL_FlipMode flip = p->facingLeft ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;

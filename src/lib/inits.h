@@ -1,7 +1,9 @@
 #include <SDL3/SDL.h>
 #define MAX_PLAYERS 5
-#define RENDER_SCALE 1
-#define SPRITE_SIZE 32
+#define PLAYER_RENDER_SCALE 1
+#define PLAYER_SIZE 32
+#define TILE_SIZE 16
+#define TILE_RENDER_SCALE 2
 
 typedef struct {
     int x, y;

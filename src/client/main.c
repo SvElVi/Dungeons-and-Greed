@@ -10,15 +10,17 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
     if(!state) return SDL_APP_FAILURE;
 
     if(initDisplay(state)) return SDL_APP_FAILURE; //Initiate and display window
-    initArt(state);
+    initCam(state);
 
     state->running = true; //Custom flag to mark the program as running
     state->lastTime = 0;
 
-    Vector2D tempVec = {50, 50};
+    Vector2D tempVec = {0, 0};
     Stats tempStats = {0};
+    updatePlayer(&(state->players[0]), tempVec, CLASS_NONE, tempStats, state->renderer);
+    tempVec.x = 50;
     updatePlayer(&(state->players[1]), tempVec, CLASS_NONE, tempStats, state->renderer);
-    tempVec.x = 100;
+    tempVec.x = 50;
     updatePlayer(&(state->players[2]), tempVec, CLASS_NONE, tempStats, state->renderer);
 
     *appstate = state; //Share the appstate to callbacks below

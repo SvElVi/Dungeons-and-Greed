@@ -1,21 +1,33 @@
 #include <SDL3/SDL.h>
 #define MAX_PLAYERS 5
-#define PLAYER_RENDER_SCALE 1
-#define PLAYER_SIZE 32
+#define PLAYER_SIZE 48
+#define PLAYER_RENDER_SCALE 1/3
 #define TILE_SIZE 16
-#define TILE_RENDER_SCALE 2
+#define TILE_RENDER_SCALE 1
+#define ANIMATION_TIME 2
 
 typedef struct {
     int x, y;
 } Vector2D;
 
+typedef enum {
+    WEST,
+    NORTH,
+    EAST,
+    SOUTH
+} direction;
+
 typedef enum{
-    ANIM_IDLE,
-    ANIM_TAKE_DAM,
-    ANIM_ATT,
-    ANIM_DEATH,
-    ANIM_WALK
-} AnimState;
+    IDLE_SOUTH,
+    IDLE_HORIZONTAL,
+    IDLE_NORTH,
+    WALK_SOUTH,
+    WALK_HORIZONTAL,
+    WALK_NORTH,
+    ATTACK_SOUTH,
+    ATTACK_HORIZONTAL,
+    ATTACK_NORTH
+} AniState;
 
 typedef enum {
     CLASS_NONE, //0
@@ -37,7 +49,6 @@ typedef struct {
 typedef struct {
     int moveX;
     int moveY;
-        bool facingLeft;
 
 } Player_Flags;
 
@@ -48,12 +59,9 @@ typedef struct {
     Stats stats;
     SDL_Texture* texture;
 
-    AnimState animState;
-    AnimState previousAnimState;
-    int currentFrame;
-    float animTimer;
-    Uint32 lastTick;
-    bool facingLeft;
+    AniState aniState;
+    SDL_FRect aniBox;
+    direction facing;
 } Player;
 
 typedef struct {
@@ -72,6 +80,7 @@ typedef struct {
     Client clients [MAX_PLAYERS];
     Player players [MAX_PLAYERS];
     SDL_FRect camera;
+    Uint8 animationTime;
 
     bool running;
     //bool computedEvent;
@@ -79,4 +88,4 @@ typedef struct {
 
 int initDisplay(AppState* state);
 
-void initArt(AppState* state);
+void initCam(AppState* state);

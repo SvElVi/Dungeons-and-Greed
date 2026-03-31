@@ -1,6 +1,11 @@
 #include <SDL3/SDL.h>
 #define MAX_PLAYERS 5
 #define RENDER_SCALE 4
+#define SPRITE_SIZE 16
+
+typedef struct {
+    int x, y;
+} Vector2D;
 
 typedef enum {
     CLASS_NONE, //0
@@ -25,8 +30,8 @@ typedef struct {
 } Player_Flags;
 
 typedef struct {
+    Vector2D pos;
     Player_Flags flags;
-    SDL_FRect renderBox;
     Player_Class class;
     Stats stats;
     SDL_Texture* texture;
@@ -47,6 +52,7 @@ typedef struct {
     int renderFlag;
     Client clients [MAX_PLAYERS];
     Player players [MAX_PLAYERS];
+    SDL_FRect camera;
 
     bool running;
     //bool computedEvent;

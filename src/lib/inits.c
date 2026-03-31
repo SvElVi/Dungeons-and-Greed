@@ -1,7 +1,6 @@
 #include <SDL3/SDL.h>
 #include "inits.h"
 #define FALLBACK_FRAMES_PER_SECOND 60
-#define TEMP_SPRITE_SIZE 16
 
 int initDisplay(AppState* state) {
     if(!(state->displayID = SDL_GetPrimaryDisplay())) {
@@ -30,8 +29,8 @@ void initArt(AppState* state) { //Init before the game, seperate event should be
     SDL_Surface* pArt = SDL_LoadPNG("./img/2D Pixel Dungeon Asset Pack/Character_animation/priests_idle/priest1/v1/priest1_v1_1.png");
     state->players[0].texture = SDL_CreateTextureFromSurface(state->renderer, pArt);
     SDL_DestroySurface(pArt);
-    state->players[0].renderBox.x = (state->displayMode->w - TEMP_SPRITE_SIZE * RENDER_SCALE)/2;
-    state->players[0].renderBox.y = (state->displayMode->h - TEMP_SPRITE_SIZE * RENDER_SCALE)/2;
-    state->players[0].renderBox.w = TEMP_SPRITE_SIZE * RENDER_SCALE;
-    state->players[0].renderBox.h = TEMP_SPRITE_SIZE * RENDER_SCALE;
+    state->camera.x = (state->displayMode->w - SPRITE_SIZE * RENDER_SCALE)/2;
+    state->camera.y = (state->displayMode->h - SPRITE_SIZE * RENDER_SCALE)/2;
+    state->camera.w = SPRITE_SIZE * RENDER_SCALE;
+    state->camera.h = SPRITE_SIZE * RENDER_SCALE;
 }

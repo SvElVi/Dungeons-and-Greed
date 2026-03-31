@@ -3,14 +3,25 @@
 #include "player.h"
 
 int renderFrame(AppState* state) {
-    int debug;
+    SDL_FRect temp;
     SDL_SetRenderDrawColor(state->renderer,0,255,255,0);
     SDL_RenderClear(state->renderer);
-    debug = SDL_RenderTexture(state->renderer, state->players[0].texture, NULL, &(state->players[0].renderBox));
-    if(!debug) {
-        SDL_Log("FAILED RENDERING TEXTURE: %s", SDL_GetError());
-        return SDL_APP_FAILURE;
+
+    for(int i = 0; i < MAX_PLAYERS; i++) {
+        if(state->players[i].texture) {
+            
+            temp.h = SPRITE_SIZE*RENDER_SCALE;
+            temp.w = SPRITE_SIZE*RENDER_SCALE;
+            temp.x = state->camera.x + (state->players[0].pos.x - state->players[i].pos.x);
+            temp.y = state->camera.y + (state->players[0].pos.y - state->players[i].pos.y);
+
+            if(!SDL_RenderTexture(state->renderer, state->players[i].texture, NULL, &(temp))) {
+                SDL_Log("FAILED RENDERING TEXTURE: %s", SDL_GetError());
+                return SDL_APP_FAILURE;
+            }
+        }
     }
+
     SDL_RenderPresent(state->renderer);
 
     return SDL_APP_CONTINUE;

@@ -10,16 +10,16 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 set(SDLTTF_VENDORED ON)
 
 # This assumes the SDL source is available in vendored/SDL
-add_subdirectory(./vendored/SDL ${CMAKE_CURRENT_BINARY_DIR}/build_sdl EXCLUDE_FROM_ALL)
+add_subdirectory(../../vendored/SDL ${CMAKE_CURRENT_BINARY_DIR}/build_sdl EXCLUDE_FROM_ALL)
 
 # This assumes all sources are available in vendored/[source]
-add_subdirectory(./vendored/SDL_ttf ${CMAKE_CURRENT_BINARY_DIR}/build_sdl_ttf EXCLUDE_FROM_ALL)
-add_subdirectory(./vendored/SDL_image ${CMAKE_CURRENT_BINARY_DIR}/build_sdl_image EXCLUDE_FROM_ALL)
-add_subdirectory(./vendored/SDL_mixer ${CMAKE_CURRENT_BINARY_DIR}/build_sdl_mixer EXCLUDE_FROM_ALL)
-add_subdirectory(./vendored/SDL_net ${CMAKE_CURRENT_BINARY_DIR}/build_sdl_net EXCLUDE_FROM_ALL)
+add_subdirectory(../../vendored/SDL_ttf ${CMAKE_CURRENT_BINARY_DIR}/build_sdl_ttf EXCLUDE_FROM_ALL)
+add_subdirectory(../../vendored/SDL_image ${CMAKE_CURRENT_BINARY_DIR}/build_sdl_image EXCLUDE_FROM_ALL)
+add_subdirectory(../../vendored/SDL_mixer ${CMAKE_CURRENT_BINARY_DIR}/build_sdl_mixer EXCLUDE_FROM_ALL)
+add_subdirectory(../../vendored/SDL_net ${CMAKE_CURRENT_BINARY_DIR}/build_sdl_net EXCLUDE_FROM_ALL)
 
 # Create your game executable target as usual
-add_executable(server WIN32 ../client/main.c ../lib/player.c ../lib/events.c ../lib/render.c ../lib/inits.c)
+add_executable(server WIN32 ../server/main.c ../lib/player.c ../lib/events.c ../lib/render.c ../lib/inits.c)
 
 # Links the lib folder to the project
 target_include_directories(server PRIVATE ../lib)

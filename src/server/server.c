@@ -9,7 +9,7 @@
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once at the begining of the program
 {
     SDL_InitSubSystem(SDL_INIT_VIDEO); //Also initilizes appevents
-    
+
     if(!startSDLNet()) {
         return SDL_APP_FAILURE;
     }

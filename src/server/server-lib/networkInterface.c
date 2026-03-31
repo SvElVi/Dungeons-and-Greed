@@ -1,5 +1,4 @@
 #include "networkInterface.h"
-#include <SDL3_Net/SDL_net.h>
 
 enum {
     FAIL,
@@ -7,6 +6,7 @@ enum {
 };
 
 int startSDLNet(void);
+NET_Server* startServer(int);
 
 int startSDLNet(void) {
     SDL_Log("Initializing SDL_Net...");
@@ -19,4 +19,8 @@ int startSDLNet(void) {
         return FAIL;
 
     }
+}
+
+NET_Server* startServer(int portNumber) {
+    return NET_CreateServer(NULL, portNumber);
 }

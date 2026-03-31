@@ -4,7 +4,7 @@
 #define PLAYER_RENDER_SCALE 2
 #define TILE_SIZE 16
 #define TILE_RENDER_SCALE 2
-#define ANIMATION_TIME 4
+#define ANIMATION_TIME 2
 
 typedef struct {
     int x, y;
@@ -76,7 +76,7 @@ typedef struct {
     int framerate;
     Uint64 deltaTime;
     Uint64 lastTime;
-    int renderFlag;
+    bool renderFlag;
     Client clients [MAX_PLAYERS];
     Player players [MAX_PLAYERS];
     SDL_FRect camera;

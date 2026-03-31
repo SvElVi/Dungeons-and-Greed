@@ -14,7 +14,8 @@ void movement(Player* player, int deltatime) {
 
 void playerAnimate(Player* player, Uint8* aTime, int framerate) {
     (*aTime)++;
-    if((*aTime) >= (framerate/ANIMATION_TIME)) {
+    if((*aTime) >= (framerate/ANIMATION_TIME) || ((*aTime) >= (framerate/(ANIMATION_TIME*2)) && (player->flags.moveX || player->flags.moveY))) { //Render more often if moving and all rendering happens after animation timer
+        *aTime = 0;
         switch(player->facing) {
             case WEST:
                 if(player->flags.moveX != 0) {
@@ -45,7 +46,9 @@ void playerAnimate(Player* player, Uint8* aTime, int framerate) {
                 }
                 break;
         }
-        player->aniBox.x = (int)(player->aniBox.x++) % (6 * PLAYER_SIZE);
+
+        player->aniBox.x += PLAYER_SIZE;
+        player->aniBox.x = (float)((int)player->aniBox.x % (PLAYER_SIZE*6));
     }
 }
 

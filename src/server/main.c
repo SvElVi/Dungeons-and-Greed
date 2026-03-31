@@ -1,6 +1,10 @@
 #define SDL_MAIN_USE_CALLBACKS 1 //Flag to use callbacks
+#define SERVER_PORT 2000
+
 #include <SDL3/SDL_main.h>
+
 #include "../lib/player.h" //All dependencies of [x] included
+#include "server-lib/networkInterface.h"
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once at the begining of the program
 {

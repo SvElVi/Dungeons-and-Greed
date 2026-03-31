@@ -19,7 +19,7 @@ add_subdirectory(../../vendored/SDL_mixer ${CMAKE_CURRENT_BINARY_DIR}/build_sdl_
 add_subdirectory(../../vendored/SDL_net ${CMAKE_CURRENT_BINARY_DIR}/build_sdl_net EXCLUDE_FROM_ALL)
 
 # Create your game executable target as usual
-add_executable(server WIN32 ../server/main.c ../lib/player.c ../lib/events.c ../lib/render.c ../lib/inits.c)
+add_executable(server WIN32 ../server/main.c ../lib/player.c ../lib/events.c ../lib/render.c ../lib/inits.c server-lib/networkInterface.c)
 
 # Links the lib folder to the project
 target_include_directories(server PRIVATE ../lib)

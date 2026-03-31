@@ -9,6 +9,10 @@
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once at the begining of the program
 {
     SDL_InitSubSystem(SDL_INIT_VIDEO); //Also initilizes appevents
+    
+    if(!startSDLNet()) {
+        return SDL_APP_FAILURE;
+    }
 
     AppState* state = (AppState*)SDL_calloc(1, sizeof(AppState)); //Create space on heap
     if(!state) return SDL_APP_FAILURE;

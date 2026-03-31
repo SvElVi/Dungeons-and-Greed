@@ -34,3 +34,7 @@ void initArt(AppState* state) { //Init before the game, seperate event should be
     state->camera.w = SPRITE_SIZE * RENDER_SCALE;
     state->camera.h = SPRITE_SIZE * RENDER_SCALE;
 }
+
+void updatePlayer() {
+    
+}

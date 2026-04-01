@@ -1,5 +1,3 @@
-// #include <SDL3/SDL.h>
-// #include "inits.h"
 #include "player.h"
 
 int renderFrame(AppState* state) {
@@ -10,12 +8,12 @@ int renderFrame(AppState* state) {
     for(int i = 0; i < MAX_PLAYERS; i++) {
         if(state->players[i].texture) {
 
-            temp.h = SPRITE_SIZE*RENDER_SCALE;
-            temp.w = SPRITE_SIZE*RENDER_SCALE;
+            temp.h = PLAYER_SIZE*PLAYER_RENDER_SCALE;
+            temp.w = PLAYER_SIZE*PLAYER_RENDER_SCALE;
             temp.x = state->camera.x + (state->players[0].pos.x - state->players[i].pos.x);
             temp.y = state->camera.y + (state->players[0].pos.y - state->players[i].pos.y);
 
-            if(!(SDL_RenderTexture(state->renderer, state->players[i].texture, NULL, &(temp)))) {
+            if(!(SDL_RenderTexture(state->renderer, state->players[i].texture, &(state->players[i].aniBox), &(temp)))) {
                 SDL_Log("FAILED RENDERING TEXTURE: %s", SDL_GetError());
                 return SDL_APP_FAILURE;
             }
@@ -32,14 +30,12 @@ int render(AppState* state) { //current but should be changed to call back style
     if(currentTime >= state->lastTime + (1000/state->framerate)){ //Should be (&& computedEvent) to avoid dublicate frames which should be set to true after a frame altering event in checkEvents()
         state->deltaTime = currentTime - state->lastTime;
         state->lastTime = currentTime;
-        if(state->renderFlag) {
-            //should be moved to a seperate callback function
-            movement(&(state->players[0]), state->deltaTime);
+        // if(state->renderFlag) {
+        movement(&(state->players[0]), state->deltaTime);
+        for(int i = 0; i < MAX_PLAYERS; i++) playerAnimate(&(state->players[i]), &(state->animationTime), state->framerate);
 
-
-            !state->renderFlag;
-            if(renderFrame(state)) return SDL_APP_FAILURE;
-        }
+        if(renderFrame(state)) return SDL_APP_FAILURE;
+        // }
     }
     return SDL_APP_CONTINUE;
 }

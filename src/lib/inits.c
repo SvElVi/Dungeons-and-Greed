@@ -20,17 +20,16 @@ int initDisplay(AppState* state) {
         state->framerate = FALLBACK_FRAMES_PER_SECOND;
     }
 
+    state->animationTime = 0;
+
     SDL_SetDefaultTextureScaleMode(state->renderer, SDL_SCALEMODE_PIXELART);
 
     return SDL_APP_CONTINUE;
 }
 
-void initArt(AppState* state) { //Init before the game, seperate event should be used later upon a class selection for the player
-    SDL_Surface* pArt = SDL_LoadPNG("./img/2D Pixel Dungeon Asset Pack/Character_animation/priests_idle/priest1/v1/priest1_v1_1.png");
-    state->players[0].texture = SDL_CreateTextureFromSurface(state->renderer, pArt);
-    SDL_DestroySurface(pArt);
-    state->camera.x = (state->displayMode->w - SPRITE_SIZE * RENDER_SCALE)/2;
-    state->camera.y = (state->displayMode->h - SPRITE_SIZE * RENDER_SCALE)/2;
-    state->camera.w = SPRITE_SIZE * RENDER_SCALE;
-    state->camera.h = SPRITE_SIZE * RENDER_SCALE;
+void initCam(AppState* state) { //Init before the game, seperate event should be used later upon a class selection for the player
+    state->camera.x = (state->displayMode->w - PLAYER_SIZE * PLAYER_RENDER_SCALE)/2;
+    state->camera.y = (state->displayMode->h - PLAYER_SIZE * PLAYER_RENDER_SCALE)/2;
+    state->camera.w = PLAYER_SIZE * PLAYER_RENDER_SCALE;
+    state->camera.h = PLAYER_SIZE * PLAYER_RENDER_SCALE;
 }

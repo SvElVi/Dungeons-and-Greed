@@ -1,11 +1,33 @@
 #include <SDL3/SDL.h>
 #define MAX_PLAYERS 5
-#define RENDER_SCALE 4
-#define SPRITE_SIZE 16
+#define PLAYER_SIZE 48
+#define PLAYER_RENDER_SCALE 2
+#define TILE_SIZE 16
+#define TILE_RENDER_SCALE 2
+#define ANIMATION_TIME 2
 
 typedef struct {
     int x, y;
 } Vector2D;
+
+typedef enum {
+    WEST,
+    NORTH,
+    EAST,
+    SOUTH
+} direction;
+
+typedef enum{
+    IDLE_SOUTH,
+    IDLE_HORIZONTAL,
+    IDLE_NORTH,
+    WALK_SOUTH,
+    WALK_HORIZONTAL,
+    WALK_NORTH,
+    ATTACK_SOUTH,
+    ATTACK_HORIZONTAL,
+    ATTACK_NORTH
+} AniState;
 
 typedef enum {
     CLASS_NONE, //0
@@ -35,11 +57,10 @@ typedef struct {
     Player_Class class;
     Stats stats;
     SDL_Texture* texture;
-} Player;
 
-typedef struct {
-    int temp;
-} Client;
+    SDL_FRect aniBox;
+    direction facing;
+} Player;
 
 typedef struct {
     SDL_Window *window;
@@ -49,10 +70,10 @@ typedef struct {
     int framerate;
     Uint64 deltaTime;
     Uint64 lastTime;
-    int renderFlag;
-    Client clients [MAX_PLAYERS];
+    // bool renderFlag;
     Player players [MAX_PLAYERS];
     SDL_FRect camera;
+    Uint8 animationTime;
 
     bool running;
     //bool computedEvent;
@@ -60,4 +81,4 @@ typedef struct {
 
 int initDisplay(AppState* state);
 
-void initArt(AppState* state);
+void initCam(AppState* state);

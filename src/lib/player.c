@@ -14,7 +14,7 @@ void movement(Player* player, int deltatime) {
  //&& (player->flags.moveX || player->flags.moveY)
  // || 
 void animatePlayers(Player players[MAX_PLAYERS], Uint8* counter, int framerate) {
-    *counter++;
+    ++*counter;
     SDL_Log("Counter: %d", *counter);
     if(*counter >= (framerate/(ANIMATION_TIME*4) )  ) {
         for(int i = 0; i < MAX_PLAYERS; i++) {

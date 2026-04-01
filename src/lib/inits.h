@@ -59,7 +59,6 @@ typedef struct {
     SDL_Texture* texture;
 
     SDL_FRect aniBox;
-    Uint8 animationTime;
     direction facing;
 } Player;
 
@@ -76,6 +75,7 @@ typedef struct {
     SDL_FRect camera;
 
     bool running;
+    Uint8 animationTime;
     //bool computedEvent;
 } AppState;
 

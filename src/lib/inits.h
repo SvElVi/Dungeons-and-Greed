@@ -4,7 +4,7 @@
 #define PLAYER_RENDER_SCALE 2
 #define TILE_SIZE 16
 #define TILE_RENDER_SCALE 2
-#define ANIMATION_TIME 2
+#define ANIMATION_TIME 4
 
 typedef struct {
     int x, y;

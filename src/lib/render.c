@@ -21,6 +21,7 @@ int renderFrame(AppState* state) {
     }
 
     SDL_RenderPresent(state->renderer);
+    state->computedEvent = false;
 
     return SDL_APP_CONTINUE;
 }

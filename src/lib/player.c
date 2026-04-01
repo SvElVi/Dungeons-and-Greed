@@ -18,7 +18,7 @@ void animatePlayers(Player players[MAX_PLAYERS], Uint8* counter, int framerate, 
     if(*counter >= (framerate/(ANIMATION_TIME*2) )  ) {
         for(int i = 0; i < MAX_PLAYERS; i++) {
             if(players[i].flags.moveX || players[i].flags.moveY || (*flag && *counter >= (framerate/ANIMATION_TIME))) { //Render faster if moving
-                SDL_Log("Test");
+                SDL_Log("Test: %d", *flag);
                 switch(players[i].facing) {
                     case WEST:
                         if(players[i].flags.moveX != 0) {

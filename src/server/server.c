@@ -78,6 +78,8 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result) //Runs after returning AP
         SDL_free(state);
     }
 
+    NET_DestroyServer(pServer);
+
     SDL_Log("Quit done");
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }

@@ -2,6 +2,7 @@
 #define SERVER_PORT 2000
 
 #include <SDL3/SDL_main.h>
+
 #include "../lib/player.h" //All dependencies of [x] included
 #include "server-lib/networkInterface.h"
 
@@ -13,11 +14,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
     SDL_Log("\n");
     SDL_InitSubSystem(SDL_INIT_VIDEO); //Also initilizes appevents
 
-    AppState* state = (AppState*)SDL_calloc(1, sizeof(AppState)); //Create space on heap
-    if(!state) return SDL_APP_FAILURE;
-
-    if(initDisplay(state)) return SDL_APP_FAILURE; //Initiate and display window
-    initCam(state);
+    AppState state = createAppState();
 
     if(!startSDLNet()) {
         return SDL_APP_FAILURE;
@@ -27,8 +24,12 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
 
     if(serverUDPSocket == NULL) return SDL_APP_FAILURE;
 
+    if(!state) return SDL_APP_FAILURE;
+
+    if(initDisplay(state)) return SDL_APP_FAILURE; //Initiate and display window
+    initCam(state);
+
     state->running = true; //Custom flag to mark the program as running
-    state->lastTime = 0;
 
     Vector2D tempVec = {0, 0};
     Stats tempStats = {0};
@@ -46,14 +47,14 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
 
 SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) //Runs on every event update
 {
-    AppState* state = (AppState*)appstate;
+    AppState state = (AppState)appstate;
 
     return checkEvents(state, event);
 }
 
 SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
 {
-    AppState* state = (AppState*)appstate;
+    AppState state = (AppState)appstate;
 
     return render(state);
 }
@@ -62,7 +63,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
 void SDL_AppQuit(void *appstate, SDL_AppResult result) //Runs after returning APP_SUCESS and SDL_FAILURE
 {
     if(appstate != NULL) {
-        AppState* state = (AppState*)appstate;
+        AppState state = (AppState)appstate;
         for (int x = 0; x < MAX_PLAYERS; x++) {
             if(state->players[x].texture) SDL_DestroyTexture(state->players[x].texture);
         }
@@ -70,8 +71,6 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result) //Runs after returning AP
         if(state->window) SDL_DestroyWindow(state->window);
         SDL_free(state);
     }
-
-    NET_DestroyServer(pServer);
 
     SDL_Log("Quit done");
     SDL_QuitSubSystem(SDL_INIT_VIDEO);

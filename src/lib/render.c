@@ -21,6 +21,7 @@ int renderFrame(AppState* state) {
     }
 
     SDL_RenderPresent(state->renderer);
+    state->computedEvent = false;
 
     return SDL_APP_CONTINUE;
 }
@@ -32,7 +33,7 @@ int render(AppState* state) { //current but should be changed to call back style
         state->lastTime = currentTime;
         // if(state->renderFlag) {
         movement(&(state->players[0]), state->deltaTime);
-        for(int i = 0; i < MAX_PLAYERS; i++) playerAnimate(&(state->players[i]), state->framerate);
+        animatePlayers(state->players, &(state->animationTime), state->framerate, &(state->computedEvent));
 
         if(renderFrame(state)) return SDL_APP_FAILURE;
         // }

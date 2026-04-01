@@ -15,12 +15,10 @@ int initDisplay(AppState* state) {
     }
 
     if(state->displayMode->refresh_rate) {
-        state->framerate = state->displayMode->refresh_rate;
+        state->framerate = state->displayMode->refresh_rate+1;
     } else {
         state->framerate = FALLBACK_FRAMES_PER_SECOND;
     }
-
-    for(int i = 0; i < MAX_PLAYERS; i++) state->players[i].animationTime = 0;
 
     SDL_SetDefaultTextureScaleMode(state->renderer, SDL_SCALEMODE_PIXELART);
 

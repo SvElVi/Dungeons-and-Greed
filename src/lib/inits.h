@@ -4,7 +4,7 @@
 #define PLAYER_RENDER_SCALE 2
 #define TILE_SIZE 16
 #define TILE_RENDER_SCALE 2
-#define ANIMATION_TIME 2
+#define ANIMATION_TIME 4
 
 typedef struct {
     int x, y;
@@ -59,7 +59,6 @@ typedef struct {
     SDL_Texture* texture;
 
     SDL_FRect aniBox;
-    Uint8 animationTime;
     direction facing;
 } Player;
 
@@ -68,15 +67,16 @@ typedef struct {
     SDL_Renderer *renderer;
     SDL_DisplayID displayID;
     const SDL_DisplayMode* displayMode;
-    int framerate;
+    Uint16 framerate;
     Uint64 deltaTime;
     Uint64 lastTime;
-    // bool renderFlag;
+
     Player players [MAX_PLAYERS];
     SDL_FRect camera;
 
+    Uint8 animationTime;
     bool running;
-    //bool computedEvent;
+    bool computedEvent;
 } AppState;
 
 int initDisplay(AppState* state);

@@ -49,7 +49,6 @@ typedef struct {
 typedef struct {
     int moveX;
     int moveY;
-
 } Player_Flags;
 
 typedef struct {
@@ -59,7 +58,6 @@ typedef struct {
     Stats stats;
     SDL_Texture* texture;
 
-    AniState aniState;
     SDL_FRect aniBox;
     direction facing;
 } Player;
@@ -76,7 +74,7 @@ typedef struct {
     int framerate;
     Uint64 deltaTime;
     Uint64 lastTime;
-    bool renderFlag;
+    // bool renderFlag;
     Client clients [MAX_PLAYERS];
     Player players [MAX_PLAYERS];
     SDL_FRect camera;

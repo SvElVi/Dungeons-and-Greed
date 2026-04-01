@@ -22,5 +22,6 @@ int startSDLNet(void) {
 }
 
 NET_Server* startServer(int portNumber) {
+    SDL_Log("Starting server...");
     return NET_CreateServer(NULL, portNumber);
 }

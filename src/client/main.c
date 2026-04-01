@@ -6,14 +6,13 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
 {
     SDL_InitSubSystem(SDL_INIT_VIDEO); //Also initilizes appevents
 
-    AppState* state = (AppState*)SDL_calloc(1, sizeof(AppState)); //Create space on heap
+    AppState state = createAppState();
     if(!state) return SDL_APP_FAILURE;
 
     if(initDisplay(state)) return SDL_APP_FAILURE; //Initiate and display window
     initCam(state);
 
     state->running = true; //Custom flag to mark the program as running
-    state->lastTime = 0;
 
     Vector2D tempVec = {0, 0};
     Stats tempStats = {0};
@@ -31,14 +30,14 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
 
 SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) //Runs on every event update
 {
-    AppState* state = (AppState*)appstate;
+    AppState state = (AppState)appstate;
 
     return checkEvents(state, event);
 }
 
 SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
 {
-    AppState* state = (AppState*)appstate;
+    AppState state = (AppState)appstate;
 
     return render(state);
 }
@@ -47,7 +46,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
 void SDL_AppQuit(void *appstate, SDL_AppResult result) //Runs after returning APP_SUCESS and SDL_FAILURE
 {
     if(appstate != NULL) {
-        AppState* state = (AppState*)appstate;
+        AppState state = (AppState)appstate;
         for (int x = 0; x < MAX_PLAYERS; x++) {
             if(state->players[x].texture) SDL_DestroyTexture(state->players[x].texture);
         }

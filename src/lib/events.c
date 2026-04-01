@@ -1,7 +1,7 @@
 #include <SDL3/SDL.h>
 #include "inits.h"
 
-int QuitEvent(AppState* state, SDL_Event* event, const bool* keylist) {
+int QuitEvent(AppState state, SDL_Event* event, const bool* keylist) {
     if (keylist[SDL_SCANCODE_ESCAPE] ||
         event->type == SDL_EVENT_QUIT) {
         state->running = false;
@@ -11,7 +11,7 @@ int QuitEvent(AppState* state, SDL_Event* event, const bool* keylist) {
     return SDL_APP_CONTINUE;
 }
 
-void moveFlag(Player_Flags* flags, const bool* keylist) {
+void moveFlag(Player_Flags* flags, const bool* keylist, bool* flag) {
     if(keylist[SDL_SCANCODE_W] && !keylist[SDL_SCANCODE_S]) {
         flags->moveY = -1;
     } else if(keylist[SDL_SCANCODE_S] && !keylist[SDL_SCANCODE_W]) {
@@ -28,9 +28,11 @@ void moveFlag(Player_Flags* flags, const bool* keylist) {
     } else {
         flags->moveX = 0;
     }
+
+    *flag = true;
 }
 
-int checkEvents(AppState* state, SDL_Event* event) {
+int checkEvents(AppState state, SDL_Event* event) {
 
     const bool* keylist = SDL_GetKeyboardState(0);
 
@@ -38,7 +40,7 @@ int checkEvents(AppState* state, SDL_Event* event) {
     if(quitEvent) return quitEvent;
 
     //Non quit functions
-    moveFlag(&(state->players[0].flags), keylist);
+    moveFlag(&(state->players[0].flags), keylist, &(state->computedEvent));
     //if frame altering function then set state->computedEvent = true and add to the if statement in the render() function
 
     return SDL_APP_CONTINUE;

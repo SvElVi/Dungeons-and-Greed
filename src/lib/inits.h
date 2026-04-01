@@ -62,7 +62,7 @@ typedef struct {
     direction facing;
 } Player;
 
-typedef struct {
+struct appState {
     SDL_Window *window;
     SDL_Renderer *renderer;
     SDL_DisplayID displayID;
@@ -77,8 +77,12 @@ typedef struct {
     Uint8 animationTime;
     bool running;
     bool computedEvent;
-} AppState;
+};
 
-int initDisplay(AppState* state);
+typedef struct appState *AppState;
 
-void initCam(AppState* state);
+AppState createAppState(void);
+
+int initDisplay(AppState state);
+
+void initCam(AppState state);

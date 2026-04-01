@@ -1,6 +1,6 @@
 #include "player.h"
 
-int renderFrame(AppState* state) {
+int renderFrame(AppState state) {
     SDL_FRect temp;
     SDL_SetRenderDrawColor(state->renderer,0,255,255,0);
     SDL_RenderClear(state->renderer);
@@ -26,7 +26,7 @@ int renderFrame(AppState* state) {
     return SDL_APP_CONTINUE;
 }
 
-int render(AppState* state) { //current but should be changed to call back style, also with vsync and variable refreshrate
+int render(AppState state) { //current but should be changed to call back style, also with vsync and variable refreshrate
     Uint64 currentTime = SDL_GetTicks();
     if(currentTime >= state->lastTime + (1000/state->framerate)){ //Should be (&& computedEvent) to avoid dublicate frames which should be set to true after a frame altering event in checkEvents()
         state->deltaTime = currentTime - state->lastTime;

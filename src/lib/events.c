@@ -1,7 +1,7 @@
 #include <SDL3/SDL.h>
 #include "inits.h"
 
-int QuitEvent(AppState* state, SDL_Event* event, const bool* keylist) {
+int QuitEvent(AppState state, SDL_Event* event, const bool* keylist) {
     if (keylist[SDL_SCANCODE_ESCAPE] ||
         event->type == SDL_EVENT_QUIT) {
         state->running = false;
@@ -32,7 +32,7 @@ void moveFlag(Player_Flags* flags, const bool* keylist, bool* flag) {
     *flag = true;
 }
 
-int checkEvents(AppState* state, SDL_Event* event) {
+int checkEvents(AppState state, SDL_Event* event) {
 
     const bool* keylist = SDL_GetKeyboardState(0);
 

@@ -60,6 +60,7 @@ typedef struct {
 
     SDL_FRect aniBox;
     direction facing;
+    SDL_FlipMode flip;
 } Player;
 
 struct appState {

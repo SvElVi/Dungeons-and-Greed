@@ -21,15 +21,19 @@ void animatePlayers(Player players[MAX_PLAYERS], Uint8* counter, Uint16 framerat
                 switch(players[i].facing) {
                     case WEST:
                         players[i].aniBox.y = WALK_HORIZONTAL * PLAYER_SIZE;
+                        players[i].flip = SDL_FLIP_HORIZONTAL;
                         break;
                     case NORTH:
                         players[i].aniBox.y = WALK_NORTH * PLAYER_SIZE;
+                        players[i].flip = SDL_FLIP_NONE;
                         break;
                     case EAST:
                         players[i].aniBox.y = WALK_HORIZONTAL * PLAYER_SIZE;
+                        players[i].flip = SDL_FLIP_NONE;
                         break;
                     case SOUTH:
                         players[i].aniBox.y = WALK_SOUTH * PLAYER_SIZE;
+                        players[i].flip = SDL_FLIP_NONE;
                         break;
                 }
 
@@ -40,15 +44,19 @@ void animatePlayers(Player players[MAX_PLAYERS], Uint8* counter, Uint16 framerat
                 switch(players[i].facing) {
                     case WEST:
                         players[i].aniBox.y = IDLE_HORIZONTAL * PLAYER_SIZE;
+                        players[i].flip = SDL_FLIP_HORIZONTAL;
                         break;
                     case NORTH:
                         players[i].aniBox.y = IDLE_NORTH * PLAYER_SIZE;
+                        players[i].flip = SDL_FLIP_NONE;
                         break;
                     case EAST:
                         players[i].aniBox.y = IDLE_HORIZONTAL * PLAYER_SIZE;
+                        players[i].flip = SDL_FLIP_NONE;
                         break;
                     case SOUTH:
                         players[i].aniBox.y = IDLE_SOUTH * PLAYER_SIZE;
+                        players[i].flip = SDL_FLIP_NONE;
                         break;
                 }
 

@@ -13,7 +13,7 @@ int renderFrame(AppState state) {
             temp.x = state->camera.x + (state->players[0].pos.x - state->players[i].pos.x);
             temp.y = state->camera.y + (state->players[0].pos.y - state->players[i].pos.y);
 
-            if(!(SDL_RenderTexture(state->renderer, state->players[i].texture, &(state->players[i].aniBox), &(temp)))) {
+            if(!(SDL_RenderTextureRotated(state->renderer, state->players[i].texture, &(state->players[i].aniBox), &(temp), 0, NULL, state->players[i].flip))) {
                 SDL_Log("FAILED RENDERING TEXTURE: %s", SDL_GetError());
                 return SDL_APP_FAILURE;
             }

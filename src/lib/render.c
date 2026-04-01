@@ -32,9 +32,9 @@ int render(AppState* state) { //current but should be changed to call back style
         state->lastTime = currentTime;
         // if(state->renderFlag) {
         movement(&(state->players[0]), state->deltaTime);
-        animatePlayers(state->players, &(state->animationTime), state->framerate);
+        animatePlayers(state->players, &(state->animationTime), state->framerate, &(state->computedEvent));
 
-        SDL_Log("Confirm: %d", state->animationTime);
+        // SDL_Log("Confirm: %d", state->animationTime);
 
         if(renderFrame(state)) return SDL_APP_FAILURE;
         // }

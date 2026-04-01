@@ -76,7 +76,7 @@ typedef struct {
 
     bool running;
     Uint8 animationTime;
-    //bool computedEvent;
+    bool computedEvent;
 } AppState;
 
 int initDisplay(AppState* state);

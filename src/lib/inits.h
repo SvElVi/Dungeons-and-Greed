@@ -63,10 +63,6 @@ typedef struct {
 } Player;
 
 typedef struct {
-    int temp;
-} Client;
-
-typedef struct {
     SDL_Window *window;
     SDL_Renderer *renderer;
     SDL_DisplayID displayID;

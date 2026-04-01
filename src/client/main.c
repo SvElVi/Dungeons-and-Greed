@@ -24,7 +24,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
     updatePlayer(&(state->players[2]), tempVec, CLASS_NONE, tempStats, state->renderer);
 
     *appstate = state; //Share the appstate to callbacks below
-    state->renderFlag = 1;
+    // state->renderFlag = 1;
 
     return SDL_APP_CONTINUE;
 }

@@ -71,7 +71,6 @@ typedef struct {
     Uint64 deltaTime;
     Uint64 lastTime;
     // bool renderFlag;
-    Client clients [MAX_PLAYERS];
     Player players [MAX_PLAYERS];
     SDL_FRect camera;
     Uint8 animationTime;

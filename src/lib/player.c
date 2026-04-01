@@ -13,51 +13,52 @@ void movement(Player* player, int deltatime) {
 }
  //&& (player->flags.moveX || player->flags.moveY)
  // || 
-void animatePlayers(Player players[MAX_PLAYERS], Uint8* counter, bool* flag) {
+void animatePlayers(Player players[MAX_PLAYERS], Uint8* counter, Uint16 framerate, bool* flag) {
     ++*counter;
-    if(*counter >= ANIMATION_TIME/2) {
+    if((*counter) == (framerate / ANIMATION_TIME /2) || (*counter) == (framerate / (ANIMATION_TIME))) {
         for(int i = 0; i < MAX_PLAYERS; i++) {
-            if(players[i].flags.moveX || players[i].flags.moveY || (*flag && *counter >= ANIMATION_TIME)) { //Render faster if moving
-                SDL_Log("Test: %d", *flag);
+            if(players[i].flags.moveX || players[i].flags.moveY) { //Render faster if moving
                 switch(players[i].facing) {
                     case WEST:
-                        if(players[i].flags.moveX != 0) {
-                            players[i].aniBox.y = WALK_HORIZONTAL * PLAYER_SIZE;
-                        } else {
-                            players[i].aniBox.y = IDLE_HORIZONTAL * PLAYER_SIZE;
-                        }
+                        players[i].aniBox.y = WALK_HORIZONTAL * PLAYER_SIZE;
                         break;
                     case NORTH:
-                        if(players[i].flags.moveY != 0) {
-                            players[i].aniBox.y = WALK_NORTH * PLAYER_SIZE;
-                        } else {
-                            players[i].aniBox.y = IDLE_NORTH * PLAYER_SIZE;
-                        }
+                        players[i].aniBox.y = WALK_NORTH * PLAYER_SIZE;
                         break;
                     case EAST:
-                        if(players[i].flags.moveX != 0) {
-                            players[i].aniBox.y = WALK_HORIZONTAL * PLAYER_SIZE;
-                        } else {
-                            players[i].aniBox.y = IDLE_HORIZONTAL * PLAYER_SIZE;
-                        }
+                        players[i].aniBox.y = WALK_HORIZONTAL * PLAYER_SIZE;
                         break;
                     case SOUTH:
-                        if(players[i].flags.moveY != 0) {
-                            players[i].aniBox.y = WALK_SOUTH * PLAYER_SIZE;
-                        } else {
-                            players[i].aniBox.y = IDLE_SOUTH * PLAYER_SIZE;
-                        }
+                        players[i].aniBox.y = WALK_SOUTH * PLAYER_SIZE;
                         break;
                 }
 
                 players[i].aniBox.x += PLAYER_SIZE;
                 players[i].aniBox.x = (float)((int)players[i].aniBox.x % (PLAYER_SIZE*6));
 
-                if(i == MAX_PLAYERS-1) {
-                    *counter = 0;
+            } else if((*counter) == (framerate / ANIMATION_TIME)) {
+                switch(players[i].facing) {
+                    case WEST:
+                        players[i].aniBox.y = IDLE_HORIZONTAL * PLAYER_SIZE;
+                        break;
+                    case NORTH:
+                        players[i].aniBox.y = IDLE_NORTH * PLAYER_SIZE;
+                        break;
+                    case EAST:
+                        players[i].aniBox.y = IDLE_HORIZONTAL * PLAYER_SIZE;
+                        break;
+                    case SOUTH:
+                        players[i].aniBox.y = IDLE_SOUTH * PLAYER_SIZE;
+                        break;
                 }
+
+                players[i].aniBox.x += PLAYER_SIZE;
+                players[i].aniBox.x = (float)((int)players[i].aniBox.x % (PLAYER_SIZE*6));
             }
         }
+    }
+    if((*counter) == (framerate / ANIMATION_TIME)) {
+        (*counter) = 0;
     }
 }
 

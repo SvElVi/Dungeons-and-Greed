@@ -70,7 +70,7 @@ typedef struct {
     Uint16 framerate;
     Uint64 deltaTime;
     Uint64 lastTime;
-    // bool renderFlag;
+
     Player players [MAX_PLAYERS];
     SDL_FRect camera;
 

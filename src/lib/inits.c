@@ -15,7 +15,7 @@ int initDisplay(AppState* state) {
     }
 
     if(state->displayMode->refresh_rate) {
-        state->framerate = state->displayMode->refresh_rate;
+        state->framerate = state->displayMode->refresh_rate+1;
     } else {
         state->framerate = FALLBACK_FRAMES_PER_SECOND;
     }

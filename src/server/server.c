@@ -2,42 +2,51 @@
 #define SERVER_PORT 2000
 
 #include <SDL3/SDL_main.h>
-
 #include "../lib/player.h" //All dependencies of [x] included
 #include "server-lib/networkInterface.h"
 
-NET_Server* pServer = 0x00;
+NET_Server *pServer = 0x0;
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once at the begining of the program
 {
+    SDL_Log("\n");
     SDL_InitSubSystem(SDL_INIT_VIDEO); //Also initilizes appevents
+
+    AppState* state = (AppState*)SDL_calloc(1, sizeof(AppState)); //Create space on heap
+    if(!state) return SDL_APP_FAILURE;
+
+    if(initDisplay(state)) return SDL_APP_FAILURE; //Initiate and display window
+    initCam(state);
 
     if(!startSDLNet()) {
         return SDL_APP_FAILURE;
     }
 
-    AppState* state = (AppState*)SDL_calloc(1, sizeof(AppState)); //Create space on heap
-
     pServer = startServer(SERVER_PORT);
 
     if (pServer == NULL) {
-        SDL_Log("Fatal error: Failed to start server!");
+        SDL_Log("Fatal error: Failed to start server!\n");
 
     } else {
-        SDL_Log("Succesfully started server!");
+        SDL_Log("Succesfully started server!\n");
 
     }
 
-    if(!state) return SDL_APP_FAILURE;
-
-    if(initDisplay(state)) return SDL_APP_FAILURE; //Initiate and display window
-    initArt(state);
+    SDL_Log("Listening on all network interfaces on port: %d\n", SERVER_PORT);
 
     state->running = true; //Custom flag to mark the program as running
     state->lastTime = 0;
 
+    Vector2D tempVec = {0, 0};
+    Stats tempStats = {0};
+    updatePlayer(&(state->players[0]), tempVec, CLASS_NONE, tempStats, state->renderer);
+    tempVec.x = 50;
+    updatePlayer(&(state->players[1]), tempVec, CLASS_NONE, tempStats, state->renderer);
+    tempVec.x = 100;
+    updatePlayer(&(state->players[2]), tempVec, CLASS_NONE, tempStats, state->renderer);
+
     *appstate = state; //Share the appstate to callbacks below
-    state->renderFlag = 1;
+    // state->renderFlag = 1;
 
     return SDL_APP_CONTINUE;
 }

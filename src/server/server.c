@@ -5,7 +5,8 @@
 #include "../lib/player.h" //All dependencies of [x] included
 #include "server-lib/networkInterface.h"
 
-NET_Server *pServer = 0x0;
+NET_Server *pServer = 0x00;
+NET_DatagramSocket *serverUDPSocket = 0x00;
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once at the begining of the program
 {
@@ -22,17 +23,9 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
         return SDL_APP_FAILURE;
     }
 
-    pServer = startServer(SERVER_PORT);
+    serverUDPSocket = createUDPSocket(SERVER_PORT);
 
-    if (pServer == NULL) {
-        SDL_Log("Fatal error: Failed to start server!\n");
-
-    } else {
-        SDL_Log("Succesfully started server!\n");
-
-    }
-
-    SDL_Log("Listening on all network interfaces on port: %d\n", SERVER_PORT);
+    if(serverUDPSocket == NULL) return SDL_APP_FAILURE;
 
     state->running = true; //Custom flag to mark the program as running
     state->lastTime = 0;

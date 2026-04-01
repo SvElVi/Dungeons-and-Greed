@@ -6,6 +6,8 @@
 #include "../lib/player.h" //All dependencies of [x] included
 #include "server-lib/networkInterface.h"
 
+NET_Server* pServer = 0x00;
+
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once at the begining of the program
 {
     SDL_InitSubSystem(SDL_INIT_VIDEO); //Also initilizes appevents
@@ -15,6 +17,17 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
     }
 
     AppState* state = (AppState*)SDL_calloc(1, sizeof(AppState)); //Create space on heap
+
+    pServer = startServer(SERVER_PORT);
+
+    if (pServer == NULL) {
+        SDL_Log("Fatal error: Failed to start server!");
+
+    } else {
+        SDL_Log("Succesfully started server!");
+
+    }
+
     if(!state) return SDL_APP_FAILURE;
 
     if(initDisplay(state)) return SDL_APP_FAILURE; //Initiate and display window

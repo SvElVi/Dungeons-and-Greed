@@ -20,7 +20,7 @@ int initDisplay(AppState* state) {
         state->framerate = FALLBACK_FRAMES_PER_SECOND;
     }
 
-    state->animationTime = 0;
+    for(int i = 0; i < MAX_PLAYERS; i++) state->players[i].animationTime = 0;
 
     SDL_SetDefaultTextureScaleMode(state->renderer, SDL_SCALEMODE_PIXELART);
 

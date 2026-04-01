@@ -59,6 +59,7 @@ typedef struct {
     SDL_Texture* texture;
 
     SDL_FRect aniBox;
+    Uint8 animationTime;
     direction facing;
 } Player;
 
@@ -73,7 +74,6 @@ typedef struct {
     // bool renderFlag;
     Player players [MAX_PLAYERS];
     SDL_FRect camera;
-    Uint8 animationTime;
 
     bool running;
     //bool computedEvent;

@@ -67,15 +67,15 @@ typedef struct {
     SDL_Renderer *renderer;
     SDL_DisplayID displayID;
     const SDL_DisplayMode* displayMode;
-    int framerate;
+    Uint16 framerate;
     Uint64 deltaTime;
     Uint64 lastTime;
     // bool renderFlag;
     Player players [MAX_PLAYERS];
     SDL_FRect camera;
 
-    bool running;
     Uint8 animationTime;
+    bool running;
     bool computedEvent;
 } AppState;
 

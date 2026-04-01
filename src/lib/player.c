@@ -13,11 +13,11 @@ void movement(Player* player, int deltatime) {
 }
  //&& (player->flags.moveX || player->flags.moveY)
  // || 
-void animatePlayers(Player players[MAX_PLAYERS], Uint8* counter, int framerate, bool* flag) {
+void animatePlayers(Player players[MAX_PLAYERS], Uint8* counter, bool* flag) {
     ++*counter;
-    if(*counter >= (framerate/(ANIMATION_TIME*2) )  ) {
+    if(*counter >= ANIMATION_TIME/2) {
         for(int i = 0; i < MAX_PLAYERS; i++) {
-            if(players[i].flags.moveX || players[i].flags.moveY || (*flag && *counter >= (framerate/ANIMATION_TIME))) { //Render faster if moving
+            if(players[i].flags.moveX || players[i].flags.moveY || (*flag && *counter >= ANIMATION_TIME)) { //Render faster if moving
                 SDL_Log("Test: %d", *flag);
                 switch(players[i].facing) {
                     case WEST:

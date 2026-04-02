@@ -7,6 +7,7 @@
 #define TILE_SIZE 16
 #define TILE_RENDER_SCALE 2
 #define ANIMATION_TIME 4
+#define CHUNK_SIZE 16
 
 typedef struct {
     int x, y;
@@ -66,8 +67,24 @@ typedef struct {
 } Player;
 
 typedef struct {
-    Uint8* tiles;
-} Dungeon;
+    Uint8 tileType[CHUNK_SIZE][CHUNK_SIZE];
+} Chunk;
+
+typedef struct {
+    Chunk chunks;
+    Uint64 cord;
+    XChunks* nextXChunk;
+} XChunks;
+
+typedef struct {
+    XChunks* xChunks;
+    Uint64 cord;
+    YChunks* nextYChunk;
+} YChunks;
+
+typedef struct {
+    YChunks quarter[4];
+} World;
 
 struct appState {
     SDL_Window *window; //LOCAL
@@ -84,6 +101,9 @@ struct appState {
     Uint8 animationTime; //LOCAL
     bool running; //LOCAL
     bool computedEvent; //LOCAL
+
+    //WORLD
+    World world;
 
     // IP
     NET_Address *ipAddresses[MAX_PLAYERS];

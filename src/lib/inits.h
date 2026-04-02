@@ -73,13 +73,13 @@ typedef struct {
 typedef struct {
     Chunk chunks;
     Uint64 cord;
-    XChunks* nextXChunk;
+    struct XChunks* nextXChunk;
 } XChunks;
 
 typedef struct {
     XChunks* xChunks;
     Uint64 cord;
-    YChunks* nextYChunk;
+    struct YChunks* nextYChunk;
 } YChunks;
 
 typedef struct {

@@ -15,10 +15,16 @@ struct world {
 World createWorld(int size) {
     World w = SDL_calloc(1, sizeof(struct world));
     w->chunks = SDL_calloc(size*size, sizeof(Chunk));
+    w->size = size*size;
     return w;
 }
 
 void destroyWorld(World w) {
     SDL_free(w->chunks);
     SDL_free(w);
+}
+
+int generateDungeon(World w, int nrOfRooms) {
+
+    return 0;
 }

@@ -1,24 +1,39 @@
 #include <SDL3/SDL.h>
-#include "../inits.h"
+#include "world.h"
+
+#define CHUNK_SIZE 16
 
 typedef struct {
     Uint8 tileType[CHUNK_SIZE][CHUNK_SIZE];
 } Chunk;
 
 typedef struct {
-    Chunk chunks;
-    Uint64 cord;
+    Chunk chunk;
+    int cord;
     struct XChunks* nextXChunk;
 } XChunks;
 
 typedef struct {
     XChunks* xChunks;
-    Uint64 cord;
+    int cord;
     struct YChunks* nextYChunk;
 } YChunks;
 
 struct world {
-    YChunks quarter[4];
+    YChunks* yChunks;
 };
 
-World createWorld();
+World createWorld() {
+    World w = SDL_calloc(1, sizeof(struct world));
+    return w;
+}
+
+void destroyWorld(World w) {
+    SDL_free(w);
+}
+
+void createChunk(World w) {
+    if(w->yChunks = NULL) {
+        SDL_Log("Test");
+    }
+}

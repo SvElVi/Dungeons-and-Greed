@@ -1,5 +1,5 @@
-#include <SDL3/SDL.h>
 #include <SDL3_net/SDL_net.h>
+#include "world/world.h"
 
 #define MAX_PLAYERS 5
 #define PLAYER_SIZE 48
@@ -7,7 +7,6 @@
 #define TILE_SIZE 16
 #define TILE_RENDER_SCALE 2
 #define ANIMATION_TIME 4
-#define CHUNK_SIZE 16
 
 typedef struct {
     int x, y;
@@ -65,8 +64,6 @@ typedef struct {
     direction facing; //SYNC MULTIPLAYER
     SDL_FlipMode flip; //SYNC MULTIPLAYER
 } Player;
-
-typedef struct world *World;
 
 struct appState {
     SDL_Window *window; //LOCAL

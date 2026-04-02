@@ -6,9 +6,6 @@
 #include "../lib/player.h" //All dependencies of [x] included
 #include "server-lib/networkInterface.h"
 
-NET_Server *pServer = 0x00;
-NET_DatagramSocket *serverUDPSocket = 0x00;
-
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once at the begining of the program
 {
     SDL_Log("\n");
@@ -20,9 +17,9 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
         return SDL_APP_FAILURE;
     }
 
-    serverUDPSocket = createUDPSocket(SERVER_PORT);
+    state->udpSocket = createUDPSocket(SERVER_PORT);
 
-    if(serverUDPSocket == NULL) return SDL_APP_FAILURE;
+    if(state->udpSocket == NULL) return SDL_APP_FAILURE;
 
     if(!state) return SDL_APP_FAILURE;
 

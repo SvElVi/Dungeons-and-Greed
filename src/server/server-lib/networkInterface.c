@@ -44,24 +44,3 @@ void destoryUDPSocket(NET_DatagramSocket* udpSocket) {
     NET_DestroyDatagramSocket(udpSocket);
     SDL_Log("Destoryed UDP socket at %p\n", udpSocket);
 }
-
-NET_Server* createServerSocket(int portNumber) {
-    NET_Server *pTemp;
-    pTemp = NET_CreateServer(NULL, portNumber);
-
-    if (pTemp != NULL) {
-        SDL_Log("Listening for TCP connections on all network interfaces on port %d\n", portNumber);
-
-    } else {
-        SDL_Log("Fatal error: Failed to create TCP socket!\n");
-
-    }
-
-    return pTemp;
-
-}
-
-void destroyServerSocket(NET_Server* serverSocket) {
-    NET_DestroyServer(serverSocket);
-    SDL_Log("Destoryed server socket at %p\n", serverSocket);
-}

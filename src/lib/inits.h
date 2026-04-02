@@ -1,4 +1,6 @@
 #include <SDL3/SDL.h>
+#include <SDL3_net/SDL_net.h>
+
 #define MAX_PLAYERS 5
 #define PLAYER_SIZE 48
 #define PLAYER_RENDER_SCALE 2
@@ -78,6 +80,14 @@ struct appState {
     Uint8 animationTime;
     bool running;
     bool computedEvent;
+
+    // IP
+    NET_Address *ipAddresses[MAX_PLAYERS];
+
+    // UDP
+    NET_DatagramSocket *udpSocket;
+    NET_Datagram **udpPacket;
+
 };
 
 typedef struct appState *AppState;

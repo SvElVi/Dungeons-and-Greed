@@ -65,6 +65,10 @@ typedef struct {
     SDL_FlipMode flip; //SYNC MULTIPLAYER
 } Player;
 
+typedef struct {
+    Uint8* tiles;
+} Dungeon;
+
 struct appState {
     SDL_Window *window; //LOCAL
     SDL_Renderer *renderer; //LOCAL

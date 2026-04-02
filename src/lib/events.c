@@ -11,7 +11,7 @@ int QuitEvent(AppState state, SDL_Event* event, const bool* keylist) {
     return SDL_APP_CONTINUE;
 }
 
-void moveFlag(Player_Flags* flags, const bool* keylist, bool* flag) {
+void moveFlag(Player_Flags* flags, const bool* keylist, bool* flag) { //Flag for player movement
     if(keylist[SDL_SCANCODE_W] && !keylist[SDL_SCANCODE_S]) {
         flags->moveY = -1;
     } else if(keylist[SDL_SCANCODE_S] && !keylist[SDL_SCANCODE_W]) {
@@ -32,7 +32,7 @@ void moveFlag(Player_Flags* flags, const bool* keylist, bool* flag) {
     *flag = true;
 }
 
-int checkEvents(AppState state, SDL_Event* event) {
+int checkEvents(AppState state, SDL_Event* event) { //Check all in game events used
 
     const bool* keylist = SDL_GetKeyboardState(0);
 

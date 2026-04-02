@@ -32,7 +32,7 @@ int initDisplay(AppState state) {
     return SDL_APP_CONTINUE;
 }
 
-void initCam(AppState state) { //Init before the game, seperate event should be used later upon a class selection for the player
+void initCam(AppState state) { //Init before the game
     state->camera.x = (state->displayMode->w - PLAYER_SIZE * PLAYER_RENDER_SCALE)/2;
     state->camera.y = (state->displayMode->h - PLAYER_SIZE * PLAYER_RENDER_SCALE)/2;
     state->camera.w = PLAYER_SIZE * PLAYER_RENDER_SCALE;

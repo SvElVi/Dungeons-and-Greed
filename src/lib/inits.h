@@ -54,32 +54,32 @@ typedef struct {
 } Player_Flags;
 
 typedef struct {
-    Vector2D pos;
-    Player_Flags flags;
-    Player_Class class;
-    Stats stats;
-    SDL_Texture* texture;
+    Vector2D pos; ////SYNC MULTIPLAYER
+    Player_Flags flags; //SYNC MULTIPLAYER
+    Player_Class class; //SYNC MULTIPLAYER
+    Stats stats; //SYNC MULTIPLAYER
+    SDL_Texture* texture; //LOCAL
 
-    SDL_FRect aniBox;
-    direction facing;
-    SDL_FlipMode flip;
+    SDL_FRect aniBox; //LOCAL
+    direction facing; //SYNC MULTIPLAYER
+    SDL_FlipMode flip; //SYNC MULTIPLAYER
 } Player;
 
 struct appState {
-    SDL_Window *window;
-    SDL_Renderer *renderer;
-    SDL_DisplayID displayID;
-    const SDL_DisplayMode* displayMode;
-    Uint16 framerate;
-    Uint64 deltaTime;
-    Uint64 lastTime;
+    SDL_Window *window; //LOCAL
+    SDL_Renderer *renderer; //LOCAL
+    SDL_DisplayID displayID; //LOCAL
+    const SDL_DisplayMode* displayMode; //LOCAL
+    Uint16 framerate; //LOCAL
+    Uint64 deltaTime; //LOCAL
+    Uint64 lastTime; //LOCAL
 
-    Player players [MAX_PLAYERS];
-    SDL_FRect camera;
+    Player players [MAX_PLAYERS]; //SEE STRUCT
+    SDL_FRect camera; //LOCAL
 
-    Uint8 animationTime;
-    bool running;
-    bool computedEvent;
+    Uint8 animationTime; //LOCAL
+    bool running; //LOCAL
+    bool computedEvent; //LOCAL
 
     // IP
     NET_Address *ipAddresses[MAX_PLAYERS];

@@ -66,25 +66,7 @@ typedef struct {
     SDL_FlipMode flip; //SYNC MULTIPLAYER
 } Player;
 
-typedef struct {
-    Uint8 tileType[CHUNK_SIZE][CHUNK_SIZE];
-} Chunk;
-
-typedef struct {
-    Chunk chunks;
-    Uint64 cord;
-    struct XChunks* nextXChunk;
-} XChunks;
-
-typedef struct {
-    XChunks* xChunks;
-    Uint64 cord;
-    struct YChunks* nextYChunk;
-} YChunks;
-
-typedef struct {
-    YChunks quarter[4];
-} World;
+typedef struct world *World;
 
 struct appState {
     SDL_Window *window; //LOCAL

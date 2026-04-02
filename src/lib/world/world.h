@@ -1,7 +1,5 @@
 typedef struct world *World;
 
-World createWorld();
+World createWorld(int size);
 
 void destroyWorld(World w);
-
-void createChunk(World w);

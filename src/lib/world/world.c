@@ -7,13 +7,13 @@ typedef struct {
     Uint8 tileType[CHUNK_SIZE][CHUNK_SIZE];
 } Chunk;
 
-typedef struct {
+typedef struct XChunks {
     Chunk chunk;
     int cord;
     struct XChunks* nextXChunk;
 } XChunks;
 
-typedef struct {
+typedef struct YChunks {
     XChunks* xChunks;
     int cord;
     struct YChunks* nextYChunk;
@@ -29,11 +29,33 @@ World createWorld() {
 }
 
 void destroyWorld(World w) {
-    SDL_free(w);
+    if(w) {
+        if(w->yChunks) {
+            YChunks* yop = w->yChunks;
+            YChunks* yp;
+            do {
+                if(w->yChunks->xChunks) {
+                    XChunks* xop = w->yChunks->xChunks;
+                    XChunks* xp;
+                    do {
+                        xp = xop->nextXChunk;
+                        SDL_free(xop);
+                        xop = xp;
+                        SDL_Log("Found Mem X");
+                    } while (xp != NULL);
+                }
+                yp = yop->nextYChunk;
+                SDL_free(yop);
+                yop = yp;
+                SDL_Log("Found Mem Y");
+            } while (yp != NULL);
+        }
+        SDL_free(w);
+    }
 }
 
 void createChunk(World w) {
-    if(w->yChunks = NULL) {
-        SDL_Log("Test");
+    if(w->yChunks == NULL) {
+        w->yChunks = SDL_calloc(1, sizeof(YChunks));
     }
 }

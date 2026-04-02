@@ -25,6 +25,9 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
     *appstate = state; //Share the appstate to callbacks below
     // state->renderFlag = 1;
 
+    state->world = createWorld();
+    createChunk(state->world);
+
     return SDL_APP_CONTINUE;
 }
 
@@ -52,6 +55,7 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result) //Runs after returning AP
         }
         if(state->renderer) SDL_DestroyRenderer(state->renderer);
         if(state->window) SDL_DestroyWindow(state->window);
+        destroyWorld(state->world);
         SDL_free(state);
     }
 

@@ -82,7 +82,7 @@ struct appState {
     bool computedEvent; //LOCAL
 
     //WORLD
-    World world;
+    World world; //LOCAL
 
     // IP
     NET_Address *ipAddresses[MAX_PLAYERS];

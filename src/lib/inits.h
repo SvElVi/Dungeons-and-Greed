@@ -1,5 +1,4 @@
 #include <SDL3_net/SDL_net.h>
-#include "world/world.h"
 
 #define MAX_PLAYERS 5
 #define PLAYER_SIZE 48
@@ -39,6 +38,8 @@ typedef enum {
     CLASS_SWORDMASTER,
     CLASS_KNIGHT //5
 } Player_Class;
+
+typedef struct world *World;
 
 typedef struct {
     int health;

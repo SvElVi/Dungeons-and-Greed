@@ -20,6 +20,8 @@ int renderFrame(AppState state) {
         }
     }
 
+    renderDungeon(state);
+
     SDL_RenderPresent(state->renderer);
     state->computedEvent = false;
 

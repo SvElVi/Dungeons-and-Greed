@@ -1,16 +1,54 @@
 #include "inits.h"
 #define SPEED 0.5
 
-void movement(Player* player, int deltatime) {
-    if(player->flags.moveX != 0) {
-        player->pos.x -= player->flags.moveX * deltatime * SPEED;
-        player->facing = player->flags.moveX + 1;
+bool collision(SDL_FRect a, SDL_FRect b)    //beräkna rektangel a med rektangel b
+{                                           //Standard kollisionsberäkning för AABB(fyrkantskollisiondetektion)
+    if(a.x < b.x + b.w &&
+    a.x +a.w > b.x &&
+    a.y < b.y + b.h &&
+    a.y + a.h > b.y)
+    {
+        return true;
     }
-    if(player->flags.moveY != 0) {
-        player->pos.y -= player->flags.moveY * deltatime * SPEED;
-        player->facing = player->flags.moveY + 2;
+    else
+    {   
+        return false; 
     }
 }
+
+bool willCollide(Player* player, Player players[MAX_PLAYERS], float futureX, float futureY){
+    SDL_FRect futurePos = player->hitBox; //Testar framtida position för att minska buggar
+    futurePos.x = futureX;
+    futurePos.y = futureY;
+    
+    for(int i = 0; i < MAX_PLAYERS;i++)
+    {
+        if(&players[i] == player)continue;  //Hoppa dig själv
+        if(collision(futurePos, players[i].hitBox)) //Kolla din framtida position med hitbox av andra spelare
+        return true;
+    }
+    return false;
+}
+
+void movement(Player* player, Player players[MAX_PLAYERS], int deltatime) {
+    if(player->flags.moveX != 0){
+    if(!willCollide(player, players, player->pos.x - player->flags.moveX * deltatime * SPEED, player->pos.y)) //testa ny x-position
+    {
+            player->pos.x -= player->flags.moveX * deltatime * SPEED;
+    }
+        player->facing = player->flags.moveX + 1;
+    }
+    if(player->flags.moveY != 0){
+        if(!willCollide(player, players, player->pos.x , player->pos.y - player->flags.moveY * deltatime * SPEED)) //testa ny y-position
+        {
+            player->pos.y -= player->flags.moveY * deltatime * SPEED;
+        }
+        player->facing = player->flags.moveY + 2;
+    }
+    player->hitBox.x = player->pos.x;
+    player->hitBox.y = player->pos.y;
+
+} 
  //&& (player->flags.moveX || player->flags.moveY)
  // || 
 void animatePlayers(Player players[MAX_PLAYERS], Uint8* counter, Uint16 framerate, bool* flag) {
@@ -99,9 +137,13 @@ void updateClass(Player* player, SDL_Renderer* renderer) {
 void updatePlayer(Player* player, Vector2D pos, Player_Class class, Stats stats, SDL_Renderer* renderer) {
     player->aniBox.w = PLAYER_SIZE;
     player->aniBox.h = PLAYER_SIZE;
+    player->hitBox.w = 16;
+    player->hitBox.h = 5;
     player->aniBox.x = 0;
     player->aniBox.y = 0;
     player->pos = pos;
+    player->hitBox.x = player->pos.x;
+    player->hitBox.y = player->pos.y;
     player->class = class;
     updateClass(player, renderer);
     player->stats = stats;

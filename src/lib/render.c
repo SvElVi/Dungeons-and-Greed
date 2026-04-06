@@ -32,7 +32,7 @@ int render(AppState state) { //current but should be changed to call back style,
         state->deltaTime = currentTime - state->lastTime;
         state->lastTime = currentTime;
         // if(state->renderFlag) {
-        movement(&(state->players[0]), state->deltaTime);
+        movement(&(state->players[0]), state->players, state->deltaTime);
         animatePlayers(state->players, &(state->animationTime), state->framerate, &(state->computedEvent));
 
         if(renderFrame(state)) return SDL_APP_FAILURE;

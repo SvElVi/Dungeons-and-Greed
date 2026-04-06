@@ -32,13 +32,15 @@ bool willCollide(Player* player, Player players[MAX_PLAYERS], float futureX, flo
 
 void movement(Player* player, Player players[MAX_PLAYERS], int deltatime) {
     if(player->flags.moveX != 0){
-    if(!willCollide(player, players, player->pos.x - player->flags.moveX * deltatime * SPEED, player->pos.y)) {
+    if(!willCollide(player, players, player->pos.x - player->flags.moveX * deltatime * SPEED, player->pos.y)) //testa ny x-position
+    {
             player->pos.x -= player->flags.moveX * deltatime * SPEED;
     }
         player->facing = player->flags.moveX + 1;
     }
     if(player->flags.moveY != 0){
-        if(!willCollide(player, players, player->pos.x , player->pos.y - player->flags.moveY * deltatime * SPEED)) {
+        if(!willCollide(player, players, player->pos.x , player->pos.y - player->flags.moveY * deltatime * SPEED)) //testa ny y-position
+        {
             player->pos.y -= player->flags.moveY * deltatime * SPEED;
         }
         player->facing = player->flags.moveY + 2;

@@ -2,9 +2,8 @@
 #define SERVER_PORT 2000
 
 #include <SDL3/SDL_main.h>
-
-#include "../lib/player.h" //All dependencies of [x] included
 #include "server-lib/networkInterface.h"
+#include "../lib/player.h" //All dependencies of [x] included
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once at the begining of the program
 {
@@ -12,19 +11,24 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
     SDL_InitSubSystem(SDL_INIT_VIDEO); //Also initilizes appevents
 
     AppState state = createAppState();
+    if(!state) return SDL_APP_FAILURE;
+
+    if(initDisplay(state)) return SDL_APP_FAILURE; //Initiate and display window
+    initCam(state);
 
     if(!startSDLNet()) {
         return SDL_APP_FAILURE;
     }
 
-    state->udpSocket = createUDPSocket(SERVER_PORT);
+    state->udpSocket = NET_CreateDatagramSocket(NULL, SERVER_PORT);
 
-    if(state->udpSocket == NULL) return SDL_APP_FAILURE;
+    NET_Datagram *pUDPPacket = SDL_calloc(1, sizeof(NET_Datagram));
 
-    if(!state) return SDL_APP_FAILURE;
+    NET_Datagram dataGram;
 
-    if(initDisplay(state)) return SDL_APP_FAILURE; //Initiate and display window
-    initCam(state);
+    *pUDPPacket = dataGram;
+
+    state->udpPacket = &pUDPPacket;
 
     state->running = true; //Custom flag to mark the program as running
 
@@ -38,6 +42,11 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
 
     *appstate = state; //Share the appstate to callbacks below
     // state->renderFlag = 1;
+
+    state->world = createWorld(5);
+
+    createDungeon(state->world, 0, 20);
+    // renderDungeon(state);
 
     return SDL_APP_CONTINUE;
 }
@@ -66,8 +75,11 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result) //Runs after returning AP
         }
         if(state->renderer) SDL_DestroyRenderer(state->renderer);
         if(state->window) SDL_DestroyWindow(state->window);
+        destroyWorld(state->world);
         SDL_free(state);
     }
+
+    NET_Quit();
 
     SDL_Log("Quit done");
     SDL_QuitSubSystem(SDL_INIT_VIDEO);

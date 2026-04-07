@@ -18,10 +18,23 @@ struct world {
     int size;
 };
 
+void cleanChunks(Chunk* chunks, int n) { //Set all tilevalues in chunks to 0
+    for(int i = 0; i < n; i++) {
+        for(int y = 0; y < CHUNK_SIZE; y++) {
+            for(int x = 0; x < CHUNK_SIZE; x++) {
+                chunks->tileType[y][x] = 0;
+            }
+        }
+        chunks++;
+    }
+}
+
 World createWorld(int size) {
     World w = SDL_calloc(1, sizeof(struct world));
     w->chunks = SDL_calloc(size*size, sizeof(Chunk));
     w->size = size*size;
+    cleanChunks(w->chunks, w->size);
+
     return w;
 }
 
@@ -30,33 +43,50 @@ void destroyWorld(World w) {
     SDL_free(w);
 }
 
-void generateRoom(Chunk* c, int* wSize, Uint8* nrOfRooms) {
-    Chunk* temp;
+bool generateRoom(Chunk* c, int* wSize, Uint8* nrOfRooms) {
+    Chunk* tempC = c;
+    float hop = SDL_rand(4); //To make splits in same line more common
+    int dir = (int)hop;
 
     switch(SDL_rand(ROOM_TYPES)) {
         case BASIC:
             break;
     }
 
-    direction dir = SDL_rand(3);
-    switch(dir) {
-        case WEST:
-            temp = c;
-            if(--temp) {
-                // generateRoom(temp, wSize, nrOfRooms);
-            }
-        case NORTH:
-            temp = c;
-            temp -= (int)SDL_sqrt(*wSize);
-            if(temp) {
-                // generateRoom(temp, wSize, nrOfRooms);
-            }
-        case EAST:
-            temp = c;
-            if(++temp) {
-                // generateRoom(temp, wSize, nrOfRooms);
-            }
-            break;
+    for(int i = 0; i < (SDL_rand(4)+1); i++) {
+        switch(dir) {
+            case WEST:
+                tempC -=1;
+                if(tempC->tileType[0][0] == 0) { //TODO: Add checks for boundries
+                    SDL_Log("Test");
+                    // generateRoom(temp, wSize, nrOfRooms);
+                }
+                break;
+            case NORTH:
+                tempC -= (int)SDL_sqrt(*wSize);
+                if(tempC->tileType[0][0] == 0) {
+                    SDL_Log("Test");
+                    // generateRoom(temp, wSize, nrOfRooms);
+                }
+                break;
+            case EAST:
+                tempC +=1;
+                if(tempC->tileType[0][0] == 0) {
+                    SDL_Log("Test");
+                    // generateRoom(temp, wSize, nrOfRooms);
+                }
+                break;
+            case SOUTH:
+                tempC += (int)SDL_sqrt(*wSize);
+                if(tempC->tileType[0][0] == 0) {
+                    SDL_Log("Test");
+                    // generateRoom(temp, wSize, nrOfRooms);
+                }
+                break;
+        }
+        SDL_Log("R: %d", dir);
+        hop += 2.5;
+        dir = (int)hop % 4;
     }
 }
 

@@ -30,7 +30,7 @@ void destroyWorld(World w) {
     SDL_free(w);
 }
 
-bool generateRoom(Chunk* c, int* wSize) {
+void generateRoom(Chunk* c, int* wSize, Uint8* nrOfRooms) {
     Chunk* temp;
 
     switch(SDL_rand(ROOM_TYPES)) {
@@ -43,27 +43,43 @@ bool generateRoom(Chunk* c, int* wSize) {
         case WEST:
             temp = c;
             if(--temp) {
-                generateRoom(temp, wSize);
+                // generateRoom(temp, wSize, nrOfRooms);
             }
         case NORTH:
             temp = c;
             temp -= (int)SDL_sqrt(*wSize);
             if(temp) {
-                generateRoom(temp, wSize);
+                // generateRoom(temp, wSize, nrOfRooms);
             }
         case EAST:
             temp = c;
             if(++temp) {
-                generateRoom(temp, wSize);
+                // generateRoom(temp, wSize, nrOfRooms);
             }
             break;
     }
 }
 
-void generateDungeon(World w, Uint64 seed, Uint8 nrOfRooms) { //Room placements
+void generateDungeon(World w, Uint64 seed, Uint8* nrOfRooms) { //Room placements
+    Chunk* temp;
     SDL_srand(seed);
 
+    switch(SDL_rand(4)) {
+        case WEST:
+            temp = w->chunks + (int)(SDL_sqrt(w->size)/2) * (int)SDL_sqrt(w->size)  -1; //Points to first chunk in middle row
+            break;
+        case NORTH:
+            temp = w->chunks + (int)(SDL_sqrt(w->size)/2) -1; //Points to middle chunk in first row
+            break;
+        case EAST:
+            temp = w->chunks + (int)(SDL_sqrt(w->size)/2 + 1) * (int)SDL_sqrt(w->size)  -1; //Points to last chunk in middle row
+            break;
+        case SOUTH:
+            temp = w->chunks + w->size - (int)SDL_ceil(SDL_sqrt(w->size)/2) -1; //Points to middle chunk in last row
+            break;
+    }
 
+    generateRoom(temp, &(w->size), nrOfRooms);
 
     // SDL_Log("Failed generating some rooms.");
 }
@@ -72,8 +88,8 @@ void polishDungeon(World w) { //Fix tileset in dungeon
 
 }
 
-void createDungeon(World w, Uint64 seed, int nrOfRooms) {
-    generateDungeon(w, seed, nrOfRooms);
+void createDungeon(World w, Uint64 seed, Uint8 nrOfRooms) {
+    generateDungeon(w, seed, &nrOfRooms);
     polishDungeon(w);
 
 }

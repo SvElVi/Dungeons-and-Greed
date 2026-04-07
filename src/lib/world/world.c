@@ -63,25 +63,33 @@ void generateRoom(Chunk* c, int* wSize, Uint8* nrOfRooms) {
 void generateDungeon(World w, Uint64 seed, Uint8* nrOfRooms) { //Room placements
     Chunk* temp;
     SDL_srand(seed);
+    SDL_rand(4);
 
-    switch(SDL_rand(4)) {
+    SDL_Log("\n---DUNGEON TESTING---");
+
+    switch(SDL_rand(4)) { //Starting room
         case WEST:
-            temp = w->chunks + (int)(SDL_sqrt(w->size)/2) * (int)SDL_sqrt(w->size)  -1; //Points to first chunk in middle row
+            SDL_Log("West");
+            temp = w->chunks + (int)(SDL_sqrt(w->size)/2) * (int)SDL_sqrt(w->size); //Points to first chunk in middle row
             break;
         case NORTH:
-            temp = w->chunks + (int)(SDL_sqrt(w->size)/2) -1; //Points to middle chunk in first row
+            SDL_Log("North");
+            temp = w->chunks + (int)(SDL_sqrt(w->size)/2); //Points to middle chunk in first row
             break;
         case EAST:
+            SDL_Log("East");
             temp = w->chunks + (int)(SDL_sqrt(w->size)/2 + 1) * (int)SDL_sqrt(w->size)  -1; //Points to last chunk in middle row
             break;
         case SOUTH:
-            temp = w->chunks + w->size - (int)SDL_ceil(SDL_sqrt(w->size)/2) -1; //Points to middle chunk in last row
+            SDL_Log("South");
+            temp = w->chunks + w->size - (int)SDL_ceil(SDL_sqrt(w->size)/2); //Points to middle chunk in last row
             break;
     }
 
+    SDL_Log("Dungeon start (1+): %d, TEST RANDOM: %d", temp - w->chunks + 1, SDL_rand(4));
     generateRoom(temp, &(w->size), nrOfRooms);
 
-    // SDL_Log("Failed generating some rooms.");
+    SDL_Log("---------------------");
 }
 
 void polishDungeon(World w) { //Fix tileset in dungeon

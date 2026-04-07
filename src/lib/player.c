@@ -147,5 +147,5 @@ void updatePlayer(Player* player, Vector2D pos, Player_Class class, Stats stats,
     player->class = class;
     updateClass(player, renderer);
     player->stats = stats;
-    SDL_Log("Pos: %d Class: %d Stats: %d", pos, class, stats);
+    // SDL_Log("Pos: %d Class: %d Stats: %d", pos, class, stats);
 }

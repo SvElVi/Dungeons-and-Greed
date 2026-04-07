@@ -28,7 +28,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
     state->world = createWorld(5);
 
     createDungeon(state->world, 0, 20);
-    // renderDungeon(state);
+    renderDungeon(state);
 
     return SDL_APP_CONTINUE;
 }
@@ -48,7 +48,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
 }
 
 
-void SDL_AppQuit(void *appstate, SDL_AppResult result) //Runs after returning APP_SUCESS and SDL_FAILURE
+void SDL_AppQuit(void *appstate, SDL_AppResult result) //Runs after returning APP_SUCESS or SDL_FAILURE
 {
     if(appstate != NULL) {
         AppState state = (AppState)appstate;

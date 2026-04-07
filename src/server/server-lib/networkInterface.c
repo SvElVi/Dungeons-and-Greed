@@ -1,5 +1,7 @@
 #include "networkInterface.h"
 
+#define RESOLVE_ADDRESS_TIMEOUT 5000
+
 enum {
     FAIL,
     SUCCESS
@@ -10,6 +12,7 @@ NET_DatagramSocket* createUDPSocket(int);
 void destoryUDPSocket(NET_DatagramSocket* udpSocket);
 NET_Server* createServerSocket(int portNumber);
 void destoryServerSocket(NET_Server*);
+void initAdress(NET_Address *adress, char ipAdress[ADDRESS_LENGTH]);
 
 int startSDLNet(void) {
     SDL_Log("Initializing SDL_Net...\n");
@@ -43,4 +46,25 @@ NET_DatagramSocket* createUDPSocket(int portNumber) {
 void destoryUDPSocket(NET_DatagramSocket* udpSocket) {
     NET_DestroyDatagramSocket(udpSocket);
     SDL_Log("Destoryed UDP socket at %p\n", udpSocket);
+}
+
+// Blocking
+void initAdress(NET_Address *adress, char ipAdress[ADDRESS_LENGTH]) {
+    adress = NET_ResolveHostname(ipAdress);
+
+    switch(NET_WaitUntilResolved(adress, RESOLVE_ADDRESS_TIMEOUT)) {
+        case NET_SUCCESS:
+            SDL_Log("Succesfully resolved address!\n");
+            break;
+
+        case NET_FAILURE:
+            SDL_Log("Failed to resolve address!\n");
+            break;
+
+        default:
+            SDL_Log("Ops... something went terribly wrong when trying to resolve a network address!\n");
+            break;
+
+    }
+
 }

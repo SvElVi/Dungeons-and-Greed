@@ -54,7 +54,7 @@ void initAddress(NET_Address **adress) {
 
     switch(NET_WaitUntilResolved(*adress, RESOLVE_ADDRESS_TIMEOUT)) {
         case NET_SUCCESS:
-            SDL_Log("Succesfully resolved address!\n");
+            SDL_Log("Succesfully resolved address of: %s\n", NET_GetAddressString(*adress));
             break;
 
         case NET_FAILURE:

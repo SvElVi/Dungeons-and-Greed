@@ -1,6 +1,6 @@
 #define SDL_MAIN_USE_CALLBACKS 1 //Flag to use callbacks
-#define SERVER_PORT 2000
-#define CLIENT_PORT 2001
+#define SERVER_PORT 2000 // As of now... hardwired...
+#define CLIENT_PORT 2001 // As of now... hardwired...
 #define DEBUG 0
 
 #include <SDL3/SDL_main.h>
@@ -11,7 +11,7 @@
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once at the begining of the program
 {
-    SDL_Log("\n");
+    SDL_Log("\n\n --------------- Starting Greedy-Delvers ---------------\n");
     SDL_InitSubSystem(SDL_INIT_VIDEO); //Also initilizes appevents
 
     AppState state = createAppState();
@@ -29,8 +29,6 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
     state->udpPacket = SDL_calloc(1, sizeof(NET_Datagram));
 
     initAddress(&state->serverIP);
-
-    SDL_Log("STATUS: %d\n", NET_GetAddressStatus(state->serverIP));
 
     state->running = true; //Custom flag to mark the program as running
 

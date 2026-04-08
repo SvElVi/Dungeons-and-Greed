@@ -1,5 +1,9 @@
 #define SDL_MAIN_USE_CALLBACKS 1 //Flag to use callbacks
+#define SERVER_PORT 2000
+#define CLIENT_PORT 2001
+
 #include <SDL3/SDL_main.h>
+#include "../lib/NET/networkInterface.h"
 #include "../lib/player.h" //All dependencies of [x] included
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once at the begining of the program
@@ -11,6 +15,14 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
 
     if(initDisplay(state)) return SDL_APP_FAILURE; //Initiate and display window
     initCam(state);
+
+    if(!startSDLNet()) {
+        return SDL_APP_FAILURE;
+    }
+
+    state->udpSocket = NET_CreateDatagramSocket(NULL, CLIENT_PORT);
+
+    state->udpPacket = SDL_calloc(1, sizeof(NET_Datagram));
 
     state->running = true; //Custom flag to mark the program as running
 

@@ -2,7 +2,7 @@
 #define SERVER_PORT 2000
 
 #include <SDL3/SDL_main.h>
-#include "server-lib/networkInterface.h"
+#include "../lib/NET/networkInterface.h"
 #include "../lib/player.h" //All dependencies of [x] included
 
 int status;

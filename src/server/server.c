@@ -27,9 +27,9 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
 
     state->udpPacket = SDL_calloc(1, sizeof(NET_Datagram));
 
-    initAddress(&state->clientIPs[0]);
+    initAddress(&state->serverIP);
 
-    SDL_Log("STATUS: %d\n", NET_GetAddressStatus(state->clientIPs[0]));
+    SDL_Log("STATUS: %d\n", NET_GetAddressStatus(state->serverIP));
 
     state->running = true; //Custom flag to mark the program as running
 
@@ -65,7 +65,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
 
     int message = 260407;
 
-    NET_SendDatagram(state->udpSocket, state->clientIPs[0], SERVER_PORT, (void *)&message, sizeof(message));
+    NET_SendDatagram(state->udpSocket, state->serverIP, SERVER_PORT, (void *)&message, sizeof(message));
 
     // Det verkar handla om tid... vi kan inte göra något innan allt är redo
     if(NET_ReceiveDatagram(state->udpSocket, state->udpPacket)) {

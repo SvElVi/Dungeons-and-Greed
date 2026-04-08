@@ -1,12 +1,8 @@
 #include "serverNet.h"
 
-#define MAX_PLAYERS 5
+ServerState* createServerState();
 
-typedef struct {
-    // TCP socket
-    NET_StreamSocket *tcpSocket;
-
-    // Client IPs
-    NET_Address *clientIPs[MAX_PLAYERS];
-
-} serverState;
+ServerState* createServerState() {
+    ServerState *ptrSeverState = SDL_calloc(1, sizeof(ServerState));
+    return ptrSeverState;
+}

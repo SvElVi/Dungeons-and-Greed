@@ -3,6 +3,8 @@
 #define CLIENT_PORT 2001
 
 #include <SDL3/SDL_main.h>
+
+#include "server-lib/serverNet.h"
 #include "../lib/NET/networkInterface.h"
 #include "../lib/player.h" //All dependencies of [x] included
 

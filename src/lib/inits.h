@@ -88,9 +88,6 @@ struct appState {
     // Server IP
     NET_Address *serverIP;
 
-    // Client IPs
-    NET_Address *clientIPs[MAX_PLAYERS];
-
     // UDP
     NET_DatagramSocket *udpSocket;
     NET_Datagram **udpPacket;

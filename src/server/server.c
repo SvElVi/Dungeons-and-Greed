@@ -24,7 +24,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
         return SDL_APP_FAILURE;
     }
 
-    state->udpSocket = NET_CreateDatagramSocket(NULL, SERVER_PORT);
+    createUDPSocket(&state->udpSocket, SERVER_PORT);
 
     state->udpPacket = SDL_calloc(1, sizeof(NET_Datagram));
 

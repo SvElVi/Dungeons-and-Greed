@@ -8,7 +8,7 @@ enum {
 };
 
 int startSDLNet(void);
-NET_DatagramSocket* createUDPSocket(int);
+void createUDPSocket(NET_DatagramSocket**, int);
 void destoryUDPSocket(NET_DatagramSocket* udpSocket);
 NET_Server* createServerSocket(int portNumber);
 void destoryServerSocket(NET_Server*);
@@ -27,19 +27,16 @@ int startSDLNet(void) {
     }
 }
 
-NET_DatagramSocket* createUDPSocket(int portNumber) {
-    NET_DatagramSocket *pTemp;
-    pTemp = NET_CreateDatagramSocket(NULL, portNumber);
+void createUDPSocket(NET_DatagramSocket **dataGramSocket ,int portNumber) {
+    *dataGramSocket = NET_CreateDatagramSocket(NULL, portNumber);
 
-    if (pTemp != NULL) {
+    if (*dataGramSocket != NULL) {
         SDL_Log("Listening on all network interfaces on port: %d\n", portNumber);
 
     } else {
         SDL_Log("Fatal error: Failed to create UDP socket!\n");
 
     }
-
-    return pTemp;
 
 }
 

@@ -12,7 +12,7 @@ NET_DatagramSocket* createUDPSocket(int);
 void destoryUDPSocket(NET_DatagramSocket* udpSocket);
 NET_Server* createServerSocket(int portNumber);
 void destoryServerSocket(NET_Server*);
-void initAdress(NET_Address *adress, char ipAdress[ADDRESS_LENGTH]);
+void initAdress(NET_Address **adress);
 
 int startSDLNet(void) {
     SDL_Log("Initializing SDL_Net...\n");
@@ -49,10 +49,10 @@ void destoryUDPSocket(NET_DatagramSocket* udpSocket) {
 }
 
 // Blocking
-void initAdress(NET_Address *adress, char ipAdress[ADDRESS_LENGTH]) {
-    adress = NET_ResolveHostname(ipAdress);
+void initAddress(NET_Address **adress) {
+    *adress = NET_ResolveHostname("127.0.0.1");
 
-    switch(NET_WaitUntilResolved(adress, RESOLVE_ADDRESS_TIMEOUT)) {
+    switch(NET_WaitUntilResolved(*adress, RESOLVE_ADDRESS_TIMEOUT)) {
         case NET_SUCCESS:
             SDL_Log("Succesfully resolved address!\n");
             break;

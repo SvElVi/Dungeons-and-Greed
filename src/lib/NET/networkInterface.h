@@ -6,4 +6,4 @@ NET_DatagramSocket* createUDPSocket(int);
 void destoryUDPSocket(NET_DatagramSocket* udpSocket);
 NET_Server* createServerSocket(int portNumber);
 void destoryServerSocket(NET_Server*);
-void initAdress(NET_Address *adress, char ipAdress[ADDRESS_LENGTH]);
+void initAddress(NET_Address **adress);

@@ -6,8 +6,6 @@
 #include "../lib/NET/networkInterface.h"
 #include "../lib/player.h" //All dependencies of [x] included
 
-int status;
-
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once at the begining of the program
 {
     SDL_Log("\n");
@@ -26,6 +24,10 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
     state->udpSocket = NET_CreateDatagramSocket(NULL, SERVER_PORT);
 
     state->udpPacket = SDL_calloc(1, sizeof(NET_Datagram));
+
+    initAddress(&state->clientIPs[0]);
+
+    SDL_Log("STATUS: %d\n", NET_GetAddressStatus(state->clientIPs[0]));
 
     state->running = true; //Custom flag to mark the program as running
 
@@ -61,38 +63,17 @@ SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
 
     int message = 260407;
 
-    NET_Address *adr;
-
-    // Skriv in din lokala IP-adress här
-    // Om du ej vet...
-    // Sök på CMD i sökfältet, skriv in ipconfig
-    // så hittar du den bredvid IPv4 address 
-    adr = NET_ResolveHostname("127.0.0.1");
-
-    status = NET_GetAddressStatus(adr);
-
-    // Det tar tid att "resolva" en address, så vi måste kolla att det är klart...
-    // Detta är inte blockerande, utan en pollad lösning
-    switch(status) {
-        case NET_SUCCESS:
-            NET_SendDatagram(state->udpSocket, adr, CLIENT_PORT, (void *)&message, sizeof(message));
-            break;
-
-        default:
-            break;
-    }
+    NET_SendDatagram(state->udpSocket, state->clientIPs[0], SERVER_PORT, (void *)&message, sizeof(message));
 
     // Det verkar handla om tid... vi kan inte göra något innan allt är redo
     if(NET_ReceiveDatagram(state->udpSocket, state->udpPacket)) {
-        if (status) {
-            if ((*state->udpPacket)!= NULL) {
+        if ((*state->udpPacket)!= NULL) {
                 int test;
                 // Kopierar över data
                 memccpy(&test, (*state->udpPacket)->buf, 1, sizeof((*state->udpPacket)->buf));
                 SDL_Log("Vi fick data, och den är: %d\n", test);
                 (*state->udpPacket) = NULL;
             }
-        }
     }
 
     return render(state);

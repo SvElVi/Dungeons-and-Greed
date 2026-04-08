@@ -85,8 +85,11 @@ struct appState {
     //WORLD
     World world; //LOCAL
 
-    // IP
-    NET_Address *ipAddresses[MAX_PLAYERS];
+    // Server IP
+    NET_Address *serverIP;
+
+    // Client IPs
+    NET_Address *clientIPs[MAX_PLAYERS];
 
     // UDP
     NET_DatagramSocket *udpSocket;

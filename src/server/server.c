@@ -1,6 +1,7 @@
 #define SDL_MAIN_USE_CALLBACKS 1 //Flag to use callbacks
 #define SERVER_PORT 2000
 #define CLIENT_PORT 2001
+#define DEBUG 0
 
 #include <SDL3/SDL_main.h>
 
@@ -73,7 +74,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
                 int test;
                 // Kopierar över data
                 memccpy(&test, (*state->udpPacket)->buf, 1, sizeof((*state->udpPacket)->buf));
-                SDL_Log("Vi fick data, och den är: %d\n", test);
+                if (DEBUG) SDL_Log("Vi fick data, och den är: %d\n", test);
                 (*state->udpPacket) = NULL;
             }
     }

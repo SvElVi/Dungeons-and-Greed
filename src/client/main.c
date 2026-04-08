@@ -66,7 +66,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
     // Om du ej vet...
     // Sök på CMD i sökfältet, skriv in ipconfig
     // så hittar du den bredvid IPv4 address 
-    adr = NET_ResolveHostname("192.168.50.46");
+    adr = NET_ResolveHostname("127.0.0.1");
 
     status = NET_GetAddressStatus(adr);
 

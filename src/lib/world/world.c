@@ -8,6 +8,12 @@ typedef enum {
     BASIC
 } ROOM_TYPE;
 
+typedef enum {
+    BLANK,
+    FLOOR,
+    WALL
+} TILE_TYPE;
+
 typedef struct {
     Uint8 tileType[CHUNK_SIZE][CHUNK_SIZE];
 } Chunk;
@@ -50,34 +56,43 @@ bool generateRoom(Chunk* c, int* wSize, Uint8* nrOfRooms) {
 
     switch(SDL_rand(ROOM_TYPES)) {
         case BASIC:
+            for(int y = 0; y < CHUNK_SIZE; y++) {
+                for(int x = 0; x < CHUNK_SIZE; x++) {
+                    if(!x || x == (CHUNK_SIZE-1) || !y || y == (CHUNK_SIZE-1)) {
+                        c->tileType[y][x] = 2; //Wall
+                    } else {
+                        c->tileType[y][x] = 1; //Floor
+                    }
+                }
+            }
             break;
     }
 
     for(int i = 0; i < (SDL_rand(4)+1); i++) {
         switch(dir) {
             case WEST:
-                tempC -=1;
+                tempC = c - 1;
                 if(tempC->tileType[0][0] == 0) { //TODO: Add checks for boundries
                     SDL_Log("Test");
                     // generateRoom(temp, wSize, nrOfRooms);
                 }
                 break;
             case NORTH:
-                tempC -= (int)SDL_sqrt(*wSize);
+                tempC = c - (int)SDL_sqrt(*wSize);
                 if(tempC->tileType[0][0] == 0) {
                     SDL_Log("Test");
                     // generateRoom(temp, wSize, nrOfRooms);
                 }
                 break;
             case EAST:
-                tempC +=1;
+                tempC = c + 1;
                 if(tempC->tileType[0][0] == 0) {
                     SDL_Log("Test");
                     // generateRoom(temp, wSize, nrOfRooms);
                 }
                 break;
             case SOUTH:
-                tempC += (int)SDL_sqrt(*wSize);
+                tempC = c + (int)SDL_sqrt(*wSize);
                 if(tempC->tileType[0][0] == 0) {
                     SDL_Log("Test");
                     // generateRoom(temp, wSize, nrOfRooms);
@@ -134,6 +149,7 @@ void createDungeon(World w, Uint64 seed, Uint8 nrOfRooms) {
 
 void renderDungeon(AppState state) {
     int yLevel = 0;
+    Chunk* tempC = state->world->chunks;
     const int rowSize = (int)SDL_sqrt(state->world->size);
     
     for(int i = 0; i < state->world->size; i++) {
@@ -141,5 +157,18 @@ void renderDungeon(AppState state) {
             yLevel++;
             // SDL_Log("%d", yLevel);
         }
+
+        for(int y = 0; y < CHUNK_SIZE; y++) {
+            for(int x = 0; x < CHUNK_SIZE; x++) {
+                switch(tempC->tileType[y][x]) {
+                    case FLOOR:
+                        break;
+                    case WALL:
+                        break;
+                }
+            }
+        }
+
+        tempC++;
     }
 }

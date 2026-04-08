@@ -22,6 +22,7 @@ struct world {
     Chunk* chunks;
     Uint64 seed;
     int size;
+    SDL_Texture* texture;
 };
 
 void cleanChunks(Chunk* chunks, int n) { //Set all tilevalues in chunks to 0
@@ -35,10 +36,15 @@ void cleanChunks(Chunk* chunks, int n) { //Set all tilevalues in chunks to 0
     }
 }
 
-World createWorld(int size) {
+World createWorld(int size, Uint64 seed, SDL_Renderer* renderer) {
     World w = SDL_calloc(1, sizeof(struct world));
     w->chunks = SDL_calloc(size*size, sizeof(Chunk));
     w->size = size*size;
+
+    SDL_Surface* wArt = SDL_LoadPNG("../img/2D Pixel Dungeon Asset Pack/character and tileset/Dungeon_Tileset.png");
+    w->texture = SDL_CreateTextureFromSurface(renderer, wArt);
+    SDL_DestroySurface(wArt);
+
     cleanChunks(w->chunks, w->size);
 
     return w;
@@ -46,6 +52,7 @@ World createWorld(int size) {
 
 void destroyWorld(World w) {
     SDL_free(w->chunks);
+    if(w->texture) SDL_DestroyTexture(w->texture);
     SDL_free(w);
 }
 
@@ -105,9 +112,9 @@ bool generateRoom(Chunk* c, int* wSize, Uint8* nrOfRooms) {
     }
 }
 
-void generateDungeon(World w, Uint64 seed, Uint8* nrOfRooms) { //Room placements
+void generateDungeon(World w, Uint8* nrOfRooms) { //Room placements
     Chunk* temp;
-    SDL_srand(seed);
+    SDL_srand(w->seed);
     SDL_rand(4);
 
     SDL_Log("\n---DUNGEON TESTING---");
@@ -141,8 +148,8 @@ void polishDungeon(World w) { //Fix tileset in dungeon
 
 }
 
-void createDungeon(World w, Uint64 seed, Uint8 nrOfRooms) {
-    generateDungeon(w, seed, &nrOfRooms);
+void createDungeon(World w, Uint8 nrOfRooms) {
+    generateDungeon(w, &nrOfRooms);
     polishDungeon(w);
 
 }

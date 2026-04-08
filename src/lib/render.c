@@ -6,7 +6,7 @@ int renderFrame(AppState state) {
     SDL_SetRenderDrawColor(state->renderer,0,255,255,0);
     SDL_RenderClear(state->renderer);
 
-    // renderDungeon(state);
+    renderDungeon(state);
 
     for(int j = 0; j < MAX_PLAYERS; j++) {
         renderOrder[j].x = j;

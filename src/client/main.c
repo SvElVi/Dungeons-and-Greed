@@ -6,6 +6,8 @@
 #include "../lib/NET/networkInterface.h"
 #include "../lib/player.h" //All dependencies of [x] included
 
+int status;
+
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once at the begining of the program
 {
     SDL_InitSubSystem(SDL_INIT_VIDEO); //Also initilizes appevents
@@ -55,6 +57,42 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) //Runs on every eve
 SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
 {
     AppState state = (AppState)appstate;
+
+    int message = 1337;
+
+    NET_Address *adr;
+
+    // Skriv in din lokala IP-adress här
+    // Om du ej vet...
+    // Sök på CMD i sökfältet, skriv in ipconfig
+    // så hittar du den bredvid IPv4 address 
+    adr = NET_ResolveHostname("192.168.50.46");
+
+    status = NET_GetAddressStatus(adr);
+
+    // Det tar tid att "resolva" en address, så vi måste kolla att det är klart...
+    // Detta är inte blockerande, utan en pollad lösning
+    switch(status) {
+        case NET_SUCCESS:
+            NET_SendDatagram(state->udpSocket, adr, SERVER_PORT, (void *)&message, sizeof(message));
+            break;
+
+        default:
+            break;
+    }
+
+    // Det verkar handla om tid... vi kan inte göra något innan allt är redo
+    if(NET_ReceiveDatagram(state->udpSocket, state->udpPacket)) {
+        if (status) {
+            if ((*state->udpPacket)!= NULL) {
+                int test;
+                // Kopierar över data
+                memccpy(&test, (*state->udpPacket)->buf, 1, sizeof((*state->udpPacket)->buf));
+                SDL_Log("Vi fick data, och den är: %d\n", test);
+                (*state->udpPacket) = NULL;
+            }
+        }
+    }
 
     return render(state);
 }

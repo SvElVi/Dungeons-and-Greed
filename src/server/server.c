@@ -1,5 +1,6 @@
 #define SDL_MAIN_USE_CALLBACKS 1 //Flag to use callbacks
 #define SERVER_PORT 2000
+#define CLIENT_PORT 2001
 
 #include <SDL3/SDL_main.h>
 #include "../lib/NET/networkInterface.h"
@@ -74,7 +75,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
     // Detta är inte blockerande, utan en pollad lösning
     switch(status) {
         case NET_SUCCESS:
-            NET_SendDatagram(state->udpSocket, adr, SERVER_PORT, (void *)&message, sizeof(message));
+            NET_SendDatagram(state->udpSocket, adr, CLIENT_PORT, (void *)&message, sizeof(message));
             break;
 
         default:

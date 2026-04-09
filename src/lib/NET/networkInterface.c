@@ -12,7 +12,6 @@ int startSDLNet(void);
 void createUDPSocket(NET_DatagramSocket**, int);
 void destoryUDPSocket(NET_DatagramSocket* udpSocket);
 void checkForDatagram(AppState state, void*);
-void destoryServerSocket(NET_Server*);
 int initAddress(NET_Address **adress, char*);
 
 int startSDLNet(void) {
@@ -43,7 +42,7 @@ void createUDPSocket(NET_DatagramSocket **dataGramSocket ,int portNumber) {
 
 void destoryUDPSocket(NET_DatagramSocket* udpSocket) {
     NET_DestroyDatagramSocket(udpSocket);
-    SDL_Log("Destoryed UDP socket at %p\n", udpSocket);
+    SDL_Log("Destoryed UDP socket\n");
 }
 
 void checkForDatagram(AppState state, void *data) {

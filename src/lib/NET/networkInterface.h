@@ -9,7 +9,6 @@ int startSDLNet(void);
 void createUDPSocket(NET_DatagramSocket**, int);
 void destoryUDPSocket(NET_DatagramSocket* udpSocket);
 void checkForDatagram(AppState state, void*);
-void destoryServerSocket(NET_Server*);
 int initAddress(NET_Address **adress, char*);
 
 #endif

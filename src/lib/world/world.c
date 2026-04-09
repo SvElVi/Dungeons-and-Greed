@@ -4,7 +4,7 @@
 #define CHUNK_SIZE 16
 #define ROOM_TYPES 1
 #define TILE_SIZE 16
-#define TILE_RENDER_SCALE 1
+#define TILE_RENDER_SCALE 2
 
 typedef enum {
     BASIC
@@ -58,10 +58,11 @@ void destroyWorld(World w) {
     SDL_free(w);
 }
 
-bool generateRoom(Chunk* c, int* wSize, Uint8* nrOfRooms) {
+bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms) { //org for origin pointer, c for relative, wSize for boundries, nrOfRooms for room limit
     Chunk* tempC = c;
     float hop = SDL_rand(4); //To make splits in same line more common
-    int dir = (int)hop;
+    int dir = (int)hop, pDif;
+    const int rowSize = (int)SDL_sqrt(*wSize);
 
     switch(SDL_rand(ROOM_TYPES)) {
         case BASIC:
@@ -77,37 +78,29 @@ bool generateRoom(Chunk* c, int* wSize, Uint8* nrOfRooms) {
             break;
     }
 
-    for(int i = 0; i < (SDL_rand(4)+1); i++) {
+    for(int i = 0; i < (SDL_rand(4)+1) && *nrOfRooms > 0; i++) {
         switch(dir) {
             case WEST:
                 tempC = c - 1;
-                if(tempC->tileType[0][0] == 0) { //TODO: Add checks for boundries
-                    SDL_Log("Test");
-                    // generateRoom(temp, wSize, nrOfRooms);
-                }
                 break;
             case NORTH:
-                tempC = c - (int)SDL_sqrt(*wSize);
-                if(tempC->tileType[0][0] == 0) {
-                    SDL_Log("Test");
-                    // generateRoom(temp, wSize, nrOfRooms);
-                }
+                tempC = c - rowSize;
                 break;
             case EAST:
                 tempC = c + 1;
-                if(tempC->tileType[0][0] == 0) {
-                    SDL_Log("Test");
-                    // generateRoom(temp, wSize, nrOfRooms);
-                }
                 break;
             case SOUTH:
-                tempC = c + (int)SDL_sqrt(*wSize);
-                if(tempC->tileType[0][0] == 0) {
-                    SDL_Log("Test");
-                    // generateRoom(temp, wSize, nrOfRooms);
-                }
+                tempC = c + rowSize;
                 break;
         }
+        pDif = tempC - org;
+        
+        if(pDif >= 0 && pDif < *wSize && tempC->tileType[0][0] == 0) { //Check for if withing boundries and available space
+            SDL_Log("Valid v");
+            *nrOfRooms--;
+            generateRoom(org, tempC, wSize, nrOfRooms);
+        }
+
         SDL_Log("R: %d", dir);
         hop += 2.5;
         dir = (int)hop % 4;
@@ -141,7 +134,7 @@ void generateDungeon(World w, Uint8* nrOfRooms) { //Room placements
     }
 
     SDL_Log("Dungeon start (1+): %d, TEST RANDOM: %d", temp - w->chunks + 1, SDL_rand(4));
-    generateRoom(temp, &(w->size), nrOfRooms);
+    generateRoom(w->chunks, temp, &(w->size), nrOfRooms);
 
     SDL_Log("---------------------");
 }
@@ -161,13 +154,10 @@ bool renderDungeon(AppState state) {
     Chunk* tempC = state->world->chunks;
     const int rowSize = (int)SDL_sqrt(state->world->size);
     SDL_FRect srcRect = {0,0,TILE_SIZE,TILE_SIZE}, dstRect = {0,0,TILE_SIZE*TILE_RENDER_SCALE,TILE_SIZE*TILE_RENDER_SCALE};
-
-    bool debug;
     
     for(int i = 0; i < state->world->size; i++) {
         if(i % rowSize == 0 && i) { //Calc to change to next row, only counts when i is not 0
             yLevel++;
-            // SDL_Log("%d", yLevel);
         }
 
         for(int y = 0; y < CHUNK_SIZE; y++) {

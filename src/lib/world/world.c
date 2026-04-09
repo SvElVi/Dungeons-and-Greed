@@ -3,6 +3,8 @@
 
 #define CHUNK_SIZE 16
 #define ROOM_TYPES 1
+#define TILE_SIZE 16
+#define TILE_RENDER_SCALE 1
 
 typedef enum {
     BASIC
@@ -41,7 +43,7 @@ World createWorld(int size, Uint64 seed, SDL_Renderer* renderer) {
     w->chunks = SDL_calloc(size*size, sizeof(Chunk));
     w->size = size*size;
 
-    SDL_Surface* wArt = SDL_LoadPNG("../img/2D Pixel Dungeon Asset Pack/character and tileset/Dungeon_Tileset.png");
+    SDL_Surface* wArt = SDL_LoadPNG("././img/2D Pixel Dungeon Asset Pack/character and tileset/Dungeon_Tileset.png");
     w->texture = SDL_CreateTextureFromSurface(renderer, wArt);
     SDL_DestroySurface(wArt);
 
@@ -154,10 +156,13 @@ void createDungeon(World w, Uint8 nrOfRooms) {
 
 }
 
-void renderDungeon(AppState state) {
+bool renderDungeon(AppState state) {
     int yLevel = 0;
     Chunk* tempC = state->world->chunks;
     const int rowSize = (int)SDL_sqrt(state->world->size);
+    SDL_FRect srcRect = {0,0,TILE_SIZE,TILE_SIZE}, dstRect = {0,0,TILE_SIZE*TILE_RENDER_SCALE,TILE_SIZE*TILE_RENDER_SCALE};
+
+    bool debug;
     
     for(int i = 0; i < state->world->size; i++) {
         if(i % rowSize == 0 && i) { //Calc to change to next row, only counts when i is not 0
@@ -167,10 +172,25 @@ void renderDungeon(AppState state) {
 
         for(int y = 0; y < CHUNK_SIZE; y++) {
             for(int x = 0; x < CHUNK_SIZE; x++) {
+                dstRect.x = state->camera.x + state->players[0].pos.x + (x+CHUNK_SIZE*((tempC - state->world->chunks) % rowSize))*TILE_SIZE*TILE_RENDER_SCALE - rowSize*CHUNK_SIZE*TILE_SIZE*TILE_RENDER_SCALE/2;
+                dstRect.y = state->camera.y + state->players[0].pos.y + (int)(y+CHUNK_SIZE*(tempC - state->world->chunks) / rowSize)*TILE_SIZE*TILE_RENDER_SCALE - rowSize*CHUNK_SIZE*TILE_SIZE*TILE_RENDER_SCALE/2;
+                
                 switch(tempC->tileType[y][x]) {
                     case FLOOR:
+                        srcRect.x = TILE_SIZE*2;
+                        srcRect.y = TILE_SIZE*2;
+                        if(!SDL_RenderTexture(state->renderer, state->world->texture, &srcRect, &dstRect)) {
+                            SDL_Log("TILE RENDER ERROR: %d : %s", tempC->tileType[y][x], SDL_GetError());
+                            return 0;
+                        }
                         break;
                     case WALL:
+                        srcRect.x = TILE_SIZE*1;
+                        srcRect.y = TILE_SIZE*0;
+                        if(!SDL_RenderTexture(state->renderer, state->world->texture, &srcRect, &dstRect)) {
+                            SDL_Log("TILE RENDER ERROR: %d : %s", tempC->tileType[y][x], SDL_GetError());
+                            return 0;
+                        }
                         break;
                 }
             }
@@ -178,4 +198,6 @@ void renderDungeon(AppState state) {
 
         tempC++;
     }
+
+    return 1;
 }

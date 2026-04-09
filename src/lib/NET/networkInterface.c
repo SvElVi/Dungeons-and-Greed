@@ -49,8 +49,6 @@ void destoryUDPSocket(NET_DatagramSocket* udpSocket) {
 void checkForDatagram(AppState state, void *data) {
     if(NET_ReceiveDatagram(state->udpSocket, state->udpPacket)) {
         if ((*state->udpPacket)!= NULL) {
-                // Kopierar över data
-                int test;
                 memccpy(data, (*state->udpPacket)->buf, 1, sizeof((*state->udpPacket)->buf));
                 (*state->udpPacket) = NULL;
             }

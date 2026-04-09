@@ -7,6 +7,7 @@
 
 #include "server-lib/serverNet.h"
 #include "../lib/NET/networkInterface.h"
+#include "server-lib/serverNet.h"
 #include "../lib/player.h" //All dependencies of [x] included
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once at the begining of the program
@@ -25,6 +26,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
     }
 
     createUDPSocket(&state->udpSocket, SERVER_PORT);
+
+    createTCPServer(state, SERVER_PORT);
 
     state->udpPacket = SDL_calloc(1, sizeof(NET_Datagram));
 

@@ -78,7 +78,7 @@ bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms) { //org fo
             break;
     }
 
-    for(int i = 0; i < (SDL_rand(4)+1) && *nrOfRooms > 0; i++) {
+    for(int i = 0; i < (SDL_rand(4)+1) && (*nrOfRooms) > 0; i++) {
         switch(dir) {
             case WEST:
                 tempC = c - 1;
@@ -95,11 +95,26 @@ bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms) { //org fo
         }
         pDif = tempC - org;
         
-        if(pDif >= 0 && pDif < *wSize && tempC->tileType[0][0] == 0) { //Check for if withing boundries and available space
-            SDL_Log("Valid v");
-            *nrOfRooms--;
-            generateRoom(org, tempC, wSize, nrOfRooms);
+        if(dir == NORTH || dir == SOUTH) {
+            if(pDif >= 0 && pDif < *wSize && tempC->tileType[0][0] == 0) { //Check for if withing boundries and available space
+                SDL_Log("Valid v");
+                (*nrOfRooms)--;
+                generateRoom(org, tempC, wSize, nrOfRooms);
+            }
+        } else if(dir = WEST) {
+            if(pDif >= 0 && pDif < *wSize && tempC->tileType[0][0] == 0 && !((pDif % rowSize) == 3)) { //Check extra for end of row
+                SDL_Log("Valid v");
+                (*nrOfRooms)--;
+                generateRoom(org, tempC, wSize, nrOfRooms);
+            }
+        } else if(dir = EAST) {
+            if(pDif >= 0 && pDif < *wSize && tempC->tileType[0][0] == 0 && !((pDif % rowSize) == 0)) { //Check extra for end of row
+                SDL_Log("Valid v");
+                (*nrOfRooms)--;
+                generateRoom(org, tempC, wSize, nrOfRooms);
+            }
         }
+
 
         SDL_Log("R: %d", dir);
         hop += 2.5;

@@ -102,7 +102,7 @@ bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms) { //org fo
                 generateRoom(org, tempC, wSize, nrOfRooms);
             }
         } else if(dir = WEST) {
-            if(pDif >= 0 && pDif < *wSize && tempC->tileType[0][0] == 0 && !((pDif % rowSize) == 3)) { //Check extra for end of row
+            if(pDif >= 0 && pDif < *wSize && tempC->tileType[0][0] == 0 && !((pDif % rowSize) == rowSize-1)) { //Check extra for end of row
                 SDL_Log("Valid v");
                 (*nrOfRooms)--;
                 generateRoom(org, tempC, wSize, nrOfRooms);

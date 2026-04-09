@@ -69,7 +69,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
     void *data;
     checkForDatagram(state, &data);
 
-    SDL_Log("Vi fick data, och den är: %d\n", (int *)data);
+    if(DEBUG) SDL_Log("Vi fick data, och den är: %d\n", (int *)data);
 
     return render(state);
 }

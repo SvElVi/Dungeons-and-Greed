@@ -1,6 +1,7 @@
 #include "networkInterface.h"
 
 #define RESOLVE_ADDRESS_TIMEOUT 5000
+#define DEBUG 1
 
 enum {
     FAIL,
@@ -10,6 +11,7 @@ enum {
 int startSDLNet(void);
 void createUDPSocket(NET_DatagramSocket**, int);
 void destoryUDPSocket(NET_DatagramSocket* udpSocket);
+void checkForDatagram(AppState state, void*);
 void destoryServerSocket(NET_Server*);
 int initAddress(NET_Address **adress, char*);
 
@@ -44,6 +46,18 @@ void destoryUDPSocket(NET_DatagramSocket* udpSocket) {
     SDL_Log("Destoryed UDP socket at %p\n", udpSocket);
 }
 
+void checkForDatagram(AppState state, void *data) {
+    if(NET_ReceiveDatagram(state->udpSocket, state->udpPacket)) {
+        if ((*state->udpPacket)!= NULL) {
+                // Kopierar över data
+                int test;
+                memccpy(data, (*state->udpPacket)->buf, 1, sizeof((*state->udpPacket)->buf));
+                (*state->udpPacket) = NULL;
+            }
+    }
+
+}
+
 // Blocking
 int initAddress(NET_Address **adress, char *adr) {
     int addressCheck = 0;
@@ -54,7 +68,7 @@ int initAddress(NET_Address **adress, char *adr) {
             return NET_FAILURE;
 
         }
-        
+
         addressCheck++;
     }
 

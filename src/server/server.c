@@ -66,16 +66,10 @@ SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
 
     NET_SendDatagram(state->udpSocket, state->serverIP, SERVER_PORT, (void *)&message, sizeof(message));
 
-    // Det verkar handla om tid... vi kan inte göra något innan allt är redo
-    if(NET_ReceiveDatagram(state->udpSocket, state->udpPacket)) {
-        if ((*state->udpPacket)!= NULL) {
-                int test;
-                // Kopierar över data
-                memccpy(&test, (*state->udpPacket)->buf, 1, sizeof((*state->udpPacket)->buf));
-                if (DEBUG) SDL_Log("Vi fick data, och den är: %d\n", test);
-                (*state->udpPacket) = NULL;
-            }
-    }
+    void *data;
+    checkForDatagram(state, &data);
+
+    SDL_Log("Vi fick data, och den är: %d\n", (int *)data);
 
     return render(state);
 }

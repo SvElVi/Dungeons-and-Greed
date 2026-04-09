@@ -1,3 +1,6 @@
+#ifndef INITS_H
+#define INITS_H
+
 #include <SDL3_net/SDL_net.h>
 
 #define MAX_PLAYERS 5
@@ -101,3 +104,5 @@ AppState createAppState(void);
 int initDisplay(AppState state);
 
 void initCam(AppState state);
+
+#endif

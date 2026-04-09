@@ -163,7 +163,7 @@ bool renderDungeon(AppState state) {
         for(int y = 0; y < CHUNK_SIZE; y++) {
             for(int x = 0; x < CHUNK_SIZE; x++) {
                 dstRect.x = state->camera.x + state->players[0].pos.x + (x+CHUNK_SIZE*((tempC - state->world->chunks) % rowSize))*TILE_SIZE*TILE_RENDER_SCALE - rowSize*CHUNK_SIZE*TILE_SIZE*TILE_RENDER_SCALE/2;
-                dstRect.y = state->camera.y + state->players[0].pos.y + (int)(y+CHUNK_SIZE*(tempC - state->world->chunks) / rowSize)*TILE_SIZE*TILE_RENDER_SCALE - rowSize*CHUNK_SIZE*TILE_SIZE*TILE_RENDER_SCALE/2;
+                dstRect.y = state->camera.y + state->players[0].pos.y + (y+CHUNK_SIZE*((int)(tempC - state->world->chunks) / rowSize))*TILE_SIZE*TILE_RENDER_SCALE - rowSize*CHUNK_SIZE*TILE_SIZE*TILE_RENDER_SCALE/2;
                 
                 switch(tempC->tileType[y][x]) {
                     case FLOOR:

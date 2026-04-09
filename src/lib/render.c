@@ -3,7 +3,7 @@
 int renderFrame(AppState state) {
     SDL_FRect temp;
     Vector2D tempV, renderOrder[MAX_PLAYERS];
-    SDL_SetRenderDrawColor(state->renderer,0,255,255,0);
+    SDL_SetRenderDrawColor(state->renderer,37,19,26,1);
     SDL_RenderClear(state->renderer);
 
     if(!renderDungeon(state)) {

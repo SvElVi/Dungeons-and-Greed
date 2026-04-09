@@ -28,7 +28,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
 
     state->udpPacket = SDL_calloc(1, sizeof(NET_Datagram));
 
-    initAddress(&state->serverIP);
+    if (initAddress(&state->serverIP, "127.0.0.1") < 0) return SDL_APP_FAILURE;
 
     state->running = true; //Custom flag to mark the program as running
 
@@ -43,10 +43,10 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
     *appstate = state; //Share the appstate to callbacks below
     // state->renderFlag = 1;
 
-    state->world = createWorld(5);
+    state->world = createWorld(5, (Uint64)SDL_rand(0), state->renderer);
 
-    createDungeon(state->world, 0, 20);
-    // renderDungeon(state);
+    createDungeon(state->world, 20);
+    renderDungeon(state);
 
     return SDL_APP_CONTINUE;
 }
@@ -66,16 +66,10 @@ SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
 
     NET_SendDatagram(state->udpSocket, state->serverIP, SERVER_PORT, (void *)&message, sizeof(message));
 
-    // Det verkar handla om tid... vi kan inte göra något innan allt är redo
-    if(NET_ReceiveDatagram(state->udpSocket, state->udpPacket)) {
-        if ((*state->udpPacket)!= NULL) {
-                int test;
-                // Kopierar över data
-                memccpy(&test, (*state->udpPacket)->buf, 1, sizeof((*state->udpPacket)->buf));
-                if (DEBUG) SDL_Log("Vi fick data, och den är: %d\n", test);
-                (*state->udpPacket) = NULL;
-            }
-    }
+    void *data;
+    checkForDatagram(state, &data);
+
+    SDL_Log("Vi fick data, och den är: %d\n", (int *)data);
 
     return render(state);
 }

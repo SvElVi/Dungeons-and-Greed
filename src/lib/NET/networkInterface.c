@@ -1,6 +1,7 @@
 #include "networkInterface.h"
 
 #define RESOLVE_ADDRESS_TIMEOUT 5000
+#define DEBUG 1
 
 enum {
     FAIL,
@@ -10,9 +11,9 @@ enum {
 int startSDLNet(void);
 void createUDPSocket(NET_DatagramSocket**, int);
 void destoryUDPSocket(NET_DatagramSocket* udpSocket);
-NET_Server* createServerSocket(int portNumber);
+void checkForDatagram(AppState state, void*);
 void destoryServerSocket(NET_Server*);
-void initAdress(NET_Address **adress);
+int initAddress(NET_Address **adress, char*);
 
 int startSDLNet(void) {
     SDL_Log("Initializing SDL_Net...\n");
@@ -45,22 +46,46 @@ void destoryUDPSocket(NET_DatagramSocket* udpSocket) {
     SDL_Log("Destoryed UDP socket at %p\n", udpSocket);
 }
 
+void checkForDatagram(AppState state, void *data) {
+    if(NET_ReceiveDatagram(state->udpSocket, state->udpPacket)) {
+        if ((*state->udpPacket)!= NULL) {
+                // Kopierar över data
+                int test;
+                memccpy(data, (*state->udpPacket)->buf, 1, sizeof((*state->udpPacket)->buf));
+                (*state->udpPacket) = NULL;
+            }
+    }
+
+}
+
 // Blocking
-void initAddress(NET_Address **adress) {
-    *adress = NET_ResolveHostname("127.0.0.1");
+int initAddress(NET_Address **adress, char *adr) {
+    int addressCheck = 0;
+
+    while (adr[addressCheck] != '\0') {
+        if (addressCheck > ADDRESS_LEN) {
+            SDL_Log("Invalid address, failed to resolve!");
+            return NET_FAILURE;
+
+        }
+
+        addressCheck++;
+    }
+
+    *adress = NET_ResolveHostname(adr);
 
     switch(NET_WaitUntilResolved(*adress, RESOLVE_ADDRESS_TIMEOUT)) {
         case NET_SUCCESS:
             SDL_Log("Succesfully resolved address of: %s\n", NET_GetAddressString(*adress));
-            break;
+            return NET_SUCCESS;
 
         case NET_FAILURE:
             SDL_Log("Failed to resolve address!\n");
-            break;
+            return NET_FAILURE;
 
         default:
             SDL_Log("Ops... something went terribly wrong when trying to resolve a network address!\n");
-            break;
+            return NET_FAILURE;
 
     }
 

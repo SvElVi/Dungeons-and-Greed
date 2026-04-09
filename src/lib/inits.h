@@ -93,6 +93,12 @@ struct appState {
     NET_DatagramSocket *udpSocket;
     NET_Datagram **udpPacket;
 
+    // Server TCP
+    NET_Server *tcpServer;
+
+    // Client TCP
+    NET_StreamSocket *tcpClient;
+
 };
 
 typedef struct appState *AppState;

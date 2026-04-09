@@ -1,8 +1,6 @@
 #include "serverNet.h"
 
-ServerState* createServerState();
+void createTCPServer(AppState state, int portNumber) {
+    state->tcpServer = NET_CreateServer(NULL, portNumber);
 
-ServerState* createServerState() {
-    ServerState *ptrSeverState = SDL_calloc(1, sizeof(ServerState));
-    return ptrSeverState;
 }

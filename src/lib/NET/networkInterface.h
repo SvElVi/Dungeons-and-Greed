@@ -1,13 +1,13 @@
 #ifndef NETWORKINTERFACE_H
 #define NETWORKINTERFACE_H
+#define ADDRESS_LEN 15
 
 #include <SDL3_Net/SDL_net.h>
-#define ADDRESS_LENGTH 17
 
 int startSDLNet(void);
 void createUDPSocket(NET_DatagramSocket**, int);
 void destoryUDPSocket(NET_DatagramSocket* udpSocket);
 void destoryServerSocket(NET_Server*);
-void initAddress(NET_Address **adress);
+int initAddress(NET_Address **adress, char*);
 
 #endif

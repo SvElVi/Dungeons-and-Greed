@@ -28,7 +28,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
 
     state->udpPacket = SDL_calloc(1, sizeof(NET_Datagram));
 
-    initAddress(&state->serverIP);
+    if (initAddress(&state->serverIP, "127.0.0.1") < 0) return SDL_APP_FAILURE;
 
     state->running = true; //Custom flag to mark the program as running
 

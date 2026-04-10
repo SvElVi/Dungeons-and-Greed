@@ -9,6 +9,8 @@ void destroyWorld(World w); //Delete the memory of the world from the heap
 
 void createDungeon(World w, Uint8 nrOfRooms); //Add dungeon data to the world
 
+void changeSeed(World w, Uint64 seed); //Change the world seed
+
 bool renderDungeon(AppState state); //Render the vicinity of the local player
 
 #endif

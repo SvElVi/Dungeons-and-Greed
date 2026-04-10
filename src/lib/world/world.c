@@ -57,6 +57,10 @@ void destroyWorld(World w) {
     SDL_free(w);
 }
 
+void changeSeed(World w, Uint64 seed) {
+    w->seed = seed;
+}
+
 bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms, Uint8 fDir) { //org for origin pointer, c for relative, wSize for boundries, nrOfRooms for room limit, fDir for the direction from previus generation
     Chunk* tempC = c;
     float hop = SDL_rand(4); //To make splits in same line more common

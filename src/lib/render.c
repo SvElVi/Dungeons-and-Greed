@@ -1,4 +1,5 @@
 #include "player.h"
+#include <string.h>
 
 int renderFrame(AppState state) {
     SDL_FRect temp;
@@ -40,6 +41,24 @@ int renderFrame(AppState state) {
         }
     }
 
+    if(state->gameState == GAME_START){
+        const char *message = "Press SPACE to start";
+        int w = 0, h = 0;
+        float x, y;
+        const float scale = 4.0f;
+
+        /* Center the message and scale it up */
+        SDL_GetRenderOutputSize(state->renderer, &w, &h);
+        SDL_SetRenderScale(state->renderer, scale, scale);
+        x = ((w / scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE * SDL_strlen(message)) / 2;
+        y = ((h / scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE) / 2;
+
+        /* Draw the message */
+        SDL_SetRenderDrawColor(state->renderer, 255, 255, 255, 255);
+        SDL_RenderDebugText(state->renderer, x, y, message);
+        SDL_SetRenderScale(state->renderer, 1.0f, 1.0f);
+    }
+
     SDL_RenderPresent(state->renderer);
     state->computedEvent = false;
 
@@ -52,8 +71,11 @@ int render(AppState state) { //current but should be changed to call back style,
         state->deltaTime = currentTime - state->lastTime;
         state->lastTime = currentTime;
         // if(state->renderFlag) {
-        movement(&(state->players[0]), state->players, state->deltaTime);
-        animatePlayers(state->players, &(state->animationTime), state->framerate, &(state->computedEvent));
+        if(state->gameState == GAME_PLAYING){
+            movement(&(state->players[0]), state->players, state->deltaTime);
+            animatePlayers(state->players, &(state->animationTime), state->framerate, &(state->computedEvent));
+        }
+        
 
         if(renderFrame(state)) return SDL_APP_FAILURE;
         // }

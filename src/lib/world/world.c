@@ -4,10 +4,9 @@
 #define CHUNK_SIZE 16
 #define ROOM_TYPES 1
 #define TILE_SIZE 16
-#define TILE_RENDER_SCALE 2
 
 typedef enum {
-    BASIC
+    TEST
 } ROOM_TYPE;
 
 typedef enum {
@@ -58,14 +57,63 @@ void destroyWorld(World w) {
     SDL_free(w);
 }
 
-bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms) { //org for origin pointer, c for relative, wSize for boundries, nrOfRooms for room limit
+bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms, Uint8 fDir) { //org for origin pointer, c for relative, wSize for boundries, nrOfRooms for room limit, fDir for the direction from previus generation
     Chunk* tempC = c;
     float hop = SDL_rand(4); //To make splits in same line more common
     int dir = (int)hop, pDif;
     const int rowSize = (int)SDL_sqrt(*wSize);
+    bool genDir[4] = {0}; //For generating exits, default all false
+
+    if(fDir < 4) {
+        genDir[fDir] = true;
+    }
+
+    for(int i = 0; i < (SDL_rand(3)+2) && (*nrOfRooms) > 0; i++) {
+        switch(dir) {
+            case WEST:
+                tempC = c - 1;
+                pDif = tempC - org;
+                if(pDif >= 0 && pDif < *wSize && tempC->tileType[0][0] == 0 && !((pDif % rowSize) == rowSize-1)) { //Check extra for end of row
+                    genDir[WEST] = true;
+                    (*nrOfRooms)--;
+                    generateRoom(org, tempC, wSize, nrOfRooms, dir);
+                }
+                break;
+            case NORTH:
+                tempC = c - rowSize;
+                pDif = tempC - org;
+                if(pDif >= 0 && pDif < *wSize && tempC->tileType[0][0] == 0) { //Check for if withing boundries and available space
+                    genDir[NORTH] = true;
+                    (*nrOfRooms)--;
+                    generateRoom(org, tempC, wSize, nrOfRooms, dir);
+                }
+                break;
+            case EAST:
+                tempC = c + 1;
+                pDif = tempC - org;
+                if(pDif >= 0 && pDif < *wSize && tempC->tileType[0][0] == 0 && !((pDif % rowSize) == 0)) { //Check extra for end of row
+                    genDir[EAST] = true;
+                    (*nrOfRooms)--;
+                    generateRoom(org, tempC, wSize, nrOfRooms, dir);
+                }
+                break;
+            case SOUTH:
+                tempC = c + rowSize;
+                pDif = tempC - org;
+                if(pDif >= 0 && pDif < *wSize && tempC->tileType[0][0] == 0) { //Check for if withing boundries and available space
+                    genDir[SOUTH] = true;
+                    (*nrOfRooms)--;
+                    generateRoom(org, tempC, wSize, nrOfRooms, dir);
+                }
+                break;
+        }
+
+        hop += 2.5;
+        dir = (int)hop % 4;
+    }
 
     switch(SDL_rand(ROOM_TYPES)) {
-        case BASIC:
+        case TEST:
             for(int y = 0; y < CHUNK_SIZE; y++) {
                 for(int x = 0; x < CHUNK_SIZE; x++) {
                     if(!x || x == (CHUNK_SIZE-1) || !y || y == (CHUNK_SIZE-1)) {
@@ -75,53 +123,8 @@ bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms) { //org fo
                     }
                 }
             }
-            break;
     }
 
-    for(int i = 0; i < (SDL_rand(3)+2) && (*nrOfRooms) > 0; i++) {
-        switch(dir) {
-            case WEST:
-                tempC = c - 1;
-                pDif = tempC - org;
-                if(pDif >= 0 && pDif < *wSize && tempC->tileType[0][0] == 0 && !((pDif % rowSize) == rowSize-1)) { //Check extra for end of row
-                    SDL_Log("Valid v");
-                    (*nrOfRooms)--;
-                    generateRoom(org, tempC, wSize, nrOfRooms);
-                }
-                break;
-            case NORTH:
-                tempC = c - rowSize;
-                pDif = tempC - org;
-                if(pDif >= 0 && pDif < *wSize && tempC->tileType[0][0] == 0) { //Check for if withing boundries and available space
-                    SDL_Log("Valid v");
-                    (*nrOfRooms)--;
-                    generateRoom(org, tempC, wSize, nrOfRooms);
-                }
-                break;
-            case EAST:
-                tempC = c + 1;
-                pDif = tempC - org;
-                if(pDif >= 0 && pDif < *wSize && tempC->tileType[0][0] == 0 && !((pDif % rowSize) == 0)) { //Check extra for end of row
-                    SDL_Log("Valid v");
-                    (*nrOfRooms)--;
-                    generateRoom(org, tempC, wSize, nrOfRooms);
-                }
-                break;
-            case SOUTH:
-                tempC = c + rowSize;
-                pDif = tempC - org;
-                if(pDif >= 0 && pDif < *wSize && tempC->tileType[0][0] == 0) { //Check for if withing boundries and available space
-                    SDL_Log("Valid v");
-                    (*nrOfRooms)--;
-                    generateRoom(org, tempC, wSize, nrOfRooms);
-                }
-                break;
-        }
-
-        SDL_Log("R: %d", dir);
-        hop += 2.5;
-        dir = (int)hop % 4;
-    }
 }
 
 void generateDungeon(World w, Uint8* nrOfRooms) { //Room placements
@@ -151,7 +154,7 @@ void generateDungeon(World w, Uint8* nrOfRooms) { //Room placements
     }
 
     SDL_Log("Dungeon start (1+): %d, TEST RANDOM: %d", temp - w->chunks + 1, SDL_rand(4));
-    generateRoom(w->chunks, temp, &(w->size), nrOfRooms);
+    generateRoom(w->chunks, temp, &(w->size), nrOfRooms, 5);
 
     SDL_Log("---------------------");
 }
@@ -170,7 +173,7 @@ bool renderDungeon(AppState state) {
     int yLevel = 0;
     Chunk* tempC = state->world->chunks;
     const int rowSize = (int)SDL_sqrt(state->world->size);
-    SDL_FRect srcRect = {0,0,TILE_SIZE,TILE_SIZE}, dstRect = {0,0,TILE_SIZE*TILE_RENDER_SCALE,TILE_SIZE*TILE_RENDER_SCALE};
+    SDL_FRect srcRect = {0,0,TILE_SIZE,TILE_SIZE}, dstRect = {0,0,TILE_SIZE*RENDER_SCALE,TILE_SIZE*RENDER_SCALE};
     
     for(int i = 0; i < state->world->size; i++) {
         if(i % rowSize == 0 && i) { //Calc to change to next row, only counts when i is not 0
@@ -179,8 +182,8 @@ bool renderDungeon(AppState state) {
 
         for(int y = 0; y < CHUNK_SIZE; y++) {
             for(int x = 0; x < CHUNK_SIZE; x++) {
-                dstRect.x = state->camera.x + state->players[0].pos.x + (x+CHUNK_SIZE*((tempC - state->world->chunks) % rowSize))*TILE_SIZE*TILE_RENDER_SCALE - rowSize*CHUNK_SIZE*TILE_SIZE*TILE_RENDER_SCALE/2;
-                dstRect.y = state->camera.y + state->players[0].pos.y + (y+CHUNK_SIZE*((int)(tempC - state->world->chunks) / rowSize))*TILE_SIZE*TILE_RENDER_SCALE - rowSize*CHUNK_SIZE*TILE_SIZE*TILE_RENDER_SCALE/2;
+                dstRect.x = state->camera.x + state->players[0].pos.x + (x+CHUNK_SIZE*((tempC - state->world->chunks) % rowSize))*TILE_SIZE*RENDER_SCALE - rowSize*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE/2;
+                dstRect.y = state->camera.y + state->players[0].pos.y + (y+CHUNK_SIZE*((int)(tempC - state->world->chunks) / rowSize))*TILE_SIZE*RENDER_SCALE - rowSize*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE/2;
                 
                 switch(tempC->tileType[y][x]) {
                     case FLOOR:

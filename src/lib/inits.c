@@ -33,8 +33,8 @@ int initDisplay(AppState state) {
 }
 
 void initCam(AppState state) { //Init before the game
-    state->camera.x = (state->displayMode->w - PLAYER_SIZE * PLAYER_RENDER_SCALE)/2;
-    state->camera.y = (state->displayMode->h - PLAYER_SIZE * PLAYER_RENDER_SCALE)/2;
-    state->camera.w = PLAYER_SIZE * PLAYER_RENDER_SCALE;
-    state->camera.h = PLAYER_SIZE * PLAYER_RENDER_SCALE;
+    state->camera.x = (state->displayMode->w - PLAYER_SIZE * RENDER_SCALE)/2;
+    state->camera.y = (state->displayMode->h - PLAYER_SIZE * RENDER_SCALE)/2;
+    state->camera.w = PLAYER_SIZE * RENDER_SCALE;
+    state->camera.h = PLAYER_SIZE * RENDER_SCALE;
 }

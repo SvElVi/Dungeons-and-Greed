@@ -28,8 +28,8 @@ int renderFrame(AppState state) {
     for(int i = 0; i < MAX_PLAYERS; i++) {
         if(state->players[renderOrder[i].x].texture) {
 
-            temp.h = PLAYER_SIZE*PLAYER_RENDER_SCALE;
-            temp.w = PLAYER_SIZE*PLAYER_RENDER_SCALE;
+            temp.h = PLAYER_SIZE*RENDER_SCALE;
+            temp.w = PLAYER_SIZE*RENDER_SCALE;
             temp.x = state->camera.x + (state->players[0].pos.x - state->players[renderOrder[i].x].pos.x);
             temp.y = state->camera.y + (state->players[0].pos.y - state->players[renderOrder[i].x].pos.y);
 

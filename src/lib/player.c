@@ -1,5 +1,5 @@
 #include "inits.h"
-#define SPEED 0.5
+#define SPEED 0.25*RENDER_SCALE
 
 bool collision(SDL_FRect a, SDL_FRect b)    //beräkna rektangel a med rektangel b
 {                                           //Standard kollisionsberäkning för AABB(fyrkantskollisiondetektion)

@@ -5,7 +5,7 @@
 
 #define MAX_PLAYERS 5
 #define PLAYER_SIZE 48
-#define PLAYER_RENDER_SCALE 2
+#define RENDER_SCALE 2
 #define ANIMATION_TIME 4
 
 typedef struct {

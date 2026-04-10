@@ -16,6 +16,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
     AppState state = createAppState();
     if(!state) return SDL_APP_FAILURE;
 
+    state->gameState = GAME_START;
+
     if(initDisplay(state)) return SDL_APP_FAILURE; //Initiate and display window
     initCam(state);
 

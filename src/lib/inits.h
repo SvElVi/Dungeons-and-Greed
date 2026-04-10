@@ -77,6 +77,14 @@ typedef struct {
     SDL_FlipMode flip; //SYNC MULTIPLAYER
 } Player;
 
+typedef enum GameState {
+    //GAME_HOST
+    //GAME_JOIN
+    GAME_START,
+    GAME_PLAYING,
+    GAME_OVER   
+} GameState;
+
 struct appState {
     SDL_Window *window; //LOCAL
     SDL_Renderer *renderer; //LOCAL
@@ -86,6 +94,7 @@ struct appState {
     Uint64 deltaTime; //LOCAL
     Uint64 lastTime; //LOCAL
     Client_State clientState;
+    GameState gameState;
 
     Player players [MAX_PLAYERS]; //SEE STRUCT
     SDL_FRect camera; //LOCAL
@@ -111,6 +120,8 @@ struct appState {
     NET_StreamSocket *tcpClient;
 
 };
+
+
 
 typedef struct appState *AppState;
 

@@ -40,8 +40,20 @@ int checkEvents(AppState state, SDL_Event* event) { //Check all in game events u
     if(quitEvent) return quitEvent;
 
     //Non quit functions
-    moveFlag(&(state->players[0].flags), keylist, &(state->computedEvent));
+    if(event->type == SDL_EVENT_KEY_DOWN && event->key.scancode == SDL_SCANCODE_SPACE) {
+        if(state->gameState == GAME_START) {
+            state->gameState = GAME_PLAYING;
+        }
+    }
+
+    if(state->gameState == GAME_PLAYING){
+        moveFlag(&(state->players[0].flags), keylist, &(state->computedEvent));
+    }
+
+    
     //if frame altering function then set state->computedEvent = true and add to the if statement in the render() function
+
+
 
     return SDL_APP_CONTINUE;
 }

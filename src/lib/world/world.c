@@ -65,6 +65,7 @@ bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms, Uint8 fDir
     bool genDir[4] = {0}; //For generating exits, default all false
 
     if(fDir < 4) {
+        fDir = (fDir + 2) % 4;
         genDir[fDir] = true;
     }
 
@@ -123,7 +124,32 @@ bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms, Uint8 fDir
                     }
                 }
             }
+            
+            for(int i = 0; i < 4; i++) {
+                if(genDir[i]) {
+                    for(int j = 0; j < CHUNK_SIZE; j++) {
+                        if(j <= ((int)(CHUNK_SIZE/2) + (int)(CHUNK_SIZE/32)) && j >= ((int)(CHUNK_SIZE/2) -1 -(int)(CHUNK_SIZE/32))) {
+                            switch(i) {
+                                case WEST:
+                                    c->tileType[j][0] = 1;
+                                    break;
+                                case NORTH:
+                                    c->tileType[0][j] = 1;
+                                    break;
+                                case EAST:
+                                    c->tileType[j][CHUNK_SIZE-1] = 1;
+                                    break;
+                                case SOUTH:
+                                    c->tileType[CHUNK_SIZE-1][j] = 1;
+                                    break;  
+                            }
+                        }
+                    }
+                }
+            }
     }
+
+    SDL_Log("Generated room");
 
 }
 

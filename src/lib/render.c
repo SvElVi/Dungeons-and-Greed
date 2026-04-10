@@ -43,7 +43,9 @@ int renderFrame(AppState state) {
 
     if(state->gameState == GAME_START){
         const char *message = "Press SPACE to start";
+        const char *title = "GREEDY DELVERS";
         int w = 0, h = 0;
+        float titleX, titleY;
         float x, y;
         const float scale = 4.0f;
 
@@ -52,10 +54,15 @@ int renderFrame(AppState state) {
         SDL_SetRenderScale(state->renderer, scale, scale);
         x = ((w / scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE * SDL_strlen(message)) / 2;
         y = ((h / scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE) / 2;
+        titleX = ((w / scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE * SDL_strlen(message)) / 2;
+        titleY = (h / scale) * 0.05f;
 
         /* Draw the message */
+        SDL_SetRenderDrawColor(state->renderer, 0, 0, 0, 255);
+        SDL_RenderClear(state->renderer);
         SDL_SetRenderDrawColor(state->renderer, 255, 255, 255, 255);
         SDL_RenderDebugText(state->renderer, x, y, message);
+        SDL_RenderDebugText(state->renderer, titleX, titleY, title);
         SDL_SetRenderScale(state->renderer, 1.0f, 1.0f);
     }
 

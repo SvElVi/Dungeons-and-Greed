@@ -184,24 +184,26 @@ bool renderDungeon(AppState state) {
             for(int x = 0; x < CHUNK_SIZE; x++) {
                 dstRect.x = state->camera.x + state->players[0].pos.x + (x+CHUNK_SIZE*((tempC - state->world->chunks) % rowSize))*TILE_SIZE*RENDER_SCALE - rowSize*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE/2;
                 dstRect.y = state->camera.y + state->players[0].pos.y + (y+CHUNK_SIZE*((int)(tempC - state->world->chunks) / rowSize))*TILE_SIZE*RENDER_SCALE - rowSize*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE/2;
-                
-                switch(tempC->tileType[y][x]) {
-                    case FLOOR:
-                        srcRect.x = TILE_SIZE*2;
-                        srcRect.y = TILE_SIZE*2;
-                        if(!SDL_RenderTexture(state->renderer, state->world->texture, &srcRect, &dstRect)) {
-                            SDL_Log("TILE RENDER ERROR: %d : %s", tempC->tileType[y][x], SDL_GetError());
-                            return 0;
-                        }
-                        break;
-                    case WALL:
-                        srcRect.x = TILE_SIZE*1;
-                        srcRect.y = TILE_SIZE*0;
-                        if(!SDL_RenderTexture(state->renderer, state->world->texture, &srcRect, &dstRect)) {
-                            SDL_Log("TILE RENDER ERROR: %d : %s", tempC->tileType[y][x], SDL_GetError());
-                            return 0;
-                        }
-                        break;
+
+                if(dstRect.x >= -(TILE_SIZE*RENDER_SCALE) && dstRect.y >= -(TILE_SIZE*RENDER_SCALE) && dstRect.x <= state->displayMode->w && dstRect.y <= state->displayMode->h) {
+                    switch(tempC->tileType[y][x]) {
+                        case FLOOR:
+                            srcRect.x = TILE_SIZE*2;
+                            srcRect.y = TILE_SIZE*2;
+                            if(!SDL_RenderTexture(state->renderer, state->world->texture, &srcRect, &dstRect)) {
+                                SDL_Log("TILE RENDER ERROR: %d : %s", tempC->tileType[y][x], SDL_GetError());
+                                return 0;
+                            }
+                            break;
+                        case WALL:
+                            srcRect.x = TILE_SIZE*1;
+                            srcRect.y = TILE_SIZE*0;
+                            if(!SDL_RenderTexture(state->renderer, state->world->texture, &srcRect, &dstRect)) {
+                                SDL_Log("TILE RENDER ERROR: %d : %s", tempC->tileType[y][x], SDL_GetError());
+                                return 0;
+                            }
+                            break;
+                    }
                 }
             }
         }

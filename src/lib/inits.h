@@ -40,6 +40,16 @@ typedef enum {
     CLASS_KNIGHT //5
 } Player_Class;
 
+typedef enum {
+    INIT,
+    IN_MENY,
+    CONNECTION,
+    CONNECTED,
+    IN_GAME,
+    EXIT
+
+} Client_State;
+
 typedef struct world *World;
 
 typedef struct {
@@ -75,6 +85,7 @@ struct appState {
     Uint16 framerate; //LOCAL
     Uint64 deltaTime; //LOCAL
     Uint64 lastTime; //LOCAL
+    Client_State clientState;
 
     Player players [MAX_PLAYERS]; //SEE STRUCT
     SDL_FRect camera; //LOCAL

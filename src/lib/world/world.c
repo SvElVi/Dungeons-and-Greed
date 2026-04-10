@@ -1,7 +1,7 @@
 #include <SDL3/SDL.h>
 #include "../inits.h"
 
-#define CHUNK_SIZE 16
+#define CHUNK_SIZE 32
 #define ROOM_TYPES 1
 #define TILE_SIZE 16
 
@@ -63,6 +63,8 @@ bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms, Uint8 fDir
     int dir = (int)hop, pDif;
     const int rowSize = (int)SDL_sqrt(*wSize);
     bool genDir[4] = {0}; //For generating exits, default all false
+
+    c->tileType[0][0] = 99; 
 
     if(fDir < 4) {
         fDir = (fDir + 2) % 4;
@@ -148,9 +150,6 @@ bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms, Uint8 fDir
                 }
             }
     }
-
-    SDL_Log("Generated room");
-
 }
 
 void generateDungeon(World w, Uint8* nrOfRooms) { //Room placements

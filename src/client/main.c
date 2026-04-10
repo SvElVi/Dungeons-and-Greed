@@ -42,7 +42,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
 
     state->world = createWorld(5, (Uint64)SDL_rand(0), state->renderer);
 
-    createDungeon(state->world, 20);
+    createDungeon(state->world, 5);
 
     return SDL_APP_CONTINUE;
 }

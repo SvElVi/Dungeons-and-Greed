@@ -137,8 +137,8 @@ void updateClass(Player* player, SDL_Renderer* renderer) {
 void updatePlayer(Player* player, Vector2D pos, Player_Class class, Stats stats, SDL_Renderer* renderer) {
     player->aniBox.w = PLAYER_SIZE;
     player->aniBox.h = PLAYER_SIZE;
-    player->hitBox.w = 32;
-    player->hitBox.h = 16;
+    player->hitBox.w = 22;
+    player->hitBox.h = 30;
     player->aniBox.x = 0;
     player->aniBox.y = 0;
     player->pos = pos;

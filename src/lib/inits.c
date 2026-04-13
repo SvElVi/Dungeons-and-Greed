@@ -25,6 +25,7 @@ int initDisplay(AppState state) {
         state->framerate = state->displayMode->refresh_rate+1;
     } else {
         state->framerate = FALLBACK_FRAMES_PER_SECOND;
+        SDL_Log("Could not find framerate, using fallback.");
     }
 
     SDL_SetDefaultTextureScaleMode(state->renderer, SDL_SCALEMODE_PIXELART);

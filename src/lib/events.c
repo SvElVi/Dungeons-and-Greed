@@ -40,14 +40,14 @@ int checkEvents(AppState state, SDL_Event* event) { //Check all in game events u
     if(quitEvent) return quitEvent;
 
     //Non quit functions
-    if(event->type == SDL_EVENT_KEY_DOWN && event->key.scancode == SDL_SCANCODE_SPACE) {
-        if(state->gameState == GAME_START) {
-            state->gameState = GAME_PLAYING;
-        }
-    }
-
     if(state->gameState == GAME_PLAYING){
         moveFlag(&(state->players[0].flags), keylist, &(state->computedEvent));
+    } else {
+        if(keylist[SDL_SCANCODE_SPACE]) {
+            if(state->gameState == GAME_START) {
+                state->gameState = GAME_PLAYING;
+            }
+        }
     }
 
     

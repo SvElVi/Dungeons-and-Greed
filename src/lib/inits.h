@@ -91,7 +91,7 @@ struct appState {
     SDL_Renderer *renderer; //LOCAL
     SDL_DisplayID displayID; //LOCAL
     const SDL_DisplayMode* displayMode; //LOCAL
-    Uint16 framerate; //LOCAL
+    float framerate; //LOCAL
     Uint64 deltaTime; //LOCAL
     Uint64 lastTime; //LOCAL
     Client_State clientState;

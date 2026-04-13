@@ -99,7 +99,7 @@ int renderFrame(AppState state) {
 
 int render(AppState state) { //current but should be changed to call back style, also with vsync and variable refreshrate
     Uint64 currentTime = SDL_GetTicks();
-    if(currentTime >= state->lastTime + (1000/state->framerate)){ //renderflag unused
+    if(currentTime >= state->lastTime + SDL_round(1000/state->framerate)){ //renderflag unused
         state->deltaTime = currentTime - state->lastTime;
         state->lastTime = currentTime;
         // if(state->renderFlag) {

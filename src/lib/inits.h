@@ -82,6 +82,7 @@ typedef enum GameState {
     //GAME_JOIN
     GAME_START,
     GAME_PLAYING,
+    GAME_PAUSE,
     GAME_OVER   
 } GameState;
 

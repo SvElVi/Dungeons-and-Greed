@@ -66,8 +66,8 @@ SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
     AppState state = (AppState)appstate;
 
     NETPacket packet = {260407};
-
-    NET_SendDatagram(state->udpSocket, state->serverIP, SERVER_PORT, (void *)&packet, sizeof(packet));
+    
+    sendDatagram(state, state->serverIP, SERVER_PORT, (void *)&packet);
 
     void *data;
     checkForDatagram(state, &data);

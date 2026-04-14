@@ -50,6 +50,10 @@ void checkForDatagram(AppState state, void **data) {
 
 }
 
+void sendDatagram(AppState state, NET_Address *ptrRxAdr, int portnumber, void *data) {
+    NET_SendDatagram(state->udpSocket, ptrRxAdr, portnumber, data, sizeof(data));
+}
+
 // Blocking
 int initAddress(NET_Address **adress, char *adr) {
     int addressCheck = 0;

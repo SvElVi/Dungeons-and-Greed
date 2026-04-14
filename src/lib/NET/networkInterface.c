@@ -8,12 +8,6 @@ enum {
     SUCCESS
 };
 
-int startSDLNet(void);
-void createUDPSocket(NET_DatagramSocket**, int);
-void destoryUDPSocket(NET_DatagramSocket* udpSocket);
-void checkForDatagram(AppState state, void*);
-int initAddress(NET_Address **adress, char*);
-
 int startSDLNet(void) {
     SDL_Log("Initializing SDL_Net...\n");
     if(NET_Init()) {
@@ -45,10 +39,11 @@ void destoryUDPSocket(NET_DatagramSocket* udpSocket) {
     SDL_Log("Destoryed UDP socket\n");
 }
 
-void checkForDatagram(AppState state, void *data) {
+void checkForDatagram(AppState state, void **data) {
     if(NET_ReceiveDatagram(state->udpSocket, state->udpPacket)) {
         if ((*state->udpPacket)!= NULL) {
-                memccpy(data, (*state->udpPacket)->buf, 1, sizeof((*state->udpPacket)->buf));
+                *data = SDL_calloc(1, sizeof((*state->udpPacket)->buf));
+                memccpy(*data, (*state->udpPacket)->buf, 1, sizeof((*state->udpPacket)->buf));
                 (*state->udpPacket) = NULL;
             }
     }

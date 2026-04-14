@@ -1,7 +1,7 @@
 #define SDL_MAIN_USE_CALLBACKS 1 //Flag to use callbacks
 #define SERVER_PORT 2000 // As of now... hardwired...
 #define CLIENT_PORT 2001 // As of now... hardwired...
-#define DEBUG 0
+#define DEBUG 1
 
 #include <SDL3/SDL_main.h>
 
@@ -65,14 +65,17 @@ SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
 {
     AppState state = (AppState)appstate;
 
-    int message = 260407;
+    NETPacket packet = {260407};
 
-    NET_SendDatagram(state->udpSocket, state->serverIP, SERVER_PORT, (void *)&message, sizeof(message));
+    NET_SendDatagram(state->udpSocket, state->serverIP, SERVER_PORT, (void *)&packet, sizeof(packet));
 
     void *data;
     checkForDatagram(state, &data);
 
-    if(DEBUG) SDL_Log("Vi fick data, och den är: %d\n", (int *)data);
+    if(DEBUG) SDL_Log("Vi fick data, och den är: %d\n", (*(NETPacket *)data).number);
+
+    // Dataläcka?
+    SDL_free(data);
 
     return render(state);
 }

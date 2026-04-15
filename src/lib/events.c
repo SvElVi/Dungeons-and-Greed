@@ -12,19 +12,18 @@ int QuitEvent(AppState state, SDL_Event* event, const bool* keylist) {
 }
 
 void moveFlag(Player_Flags* flags, const bool* keylist, bool* flag) { //Flag for player movement
-    if(keylist[SDL_SCANCODE_W] && !keylist[SDL_SCANCODE_S]) {
+    if((keylist[SDL_SCANCODE_W] || keylist[SDL_SCANCODE_UP]) && !(keylist[SDL_SCANCODE_S] || keylist[SDL_SCANCODE_DOWN])) {
         flags->moveY = -1;
-    } else if(keylist[SDL_SCANCODE_S] && !keylist[SDL_SCANCODE_W]) {
+    } else if((keylist[SDL_SCANCODE_S] || keylist[SDL_SCANCODE_DOWN]) && !(keylist[SDL_SCANCODE_W] || keylist[SDL_SCANCODE_UP])) {
         flags->moveY = 1;
     } else {
         flags->moveY = 0;
     }
 
-    if(keylist[SDL_SCANCODE_A] && !keylist[SDL_SCANCODE_D]) {
+    if((keylist[SDL_SCANCODE_A] || keylist[SDL_SCANCODE_LEFT]) && !(keylist[SDL_SCANCODE_D] || keylist[SDL_SCANCODE_RIGHT])) {
         flags->moveX = -1;
-    } else if(keylist[SDL_SCANCODE_D] && !keylist[SDL_SCANCODE_A]) {
+    } else if((keylist[SDL_SCANCODE_D] || keylist[SDL_SCANCODE_RIGHT]) && !(keylist[SDL_SCANCODE_A] || keylist[SDL_SCANCODE_LEFT])) {
         flags->moveX = 1;
-        
     } else {
         flags->moveX = 0;
     }

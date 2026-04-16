@@ -4,8 +4,6 @@
 #define DEBUG 1
 
 #include <SDL3/SDL_main.h>
-
-#include "server-lib/serverNet.h"
 #include "../lib/NET/networkInterface.h"
 #include "server-lib/serverNet.h"
 #include "../lib/player.h" //All dependencies of [x] included
@@ -17,6 +15,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
 
     AppState state = createAppState();
     if(!state) return SDL_APP_FAILURE;
+
+    state->gameState = GAME_START;
 
     if(initDisplay(state)) return SDL_APP_FAILURE; //Initiate and display window
     initCam(state);
@@ -49,7 +49,6 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
     state->world = createWorld(5, (Uint64)SDL_rand(0), state->renderer);
 
     createDungeon(state->world, 20);
-    renderDungeon(state);
 
     return SDL_APP_CONTINUE;
 }
@@ -65,41 +64,33 @@ SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
 {
     AppState state = (AppState)appstate;
 
-    NETPacket packet = {260407};
-    
+    NETPacket packet = {UPDATE_PLAYER, ZERO};
+
     sendDatagram(state, state->serverIP, SERVER_PORT, (void *)&packet);
 
     void *data;
     checkForDatagram(state, &data);
 
-    if(DEBUG) SDL_Log("Vi fick data, och den är: %d\n", (*(NETPacket *)data).number);
-
-    // Dataläcka?
-    SDL_free(data);
-
     return render(state);
 }
 
 
-void SDL_AppQuit(void *appstate, SDL_AppResult result) //Runs after returning APP_SUCESS and SDL_FAILURE
+void SDL_AppQuit(void *appstate, SDL_AppResult result) //Runs after returning APP_SUCESS or SDL_FAILURE
 {
     if(appstate != NULL) {
         AppState state = (AppState)appstate;
 
         destoryUDPSocket(state->udpSocket);
+        stopSDLNet();
 
         for (int x = 0; x < MAX_PLAYERS; x++) {
             if(state->players[x].texture) SDL_DestroyTexture(state->players[x].texture);
         }
-
         if(state->renderer) SDL_DestroyRenderer(state->renderer);
         if(state->window) SDL_DestroyWindow(state->window);
-        
         destroyWorld(state->world);
         SDL_free(state);
     }
-
-    NET_Quit();
 
     SDL_Log("Quit done");
     SDL_QuitSubSystem(SDL_INIT_VIDEO);

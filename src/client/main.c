@@ -1,12 +1,11 @@
 #define SDL_MAIN_USE_CALLBACKS 1 //Flag to use callbacks
 #define SERVER_PORT 2000 // As of now... hardwired...
 #define CLIENT_PORT 2001 // As of now... hardwired...
+#define DEBUG 1
 
 #include <SDL3/SDL_main.h>
 #include "../lib/NET/networkInterface.h"
 #include "../lib/player.h" //All dependencies of [x] included
-
-int status;
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once at the begining of the program
 {
@@ -25,9 +24,11 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
         return SDL_APP_FAILURE;
     }
 
-    state->udpSocket = NET_CreateDatagramSocket(NULL, CLIENT_PORT);
+    createUDPSocket(&state->udpSocket, SERVER_PORT);
 
     state->udpPacket = SDL_calloc(1, sizeof(NET_Datagram));
+
+    if (initAddress(&state->serverIP, "127.0.0.1") < 0) return SDL_APP_FAILURE;
 
     state->running = true; //Custom flag to mark the program as running
 
@@ -60,6 +61,13 @@ SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
 {
     AppState state = (AppState)appstate;
 
+    NETPacket packet = {UPDATE_PLAYER, ZERO};
+
+    sendDatagram(state, state->serverIP, SERVER_PORT, (void *)&packet);
+
+    void *data;
+    checkForDatagram(state, &data);
+
     return render(state);
 }
 
@@ -68,6 +76,10 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result) //Runs after returning AP
 {
     if(appstate != NULL) {
         AppState state = (AppState)appstate;
+
+        destoryUDPSocket(state->udpSocket);
+        stopSDLNet();
+
         for (int x = 0; x < MAX_PLAYERS; x++) {
             if(state->players[x].texture) SDL_DestroyTexture(state->players[x].texture);
         }

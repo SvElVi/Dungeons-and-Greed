@@ -11,7 +11,7 @@ enum {
 int startSDLNet(void) {
     SDL_Log("Initializing SDL_Net...\n");
     if(NET_Init()) {
-        SDL_Log("Succesfully started SDL_Net!\n");
+        SDL_Log("SDLNet was initialized!\n");
         return SUCCESS;
         
     } else {
@@ -21,7 +21,12 @@ int startSDLNet(void) {
     }
 }
 
-void createUDPSocket(NET_DatagramSocket **dataGramSocket ,int portNumber) {
+void stopSDLNet(void) {
+    NET_Quit();
+    SDL_Log("SDLNet was deinitialized!\n");
+}
+
+void createUDPSocket(NET_DatagramSocket **dataGramSocket, int portNumber) {
     *dataGramSocket = NET_CreateDatagramSocket(NULL, portNumber);
 
     if (*dataGramSocket != NULL) {

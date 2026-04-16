@@ -124,9 +124,9 @@ bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms, Uint8 fDir
             for(int y = 0; y < CHUNK_SIZE; y++) {
                 for(int x = 0; x < CHUNK_SIZE; x++) {
                     if(!x || x == (CHUNK_SIZE-1) || !y || y == (CHUNK_SIZE-1)) {
-                        c->tileType[y][x] = 2; //Wall
+                        c->tileType[y][x] = WALL;
                     } else {
-                        c->tileType[y][x] = 1; //Floor
+                        c->tileType[y][x] = FLOOR;
                     }
                 }
             }
@@ -193,56 +193,67 @@ void polishDungeon(World w) { //Fix tileset in dungeon
     Chunk* chunks = w->chunks;
     Chunk* tempC;
     bool dir[4] = {0};
+    Chunk* saveChunks = SDL_calloc(w->size*w->size, sizeof(Chunk));
 
     for(int i = 0; i < w->size; i++) {
         for(int y = 0; y < CHUNK_SIZE; y++) {
             for(int x = 0; x < CHUNK_SIZE; x++) {
-                for(int j = 0; j < 4; j++) {
-                    switch(j) {
-                        case WEST:
-                            tempC = chunks - 1;
+                if(chunks->tileType[y][x] != 0) {
+                    for(int j = 0; j < 4; j++) {
+                        switch(j) {
+                            case WEST:
+                                tempC = chunks - 1;
 
-                            if((x > 0 && tempC->tileType[y][x] == chunks->tileType[y][x]) || (x == 0 && tempC >= w->chunks && tempC->tileType[y][x] == chunks->tileType[y][x])) {
-                                dir[WEST] == true;
-                            } else {
-                                dir[WEST] == false;
-                            }
-                            break;
-                        case NORTH:
-                            tempC = chunks - rowSize;
+                                if((x > 0 && tempC->tileType[y][x] == chunks->tileType[y][x]) || (x == 0 && tempC >= w->chunks && tempC->tileType[y][x] == chunks->tileType[y][x])) {
+                                    dir[WEST] == true;
+                                } else {
+                                    dir[WEST] == false;
+                                }
+                                break;
+                            case NORTH:
+                                tempC = chunks - rowSize;
 
-                            if((y > 0 && tempC->tileType[y][x] == chunks->tileType[y][x]) || (y == 0 && tempC >= w->chunks && tempC->tileType[y][x] == chunks->tileType[y][x])) {
-                                dir[NORTH] == true;
-                            } else {
-                                dir[NORTH] == false;
-                            }
-                            break;
-                        case EAST:
-                            tempC = chunks + 1;
+                                if((y > 0 && tempC->tileType[y][x] == chunks->tileType[y][x]) || (y == 0 && tempC >= w->chunks && tempC->tileType[y][x] == chunks->tileType[y][x])) {
+                                    dir[NORTH] == true;
+                                } else {
+                                    dir[NORTH] == false;
+                                }
+                                break;
+                            case EAST:
+                                tempC = chunks + 1;
 
-                            if((x < (CHUNK_SIZE-1) && tempC->tileType[y][x] == chunks->tileType[y][x]) || (x == (CHUNK_SIZE-1) && tempC >= w->chunks && tempC->tileType[y][x] == chunks->tileType[y][x])) {
-                                dir[EAST] == true;
-                            } else {
-                                dir[EAST] == false;
-                            }
-                            break;
-                        case SOUTH:
-                            tempC = chunks + rowSize;
+                                if((x < (CHUNK_SIZE-1) && tempC->tileType[y][x] == chunks->tileType[y][x]) || (x == (CHUNK_SIZE-1) && tempC >= w->chunks && tempC->tileType[y][x] == chunks->tileType[y][x])) {
+                                    dir[EAST] == true;
+                                } else {
+                                    dir[EAST] == false;
+                                }
+                                break;
+                            case SOUTH:
+                                tempC = chunks + rowSize;
 
-                            if((y < (CHUNK_SIZE-1) && tempC->tileType[y][x] == chunks->tileType[y][x]) || (y == (CHUNK_SIZE-1) && tempC >= w->chunks && tempC->tileType[y][x] == chunks->tileType[y][x])) {
-                                dir[SOUTH] == true;
-                            } else {
-                                dir[SOUTH] == false;
-                            }
-                            break;
+                                if((y < (CHUNK_SIZE-1) && tempC->tileType[y][x] == chunks->tileType[y][x]) || (y == (CHUNK_SIZE-1) && tempC >= w->chunks && tempC->tileType[y][x] == chunks->tileType[y][x])) {
+                                    dir[SOUTH] == true;
+                                } else {
+                                    dir[SOUTH] == false;
+                                }
+                                break;
+                        }
+                    }
+
+                    if(dir[WEST] && dir[NORTH] && dir[EAST] && dir[SOUTH]) {
+                        if(chunks->tileType[y][x] == FLOOR) {
+                            saveChunks->tileType[y][x] == 6;
+                        } else if(chunks->tileType[y][x] == WALL) {
+                            saveChunks->tileType[y][x] == 78;
+                        }
                     }
                 }
-
-                //e
             }
         }
         chunks++;
     }
+
+    SDL_free(saveChunks);
 }
 
 void createDungeon(World w, Uint8 nrOfRooms) {
@@ -267,7 +278,7 @@ bool renderDungeon(AppState state) {
                 dstRect.x = state->camera.x + state->players[0].pos.x + (x+CHUNK_SIZE*((tempC - state->world->chunks) % rowSize))*TILE_SIZE*RENDER_SCALE - rowSize*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE/2;
                 dstRect.y = state->camera.y + state->players[0].pos.y + (y+CHUNK_SIZE*((int)(tempC - state->world->chunks) / rowSize))*TILE_SIZE*RENDER_SCALE - rowSize*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE/2;
 
-                if(dstRect.x >= -(TILE_SIZE*RENDER_SCALE) && dstRect.y >= -(TILE_SIZE*RENDER_SCALE) && dstRect.x <= state->displayMode->w && dstRect.y <= state->displayMode->h) {
+                if(dstRect.x >= -(TILE_SIZE*RENDER_SCALE) && dstRect.y >= -(TILE_SIZE*RENDER_SCALE) && dstRect.x <= state->displayMode->w && dstRect.y <= state->displayMode->h && tempC->tileType[y][x] != 0) {
                     switch(tempC->tileType[y][x]) {
                         case FLOOR:
                             srcRect.x = TILE_SIZE*2;

@@ -5,6 +5,7 @@
 
 #include <SDL3/SDL_main.h>
 #include "../lib/NET/networkInterface.h"
+#include "client-lib/clientNet.h"
 #include "../lib/player.h" //All dependencies of [x] included
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once at the begining of the program
@@ -29,6 +30,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
     state->udpPacket = SDL_calloc(1, sizeof(NET_Datagram));
 
     if (initAddress(&state->serverIP, "127.0.0.1") < 0) return SDL_APP_FAILURE;
+
+    createTCPClient(state->serverIP, SERVER_PORT, state);
 
     state->running = true; //Custom flag to mark the program as running
 
@@ -60,13 +63,31 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) //Runs on every eve
 SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
 {
     AppState state = (AppState)appstate;
+    void *data;
+    int test = 100;
+    data = &test;
 
-    NETPacket packet = {UPDATE_PLAYER, ZERO};
+    /* NETPacket packet = {UPDATE_PLAYER, ZERO};
 
     sendDatagram(state, state->serverIP, SERVER_PORT, (void *)&packet);
 
     void *data;
-    checkForDatagram(state, &data);
+    checkForDatagram(state, &data); */
+
+    switch(NET_GetConnectionStatus(state->tcpClient)) {
+        case NET_SUCCESS:
+            if (DEBUG) SDL_Log("Client TCP: Connected!\n");
+            break;
+
+        case NET_FAILURE:
+            if (DEBUG) SDL_Log("Client TCP: Disconnected!\n");
+            break;
+
+        default:
+            break;
+    }
+
+    sendTCPData(state, data);
 
     return render(state);
 }

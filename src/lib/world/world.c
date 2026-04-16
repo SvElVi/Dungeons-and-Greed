@@ -240,11 +240,13 @@ void polishDungeon(World w) { //Fix tileset in dungeon
                         }
                     }
 
-                    if(dir[WEST] && dir[NORTH] && dir[EAST] && dir[SOUTH]) {
-                        if(chunks->tileType[y][x] == FLOOR) {
-                            saveChunks->tileType[y][x] == 6;
-                        } else if(chunks->tileType[y][x] == WALL) {
-                            saveChunks->tileType[y][x] == 78;
+                    if(chunks->tileType[y][x] == FLOOR) {
+                        if(dir[WEST] && dir[NORTH] && dir[EAST] && dir[SOUTH]) {
+                            saveChunks->tileType[y][x] == 7;
+                        }
+                    } else if(chunks->tileType[y][x] == WALL) {
+                        if(dir[WEST] && dir[NORTH] && dir[EAST] && dir[SOUTH]) {
+                            saveChunks->tileType[y][x] == 79;
                         }
                     }
                 }

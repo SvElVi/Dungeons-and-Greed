@@ -218,44 +218,48 @@ void polishDungeon(World w) { //Fix tileset in dungeon
                                 tempC = chunks - rowSize;
 
                                 if((y > 0 && tempC->tileType[y][x] == chunks->tileType[y][x]) || (y == 0 && tempC >= w->chunks && tempC->tileType[y][x] == chunks->tileType[y][x])) {
-                                    dir[NORTH] == true;
+                                    dir[NORTH] = true;
                                 } else {
-                                    dir[NORTH] == false;
+                                    dir[NORTH] = false;
                                 }
                                 break;
                             case EAST:
                                 tempC = chunks + 1;
 
                                 if((x < (CHUNK_SIZE-1) && tempC->tileType[y][x] == chunks->tileType[y][x]) || (x == (CHUNK_SIZE-1) && tempC >= w->chunks && tempC->tileType[y][x] == chunks->tileType[y][x])) {
-                                    dir[EAST] == true;
+                                    dir[EAST] = true;
                                 } else {
-                                    dir[EAST] == false;
+                                    dir[EAST] = false;
                                 }
                                 break;
                             case SOUTH:
                                 tempC = chunks + rowSize;
 
                                 if((y < (CHUNK_SIZE-1) && tempC->tileType[y][x] == chunks->tileType[y][x]) || (y == (CHUNK_SIZE-1) && tempC >= w->chunks && tempC->tileType[y][x] == chunks->tileType[y][x])) {
-                                    dir[SOUTH] == true;
+                                    dir[SOUTH] = true;
                                 } else {
-                                    dir[SOUTH] == false;
+                                    dir[SOUTH] = false;
                                 }
                                 break;
                         }
                     }
 
                     if(chunks->tileType[y][x] == FLOOR) {
-                        // if(dir[WEST] && dir[NORTH] && dir[EAST] && dir[SOUTH]) {
-                        //     saveChunks->tileType[y][x] == 10;
-                        // }
+                        if(dir[WEST] && dir[NORTH] && dir[EAST] && dir[SOUTH]) {
+                            saveChunks->tileType[y][x] == 10;
+                        } else {
+                            tempS->tileType[y][x] = 11;
+                            // SDL_Log("Failed: W: %d, N: %d, E: %d, S: %d", dir[WEST], dir[NORTH], dir[EAST], dir[SOUTH]);
+                        }
 
-                        tempS->tileType[y][x] = 10;
+                        
                     } else if(chunks->tileType[y][x] == WALL) {
-                        // if(dir[WEST] && dir[NORTH] && dir[EAST] && dir[SOUTH]) {
-                        //     saveChunks->tileType[y][x] == 56;
-                        // }
-
-                        tempS->tileType[y][x] = 56;
+                        if(dir[WEST] && dir[NORTH] && dir[EAST] && dir[SOUTH]) {
+                            saveChunks->tileType[y][x] == 51;
+                        } else {
+                            tempS->tileType[y][x] = 56;
+                        }
+                        
                         // SDL_Log("%d", saveChunks->tileType[y][x]);
                     }
                 }
@@ -292,8 +296,8 @@ bool renderDungeon(AppState state) {
                 dstRect.y = state->camera.y + state->players[0].pos.y + (y+CHUNK_SIZE*((int)(tempC - state->world->chunks) / rowSize))*TILE_SIZE*RENDER_SCALE - rowSize*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE/2;
 
                 if(dstRect.x >= -(TILE_SIZE*RENDER_SCALE) && dstRect.y >= -(TILE_SIZE*RENDER_SCALE) && dstRect.x <= state->displayMode->w && dstRect.y <= state->displayMode->h && tempC->tileType[y][x] != 0) {
-                    srcRect.x = TILE_SIZE*((int)(tempC->tileType[y][x]%10));
-                    srcRect.y = TILE_SIZE*((int)(tempC->tileType[y][x]/10));
+                    srcRect.x = TILE_SIZE*((int)((tempC->tileType[y][x]-1)%10));
+                    srcRect.y = TILE_SIZE*((int)((tempC->tileType[y][x]-1)/10));
 
                     if(!SDL_RenderTexture(state->renderer, state->world->texture, &srcRect, &dstRect)) {
                         SDL_Log("TILE RENDER ERROR: %d : %s", tempC->tileType[y][x], SDL_GetError());

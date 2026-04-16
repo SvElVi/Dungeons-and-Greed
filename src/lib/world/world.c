@@ -26,8 +26,8 @@ struct world {
     SDL_Texture* texture;
 };
 
-void cleanChunks(Chunk* chunks, int n) { //Set all tilevalues in chunks to 0
-    for(int i = 0; i < n; i++) {
+void cleanChunks(Chunk* chunks, int size) { //Set all tilevalues in chunks to 0
+    for(int i = 0; i < size; i++) {
         for(int y = 0; y < CHUNK_SIZE; y++) {
             for(int x = 0; x < CHUNK_SIZE; x++) {
                 chunks->tileType[y][x] = 0;
@@ -42,7 +42,7 @@ World createWorld(int size, Uint64 seed, SDL_Renderer* renderer) {
     w->chunks = SDL_calloc(size*size, sizeof(Chunk));
     w->size = size*size;
 
-    SDL_Surface* wArt = SDL_LoadPNG("././img/2D Pixel Dungeon Asset Pack/character and tileset/Dungeon_Tileset.png");
+    SDL_Surface* wArt = SDL_LoadPNG("././img/Custom/Dungeon_Tileset.png");
     w->texture = SDL_CreateTextureFromSurface(renderer, wArt);
     SDL_DestroySurface(wArt);
 
@@ -193,7 +193,11 @@ void polishDungeon(World w) { //Fix tileset in dungeon
     Chunk* chunks = w->chunks;
     Chunk* tempC;
     bool dir[4] = {0};
-    Chunk* saveChunks = SDL_calloc(w->size*w->size, sizeof(Chunk));
+
+    Chunk* saveChunks = SDL_calloc(w->size, sizeof(Chunk));
+    Chunk* tempS = saveChunks;
+    cleanChunks(saveChunks, w->size);
+
 
     for(int i = 0; i < w->size; i++) {
         for(int y = 0; y < CHUNK_SIZE; y++) {
@@ -241,21 +245,28 @@ void polishDungeon(World w) { //Fix tileset in dungeon
                     }
 
                     if(chunks->tileType[y][x] == FLOOR) {
-                        if(dir[WEST] && dir[NORTH] && dir[EAST] && dir[SOUTH]) {
-                            saveChunks->tileType[y][x] == 7;
-                        }
+                        // if(dir[WEST] && dir[NORTH] && dir[EAST] && dir[SOUTH]) {
+                        //     saveChunks->tileType[y][x] == 10;
+                        // }
+
+                        tempS->tileType[y][x] = 10;
                     } else if(chunks->tileType[y][x] == WALL) {
-                        if(dir[WEST] && dir[NORTH] && dir[EAST] && dir[SOUTH]) {
-                            saveChunks->tileType[y][x] == 79;
-                        }
+                        // if(dir[WEST] && dir[NORTH] && dir[EAST] && dir[SOUTH]) {
+                        //     saveChunks->tileType[y][x] == 56;
+                        // }
+
+                        tempS->tileType[y][x] = 56;
+                        // SDL_Log("%d", saveChunks->tileType[y][x]);
                     }
                 }
             }
         }
         chunks++;
+        tempS++;
     }
 
-    SDL_free(saveChunks);
+    SDL_free(w->chunks);
+    w->chunks = saveChunks;
 }
 
 void createDungeon(World w, Uint8 nrOfRooms) {
@@ -281,23 +292,12 @@ bool renderDungeon(AppState state) {
                 dstRect.y = state->camera.y + state->players[0].pos.y + (y+CHUNK_SIZE*((int)(tempC - state->world->chunks) / rowSize))*TILE_SIZE*RENDER_SCALE - rowSize*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE/2;
 
                 if(dstRect.x >= -(TILE_SIZE*RENDER_SCALE) && dstRect.y >= -(TILE_SIZE*RENDER_SCALE) && dstRect.x <= state->displayMode->w && dstRect.y <= state->displayMode->h && tempC->tileType[y][x] != 0) {
-                    switch(tempC->tileType[y][x]) {
-                        case FLOOR:
-                            srcRect.x = TILE_SIZE*2;
-                            srcRect.y = TILE_SIZE*2;
-                            if(!SDL_RenderTexture(state->renderer, state->world->texture, &srcRect, &dstRect)) {
-                                SDL_Log("TILE RENDER ERROR: %d : %s", tempC->tileType[y][x], SDL_GetError());
-                                return 0;
-                            }
-                            break;
-                        case WALL:
-                            srcRect.x = TILE_SIZE*1;
-                            srcRect.y = TILE_SIZE*0;
-                            if(!SDL_RenderTexture(state->renderer, state->world->texture, &srcRect, &dstRect)) {
-                                SDL_Log("TILE RENDER ERROR: %d : %s", tempC->tileType[y][x], SDL_GetError());
-                                return 0;
-                            }
-                            break;
+                    srcRect.x = TILE_SIZE*((int)(tempC->tileType[y][x]%10));
+                    srcRect.y = TILE_SIZE*((int)(tempC->tileType[y][x]/10));
+
+                    if(!SDL_RenderTexture(state->renderer, state->world->texture, &srcRect, &dstRect)) {
+                        SDL_Log("TILE RENDER ERROR: %d : %s", tempC->tileType[y][x], SDL_GetError());
+                        return 0;
                     }
                 }
             }

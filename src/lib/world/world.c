@@ -189,7 +189,60 @@ void generateDungeon(World w, Uint8* nrOfRooms) { //Room placements
 }
 
 void polishDungeon(World w) { //Fix tileset in dungeon
+    const int rowSize = (int)SDL_sqrt(w->size);
+    Chunk* chunks = w->chunks;
+    Chunk* tempC;
+    bool dir[4] = {0};
 
+    for(int i = 0; i < w->size; i++) {
+        for(int y = 0; y < CHUNK_SIZE; y++) {
+            for(int x = 0; x < CHUNK_SIZE; x++) {
+                for(int j = 0; j < 4; j++) {
+                    switch(j) {
+                        case WEST:
+                            tempC = chunks - 1;
+
+                            if((x > 0 && tempC->tileType[y][x] == chunks->tileType[y][x]) || (x == 0 && tempC >= w->chunks && tempC->tileType[y][x] == chunks->tileType[y][x])) {
+                                dir[WEST] == true;
+                            } else {
+                                dir[WEST] == false;
+                            }
+                            break;
+                        case NORTH:
+                            tempC = chunks - rowSize;
+
+                            if((y > 0 && tempC->tileType[y][x] == chunks->tileType[y][x]) || (y == 0 && tempC >= w->chunks && tempC->tileType[y][x] == chunks->tileType[y][x])) {
+                                dir[NORTH] == true;
+                            } else {
+                                dir[NORTH] == false;
+                            }
+                            break;
+                        case EAST:
+                            tempC = chunks + 1;
+
+                            if((x < (CHUNK_SIZE-1) && tempC->tileType[y][x] == chunks->tileType[y][x]) || (x == (CHUNK_SIZE-1) && tempC >= w->chunks && tempC->tileType[y][x] == chunks->tileType[y][x])) {
+                                dir[EAST] == true;
+                            } else {
+                                dir[EAST] == false;
+                            }
+                            break;
+                        case SOUTH:
+                            tempC = chunks + rowSize;
+
+                            if((y < (CHUNK_SIZE-1) && tempC->tileType[y][x] == chunks->tileType[y][x]) || (y == (CHUNK_SIZE-1) && tempC >= w->chunks && tempC->tileType[y][x] == chunks->tileType[y][x])) {
+                                dir[SOUTH] == true;
+                            } else {
+                                dir[SOUTH] == false;
+                            }
+                            break;
+                    }
+                }
+
+                //e
+            }
+        }
+        chunks++;
+    }
 }
 
 void createDungeon(World w, Uint8 nrOfRooms) {

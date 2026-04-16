@@ -8,8 +8,6 @@
 #include "server-lib/serverNet.h"
 #include "../lib/player.h" //All dependencies of [x] included
 
-int status;
-
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once at the begining of the program
 {
     SDL_Log("\n\n --------------- Starting Greedy-Delvers ---------------\n");

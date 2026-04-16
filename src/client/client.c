@@ -68,6 +68,7 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result) //Runs after returning AP
         AppState state = (AppState)appstate;
 
         destoryUDPSocket(state->udpSocket);
+        stopSDLNet();
 
         for (int x = 0; x < MAX_PLAYERS; x++) {
             if(state->players[x].texture) SDL_DestroyTexture(state->players[x].texture);

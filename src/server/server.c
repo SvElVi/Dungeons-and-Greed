@@ -37,7 +37,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
 
     Vector2D tempVec = {0, 0};
     Stats tempStats = {0};
-    updatePlayer(&(state->players[0]), tempVec, CLASS_NONE, tempStats, state->renderer);
+    updatePlayer(&(state->players[0]), tempVec, CLASS_HUNTER, tempStats, state->renderer);
     tempVec.x = 50;
     updatePlayer(&(state->players[1]), tempVec, CLASS_NONE, tempStats, state->renderer);
     tempVec.x = 100;
@@ -65,14 +65,12 @@ SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
 {
     AppState state = (AppState)appstate;
 
-    NETPacket packet = {260407};
-    
+    NETPacket packet = {UPDATE_PLAYER, ZERO};
+
     sendDatagram(state, state->serverIP, SERVER_PORT, (void *)&packet);
 
     void *data;
     checkForDatagram(state, &data);
-
-    if(DEBUG) SDL_Log("Vi fick data, och den är: %d\n", (*(NETPacket *)data).number);
 
     // Dataläcka?
     SDL_free(data);
@@ -87,6 +85,7 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result) //Runs after returning AP
         AppState state = (AppState)appstate;
 
         destoryUDPSocket(state->udpSocket);
+        stopSDLNet();
 
         for (int x = 0; x < MAX_PLAYERS; x++) {
             if(state->players[x].texture) SDL_DestroyTexture(state->players[x].texture);

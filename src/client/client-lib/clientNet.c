@@ -29,9 +29,33 @@ void sendTCPData(AppState state, void *data) {
 }
 
 void clientTCPHandshake(AppState state) {
+    SDL_Log("TEST!");
+    NETPacket packet = {REQUESTING_PLAYER_ID, 0};
+
+    void *data;
+    data = SDL_calloc(1, sizeof(packet));
+
+    *(NETPacket *)data = packet;
+    
+
+    sendTCPData(state, data);
+    SDL_free(data);
 
 }
 
-int handshakeDone(AppState state) {
-    return 1;
+NET_Status handshakeDone(AppState state) {
+    void *data = NULL;
+
+    NET_ReadFromStreamSocket(state->tcpClient, data, sizeof(NETPacket));
+
+    if (data != NULL) {
+        NETPacket packet = (*(NETPacket *)data);
+
+        if (packet.command == APPROVED_PLAYER) {
+            SDL_Log("Server: You're playerID is: %d\n", packet.PlayerID);
+            return NET_SUCCESS;
+        }
+
+        return NET_FAILURE;
+    }
 }

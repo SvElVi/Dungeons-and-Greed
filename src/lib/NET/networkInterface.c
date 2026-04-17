@@ -3,20 +3,15 @@
 #define RESOLVE_ADDRESS_TIMEOUT 5000
 #define DEBUG 1
 
-enum {
-    FAIL,
-    SUCCESS
-};
-
 int startSDLNet(void) {
     SDL_Log("Initializing SDL_Net...\n");
     if(NET_Init()) {
         SDL_Log("SDLNet was initialized!\n");
-        return SUCCESS;
+        return NET_SUCCESS;
         
     } else {
         SDL_Log("Fatal error: SDL_Net failed to start!\n");
-        return FAIL;
+        return NET_FAILURE;
 
     }
 }

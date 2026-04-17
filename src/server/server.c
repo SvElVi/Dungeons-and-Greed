@@ -21,9 +21,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
     if(initDisplay(state)) return SDL_APP_FAILURE; //Initiate and display window
     initCam(state);
 
-    if(!startSDLNet()) {
-        return SDL_APP_FAILURE;
-    }
+    if(startSDLNet() == NET_FAILURE) return SDL_APP_FAILURE;
+    
 
     createUDPSocket(&state->udpSocket, SERVER_PORT);
 

@@ -19,14 +19,10 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
     state->gameState = GAME_INIT;
     if(!state) return SDL_APP_FAILURE;
 
-    state->gameState = GAME_START;
-
     if(initDisplay(state)) return SDL_APP_FAILURE; //Initiate and display window
     initCam(state);
 
-    if(!startSDLNet()) {
-        return SDL_APP_FAILURE;
-    }
+    if(startSDLNet() == NET_FAILURE) return SDL_APP_FAILURE;
 
     createUDPSocket(&state->udpSocket, SERVER_PORT);
 
@@ -65,12 +61,14 @@ SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
     
     switch (state->gameState) {
         case GAME_INIT:
+            SDL_Log("GAME_INIT\n");
             state->gameState = GAME_MENY;
             break;
 
         case GAME_MENY:
             // Meny passar bra att fixa här, oavsett vart i koden den ligger...
             state->gameState = GAME_TCP_INIT;
+            SDL_Log("GAME_MENY\n");
             break;
 
         case GAME_TCP_INIT:
@@ -78,6 +76,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
                 createTCPClient(state->serverIP, SERVER_PORT, state);
             }
             state->gameState = GAME_TCP_HANDSHAKE;
+            SDL_Log("GAME_TCP_INIT\n");
             break;
 
         case GAME_TCP_HANDSHAKE:
@@ -85,13 +84,17 @@ SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
                 clientTCPHandshake(state);
                 state->gameState = GAME_TCP_VERIFYING_HANDSHAKE;
             }
+            SDL_Log("GAME_TCP_HANDSHAKE\n");
             break;
 
         case GAME_TCP_VERIFYING_HANDSHAKE:
-            if (handshakeDone(state)) state->gameState = GAME_START;
+            if (handshakeDone(state) == NET_SUCCESS) state->gameState = GAME_START;
+            SDL_Log("GAME_TCP_VER\n");
+            state->gameState = GAME_START;
             break;
 
         case GAME_START:
+            SDL_Log("GAME_START\n");
             state->gameState = GAME_PLAYING;
             break;
 

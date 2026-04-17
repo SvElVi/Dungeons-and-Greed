@@ -41,14 +41,12 @@ typedef enum {
 } Player_Class;
 
 typedef enum {
-    INIT,
-    IN_MENY,
-    CONNECTION,
-    CONNECTED,
-    IN_GAME,
-    EXIT
-
-} Client_State;
+    INIT_OF_SERVER,
+    WAITING_FOR_PLAYERS,
+    STARTING_GAME,
+    GAME_ONGOING,
+    SERVER_CLEANUP
+} ServerState;
 
 typedef struct world *World;
 
@@ -75,7 +73,14 @@ typedef struct {
     SDL_FRect aniBox; //LOCAL
     direction facing; //SYNC MULTIPLAYER
     SDL_FlipMode flip; //SYNC MULTIPLAYER
+    NET_StreamSocket **playerStreamSocket;
 } Player;
+
+typedef struct {
+    int amount;
+    Player players[MAX_PLAYERS];
+
+} ConnectedPlayers;
 
 typedef enum GameState {
     //GAME_HOST
@@ -94,7 +99,7 @@ struct appState {
     float framerate; //LOCAL
     Uint64 deltaTime; //LOCAL
     Uint64 lastTime; //LOCAL
-    Client_State clientState;
+    ServerState serverState;
     GameState gameState;
 
     Player players [MAX_PLAYERS]; //SEE STRUCT
@@ -106,6 +111,8 @@ struct appState {
 
     //WORLD
     World world; //LOCAL
+
+    ConnectedPlayers connectedPlayers;
 
     // Server IP
     NET_Address *serverIP;

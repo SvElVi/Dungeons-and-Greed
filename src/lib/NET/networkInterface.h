@@ -23,6 +23,11 @@ typedef struct {
 
 } NETPacket;
 
+typedef struct {
+    int player;
+
+} HandshakePacket;
+
 // This function is executed once during initialization of the game, to initialize SDL_Net.
 int startSDLNet(void);
 

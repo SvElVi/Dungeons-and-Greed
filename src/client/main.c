@@ -74,19 +74,6 @@ SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
     void *data;
     checkForDatagram(state, &data); */
 
-    switch(NET_GetConnectionStatus(state->tcpClient)) {
-        case NET_SUCCESS:
-            if (DEBUG) SDL_Log("Client TCP: Connected!\n");
-            break;
-
-        case NET_FAILURE:
-            if (DEBUG) SDL_Log("Client TCP: Disconnected!\n");
-            break;
-
-        default:
-            break;
-    }
-
     sendTCPData(state, data);
 
     return render(state);

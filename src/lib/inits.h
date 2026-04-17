@@ -40,6 +40,7 @@ typedef enum {
     CLASS_KNIGHT //5
 } Player_Class;
 
+// Serverside state
 typedef enum {
     INIT_OF_SERVER,
     WAITING_FOR_PLAYERS,
@@ -76,9 +77,22 @@ typedef struct {
     NET_StreamSocket **playerStreamSocket;
 } Player;
 
+// Serverside player struct
 typedef struct {
-    int amount;
-    Player players[MAX_PLAYERS];
+    Vector2D pos;
+    Player_Flags flags;
+    Player_Class class;
+    Stats stats;
+    SDL_FRect hitBox;
+    direction facing;
+    SDL_FlipMode flip;
+    NET_StreamSocket **playerStreamSocket;
+} ServerPlayer;
+
+// Serverside players
+typedef struct {
+    int amountOfPlayers;
+    ServerPlayer players[MAX_PLAYERS];
 
 } ConnectedPlayers;
 
@@ -128,8 +142,6 @@ struct appState {
     NET_StreamSocket *tcpClient;
 
 };
-
-
 
 typedef struct appState *AppState;
 

@@ -270,14 +270,20 @@ void polishDungeon(World w) { //Fix tileset in dungeon
                         // SDL_Log("Failed: W: %d, N: %d, E: %d, S: %d", dir[WEST], dir[NORTH], dir[EAST], dir[SOUTH]);
 
                     } else if(chunks->tileType[y][x] == WALL) {
-                         if (!dir[SOUTH] && (dir[NORTH] || y == 0)) {
-                            tempS->tileType[y][x] = 56 + SDL_rand(3);
-                        } else if(!dir[NORTH]) { //Upper side
-                            tempS->tileType[y][x] = 42 + SDL_rand(6);
-                        } else if(!dir[EAST] && (dir[WEST] || x == 0)) {
-                            tempS->tileType[y][x] = 53 + SDL_rand(3);
-                        } else if(!dir[WEST]) {
-                            tempS->tileType[y][x] = 49 + SDL_rand(3);
+                         if (dir[WEST] && dir[EAST]) { //North wall
+                            if(chunks->tileType[y+1][x] == FLOOR) {
+                                tempS->tileType[y][x] = 56 + SDL_rand(3);
+                            } else if(chunks->tileType[y-1][x] == FLOOR) {
+                                tempS->tileType[y][x] = 42 + SDL_rand(6);
+                            }
+                            
+                            
+                        } else if(dir[NORTH] && dir[SOUTH]) {
+                            if(chunks->tileType[y][x+1] == FLOOR) {
+                                tempS->tileType[y][x] = 53 + SDL_rand(3);
+                            } else if(chunks->tileType[y][x-1] == FLOOR) {
+                                tempS->tileType[y][x] = 49 + SDL_rand(3);
+                            }
                         } else {
                             tempS->tileType[y][x] = 40;
                         }

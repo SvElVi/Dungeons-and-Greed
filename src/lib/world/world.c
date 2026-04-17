@@ -206,18 +206,18 @@ void polishDungeon(World w) { //Fix tileset in dungeon
                     for(int j = 0; j < 4; j++) {
                         switch(j) {
                             case WEST:
-                                tempC = chunks - 1;
+                                tempC = chunks - 1; 
 
-                                if((x > 0 && tempC->tileType[y][x] == chunks->tileType[y][x]) || (x == 0 && tempC >= w->chunks && tempC->tileType[y][x] == chunks->tileType[y][x])) {
-                                    dir[WEST] == true;
+                                if((x > 0 && chunks->tileType[y][x] == chunks->tileType[y][x-1]) || (x == 0 && tempC >= w->chunks && chunks->tileType[y][x] == tempC->tileType[y][CHUNK_SIZE-1])) {
+                                    dir[WEST] = true;
                                 } else {
-                                    dir[WEST] == false;
+                                    dir[WEST] = false;
                                 }
                                 break;
                             case NORTH:
                                 tempC = chunks - rowSize;
 
-                                if((y > 0 && tempC->tileType[y][x] == chunks->tileType[y][x]) || (y == 0 && tempC >= w->chunks && tempC->tileType[y][x] == chunks->tileType[y][x])) {
+                                if((y > 0 && chunks->tileType[y][x] == chunks->tileType[y-1][x]) || (y == 0 && tempC >= w->chunks && chunks->tileType[y][x] == tempC->tileType[CHUNK_SIZE-1][x])) {
                                     dir[NORTH] = true;
                                 } else {
                                     dir[NORTH] = false;
@@ -226,7 +226,7 @@ void polishDungeon(World w) { //Fix tileset in dungeon
                             case EAST:
                                 tempC = chunks + 1;
 
-                                if((x < (CHUNK_SIZE-1) && tempC->tileType[y][x] == chunks->tileType[y][x]) || (x == (CHUNK_SIZE-1) && tempC >= w->chunks && tempC->tileType[y][x] == chunks->tileType[y][x])) {
+                                if((x < (CHUNK_SIZE-1) && chunks->tileType[y][x] == chunks->tileType[y][x+1]) || (x == (CHUNK_SIZE-1) && tempC >= w->chunks && chunks->tileType[y][x] == tempC->tileType[y][0])) {
                                     dir[EAST] = true;
                                 } else {
                                     dir[EAST] = false;
@@ -235,7 +235,7 @@ void polishDungeon(World w) { //Fix tileset in dungeon
                             case SOUTH:
                                 tempC = chunks + rowSize;
 
-                                if((y < (CHUNK_SIZE-1) && tempC->tileType[y][x] == chunks->tileType[y][x]) || (y == (CHUNK_SIZE-1) && tempC >= w->chunks && tempC->tileType[y][x] == chunks->tileType[y][x])) {
+                                if((y < (CHUNK_SIZE-1) && chunks->tileType[y][x] == chunks->tileType[y+1][x]) || (y == (CHUNK_SIZE-1) && tempC >= w->chunks && chunks->tileType[y][x] == tempC->tileType[0][x])) {
                                     dir[SOUTH] = true;
                                 } else {
                                     dir[SOUTH] = false;
@@ -246,19 +246,19 @@ void polishDungeon(World w) { //Fix tileset in dungeon
 
                     if(chunks->tileType[y][x] == FLOOR) {
                         if(dir[WEST] && dir[NORTH] && dir[EAST] && dir[SOUTH]) {
-                            saveChunks->tileType[y][x] == 10;
+                            tempS->tileType[y][x] = 10;
                         } else {
                             tempS->tileType[y][x] = 11;
-                            // SDL_Log("Failed: W: %d, N: %d, E: %d, S: %d", dir[WEST], dir[NORTH], dir[EAST], dir[SOUTH]);
                         }
 
-                        
+                        // SDL_Log("Failed: W: %d, N: %d, E: %d, S: %d", dir[WEST], dir[NORTH], dir[EAST], dir[SOUTH]);
+
                     } else if(chunks->tileType[y][x] == WALL) {
-                        if(dir[WEST] && dir[NORTH] && dir[EAST] && dir[SOUTH]) {
-                            saveChunks->tileType[y][x] == 51;
-                        } else {
+                        // if(dir[WEST] && dir[NORTH] && dir[EAST] && dir[SOUTH]) {
+                        //     tempS->tileType[y][x] = 56;
+                        // } else {
                             tempS->tileType[y][x] = 56;
-                        }
+                        // }
                         
                         // SDL_Log("%d", saveChunks->tileType[y][x]);
                     }

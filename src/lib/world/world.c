@@ -271,18 +271,22 @@ void polishDungeon(World w) { //Fix tileset in dungeon
 
                     } else if(chunks->tileType[y][x] == WALL) {
                          if (dir[WEST] && dir[EAST]) { //North wall
-                            if(chunks->tileType[y+1][x] == FLOOR) {
+                            if((y < (CHUNK_SIZE-1) && chunks->tileType[y+1][x] == FLOOR) || (y == 0 && tempC >= w->chunks && tempC->tileType[y][x] == FLOOR)) {
                                 tempS->tileType[y][x] = 56 + SDL_rand(3);
-                            } else if(chunks->tileType[y-1][x] == FLOOR) {
+                            } else if((y > 0 && chunks->tileType[y-1][x] == FLOOR) || (y == (CHUNK_SIZE-1) && tempC >= w->chunks && tempC->tileType[y][x] == FLOOR)) {
                                 tempS->tileType[y][x] = 42 + SDL_rand(6);
+                            } else {
+                                tempS->tileType[y][x] = 40;
                             }
                             
                             
                         } else if(dir[NORTH] && dir[SOUTH]) {
-                            if(chunks->tileType[y][x+1] == FLOOR) {
+                            if((x < (CHUNK_SIZE-1) && chunks->tileType[y][x+1] == FLOOR) || (x == 0 && tempC >= w->chunks && tempC->tileType[y][x] == FLOOR)) {
                                 tempS->tileType[y][x] = 53 + SDL_rand(3);
-                            } else if(chunks->tileType[y][x-1] == FLOOR) {
+                            } else if((y > 0 && chunks->tileType[y][x-1] == FLOOR) || (x == (CHUNK_SIZE-1) && tempC >= w->chunks && tempC->tileType[y][x] == FLOOR)) {
                                 tempS->tileType[y][x] = 49 + SDL_rand(3);
+                            } else {
+                                tempS->tileType[y][x] = 40;
                             }
                         } else {
                             tempS->tileType[y][x] = 40;

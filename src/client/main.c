@@ -8,12 +8,15 @@
 #include "client-lib/clientNet.h"
 #include "../lib/player.h" //All dependencies of [x] included
 
+char ip[15] = "127.0.0.1";
+
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once at the begining of the program
 {
     SDL_Log("\n\n --------------- Starting Greedy-Delvers ---------------\n");
     SDL_InitSubSystem(SDL_INIT_VIDEO); //Also initilizes appevents
 
     AppState state = createAppState();
+    state->gameState = GAME_INIT;
     if(!state) return SDL_APP_FAILURE;
 
     state->gameState = GAME_START;
@@ -28,10 +31,6 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
     createUDPSocket(&state->udpSocket, SERVER_PORT);
 
     state->udpPacket = SDL_calloc(1, sizeof(NET_Datagram));
-
-    if (initAddress(&state->serverIP, "127.0.0.1") < 0) return SDL_APP_FAILURE;
-
-    createTCPClient(state->serverIP, SERVER_PORT, state);
 
     state->running = true; //Custom flag to mark the program as running
 
@@ -63,18 +62,49 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) //Runs on every eve
 SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
 {
     AppState state = (AppState)appstate;
-    void *data;
-    int test = 100;
-    data = &test;
+    
+    switch (state->gameState) {
+        case GAME_INIT:
+            state->gameState = GAME_MENY;
+            break;
 
-    /* NETPacket packet = {UPDATE_PLAYER, ZERO};
+        case GAME_MENY:
+            // Meny passar bra att fixa här, oavsett vart i koden den ligger...
+            state->gameState = GAME_TCP_INIT;
+            break;
 
-    sendDatagram(state, state->serverIP, SERVER_PORT, (void *)&packet);
+        case GAME_TCP_INIT:
+            if (initAddress(&state->serverIP, ip) < 0) {
+                createTCPClient(state->serverIP, SERVER_PORT, state);
+            }
+            state->gameState = GAME_TCP_HANDSHAKE;
+            break;
 
-    void *data;
-    checkForDatagram(state, &data); */
+        case GAME_TCP_HANDSHAKE:
+            if (checkStreamsocketConnection(state) == NET_SUCCESS) {
+                clientTCPHandshake(state);
+            }
+            state->gameState = GAME_TCP_VERIFYING_HANDSHAKE;
+            break;
 
-    sendTCPData(state, data);
+        case GAME_TCP_VERIFYING_HANDSHAKE:
+            if (handshakeDone(state)) state->gameState = GAME_START;
+            break;
+
+        case GAME_START:
+            state->gameState = GAME_PLAYING;
+            break;
+
+        case GAME_PLAYING:
+            break;
+
+        case GAME_OVER:
+            break;
+
+        default:
+            break;
+
+    }
 
     return render(state);
 }

@@ -6,8 +6,14 @@
 #include "../inits.h"
 
 typedef enum {
-    UPDATE_PLAYER
-} NETPacket_Command;
+    REQUESTING_PLAYER_ID,
+    APPROVED_PLAYER,
+    DENIED_PLAYER,
+    UPDATE_MY_LOCATION,
+    UPDATE_PLAYERS_LOCATIONS,
+    PLAYER_EXIT,
+    PLAYER_EXIT_APPROVED
+} NetCommands;
 
 typedef enum {
     ZERO,
@@ -18,15 +24,10 @@ typedef enum {
 } PlayerID;
 
 typedef struct {
-    NETPacket_Command command;
+    NetCommands command;
     PlayerID PlayerID;
 
 } NETPacket;
-
-typedef struct {
-    int player;
-
-} HandshakePacket;
 
 // This function is executed once during initialization of the game, to initialize SDL_Net.
 int startSDLNet(void);

@@ -83,8 +83,8 @@ SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
         case GAME_TCP_HANDSHAKE:
             if (checkStreamsocketConnection(state) == NET_SUCCESS) {
                 clientTCPHandshake(state);
+                state->gameState = GAME_TCP_VERIFYING_HANDSHAKE;
             }
-            state->gameState = GAME_TCP_VERIFYING_HANDSHAKE;
             break;
 
         case GAME_TCP_VERIFYING_HANDSHAKE:

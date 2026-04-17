@@ -245,22 +245,42 @@ void polishDungeon(World w) { //Fix tileset in dungeon
                     }
 
                     if(chunks->tileType[y][x] == FLOOR) {
-                        if(dir[WEST] && dir[NORTH] && dir[EAST] && dir[SOUTH]) {
-                            tempS->tileType[y][x] = 10;
+                        if(!dir[WEST] && !dir[NORTH] && dir[EAST] && dir[SOUTH]) { //Left upper corner
+                            tempS->tileType[y][x] = 1;
+                        } else if(dir[WEST] && !dir[NORTH] && dir[EAST] && dir[SOUTH]) { //Upper side
+                            tempS->tileType[y][x] = 2 + SDL_rand(6);
+                        } else if(dir[WEST] && !dir[NORTH] && !dir[EAST] && dir[SOUTH]) { //Right upper corner
+                            tempS->tileType[y][x] = 8;
+                        } else if(!dir[WEST] && dir[NORTH] && dir[EAST] && dir[SOUTH]) { //Left side
+                            tempS->tileType[y][x] = 9;
+                        } else if(dir[WEST] && dir[NORTH] && dir[EAST] && dir[SOUTH]) { //Middle
+                            tempS->tileType[y][x] = 10 + SDL_rand(18);
+                        } else if(dir[WEST] && dir[NORTH] && !dir[EAST] && dir[SOUTH]) { //Right side
+                            tempS->tileType[y][x] = 28;
+                        } else if(!dir[WEST] && dir[NORTH] && dir[EAST] && !dir[SOUTH]) { //Left bottom corner
+                            tempS->tileType[y][x] = 29;
+                        } else if(dir[WEST] && dir[NORTH] && dir[EAST] && !dir[SOUTH]) { //Bottom side
+                            tempS->tileType[y][x] = 30 + SDL_rand(2);
+                        } else if(dir[WEST] && dir[NORTH] && !dir[EAST] && !dir[SOUTH]) { //Right bottom corner
+                            tempS->tileType[y][x] = 32;
                         } else {
-                            tempS->tileType[y][x] = 11;
+                            tempS->tileType[y][x] = 40;
                         }
 
                         // SDL_Log("Failed: W: %d, N: %d, E: %d, S: %d", dir[WEST], dir[NORTH], dir[EAST], dir[SOUTH]);
 
                     } else if(chunks->tileType[y][x] == WALL) {
-                        // if(dir[WEST] && dir[NORTH] && dir[EAST] && dir[SOUTH]) {
-                        //     tempS->tileType[y][x] = 56;
-                        // } else {
-                            tempS->tileType[y][x] = 56;
-                        // }
-                        
-                        // SDL_Log("%d", saveChunks->tileType[y][x]);
+                         if (!dir[SOUTH] && (dir[NORTH] || y == 0)) {
+                            tempS->tileType[y][x] = 56 + SDL_rand(3);
+                        } else if(!dir[NORTH]) { //Upper side
+                            tempS->tileType[y][x] = 42 + SDL_rand(6);
+                        } else if(!dir[EAST] && (dir[WEST] || x == 0)) {
+                            tempS->tileType[y][x] = 53 + SDL_rand(3);
+                        } else if(!dir[WEST]) {
+                            tempS->tileType[y][x] = 49 + SDL_rand(3);
+                        } else {
+                            tempS->tileType[y][x] = 40;
+                        }
                     }
                 }
             }

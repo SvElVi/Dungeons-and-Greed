@@ -8,6 +8,11 @@
 #define RENDER_SCALE 2
 #define ANIMATION_TIME 4
 
+#define MAX_ENEMIES 20
+#define ENEMY_SIZE 48
+#define ENEMY_AGGRO_RANGE 150
+#define ENEMY_ATTACK_RANGE 20
+
 typedef struct {
     int x, y;
 } Vector2D;
@@ -76,6 +81,34 @@ typedef struct {
     SDL_FlipMode flip; //SYNC MULTIPLAYER
     NET_StreamSocket **playerStreamSocket;
 } Player;
+
+typedef enum {
+    ENEMY_SKELETON,
+    ENEMY_VAMPIRE,
+} Enemy_Type;
+
+typedef enum {
+    ENEMY_IDLE,
+    ENEMY_CHASE,
+    ENEMY_ATTACK,
+    ENEMY_DEAD
+} Enemy_State;
+
+typedef struct {
+    Vector2D pos;
+    SDL_FRect hitBox;
+    SDL_FRect aniBox;
+    SDL_Texture* texture;
+    SDL_FlipMode flip;
+    direction facing;
+
+    Enemy_Type type;
+    Enemy_State state;
+    Stats stats;
+
+    float moveX;
+    float moveY;
+} Enemy;
 
 // Serverside player struct
 typedef struct {

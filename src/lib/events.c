@@ -85,9 +85,10 @@ int checkEvents(AppState state, SDL_Event* event) { //Check all in game events u
                     state->hostIP[state->hostIPLen]='\0';
                 }
             }
-            else if(event->key.key == SDLK_RETURN){
+            else if(event->key.key == SDLK_RETURN && state->hostIPLen > 0){
                 SDL_StopTextInput(state->window);
                 SDL_Log("Connecting/hosting with IP: %s", state->hostIP);
+                state->gameState = GAME_TCP_INIT;
             }
             else{
                 char c = 0;

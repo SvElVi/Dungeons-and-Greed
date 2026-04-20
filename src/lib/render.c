@@ -10,7 +10,7 @@ int renderFrame(AppState state) {
         menu_screen(&state->mainMenu, state);
     }
     else if(state->gameState == GAME_PAUSE){
-        pause_screen(state);   
+        pause_screen(state, "Press SPACE to continue");   
     }
     else if(state->gameState == GAME_HOST){
         host_screen(state);
@@ -19,13 +19,13 @@ int renderFrame(AppState state) {
         join_screen(state);
     }
     else if(state->gameState == GAME_TCP_INIT){
-        host_screen(state);
+        pause_screen(state, "Connecting...");
     }
     else if(state->gameState == GAME_TCP_HANDSHAKE){
-        host_screen(state);
+        pause_screen(state, "Handshake...");
     }
     else if(state->gameState == GAME_TCP_VERIFYING_HANDSHAKE){
-        host_screen(state);
+        pause_screen(state, "Veryfying handshake...");
     }
     
     else if (state->gameState == GAME_PLAYING) {
@@ -135,8 +135,8 @@ void host_screen(AppState state){
     SDL_SetRenderScale(state->renderer, 1.0f, 1.0f);
 }
 
-void pause_screen(AppState state){
-       const char *message = "Press SPACE to continue";
+void pause_screen(AppState state, const char *inputMes){
+        const char *message = inputMes;
         const char *title = "GREEDY DELVERS";
         int w = 0, h = 0;
         float titleX, titleY;

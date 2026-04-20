@@ -7,6 +7,7 @@
 #define PLAYER_SIZE 48
 #define RENDER_SCALE 2
 #define ANIMATION_TIME 4
+#define PLAYER_NAME_MAX 30
 
 #define MAX_ENEMIES 20
 #define ENEMY_SIZE 48
@@ -64,6 +65,7 @@ typedef struct{
 
 typedef struct {
     int health;
+    int maxHealth;
     int mana;
     int defense;
     int attackPower;
@@ -86,6 +88,7 @@ typedef struct {
     direction facing; //SYNC MULTIPLAYER
     SDL_FlipMode flip; //SYNC MULTIPLAYER
     NET_StreamSocket **playerStreamSocket;
+    char name[PLAYER_NAME_MAX]; // player name string
 } Player;
 
 typedef enum {

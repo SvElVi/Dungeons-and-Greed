@@ -77,11 +77,11 @@ SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
             break;
 
         case GAME_HOST:
-            SDL_Log("GAME_HOST (waiting for IP input)\n");
+            //SDL_Log("GAME_HOST (waiting for IP input)\n");
             break;
-            
+
         case GAME_JOIN:
-            SDL_Log("GAME_JOIN (waiting for IP input)\n");
+            //SDL_Log("GAME_JOIN (waiting for IP input)\n");
             break;
 
         case GAME_TCP_INIT:

@@ -146,6 +146,11 @@ void updatePlayer(Player* player, Vector2D pos, Player_Class class, Stats stats,
     player->hitBox.y = player->pos.y;
     player->class = class;
     updateClass(player, renderer);
+
+    // temporary health reset when it goes down to 0
+    if (stats.health <= 0 ) {
+        stats.health = stats.maxHealth;
+    }
     player->stats = stats;
     // SDL_Log("Pos: %d Class: %d Stats: %d", pos, class, stats);
 }

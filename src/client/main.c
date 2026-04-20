@@ -37,11 +37,16 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
 
     Vector2D tempVec = {0, 0};
     Stats tempStats = {0};
+    tempStats.health = 100;
+    tempStats.maxHealth = 100;
     updatePlayer(&(state->players[0]), tempVec, CLASS_NONE, tempStats, state->renderer);
-    tempVec.x = 50;
+    SDL_strlcpy(state->players[0].name, "Player1", sizeof(state->players[0].name));
+    tempVec.x = 120;
     updatePlayer(&(state->players[1]), tempVec, CLASS_NONE, tempStats, state->renderer);
-    tempVec.x = 100;
+    SDL_strlcpy(state->players[1].name, "Player2", sizeof(state->players[1].name));
+    tempVec.x = 240;
     updatePlayer(&(state->players[2]), tempVec, CLASS_NONE, tempStats, state->renderer);
+    SDL_strlcpy(state->players[2].name, "Player3", sizeof(state->players[2].name));
 
     *appstate = state; //Share the appstate to callbacks below
     // state->renderFlag = 1;

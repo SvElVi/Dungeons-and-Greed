@@ -317,7 +317,11 @@ void polishDungeon(World w) { //Fix tileset in dungeon
                                 tempS->tileType[y][x] = 48;
                             } else if(y > 0 && x > 0 && chunks->tileType[y-1][x-1] == FLOOR) {
                                 tempS->tileType[y][x] = 41;
-                            } else {
+                            } else if(y < (CHUNK_SIZE-1) && x < (CHUNK_SIZE-1) && chunks->tileType[y+1][x+1] == FLOOR) {
+                                tempS->tileType[y][x] = 53 + SDL_rand(3);
+                            } else if(y < (CHUNK_SIZE-1) && x > 0 && chunks->tileType[y+1][x-1] == FLOOR) {
+                                tempS->tileType[y][x] = 49 + SDL_rand(3);
+                            }  else {
                                 tempS->tileType[y][x] = 40;
                             }
                         }

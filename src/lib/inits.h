@@ -56,6 +56,12 @@ typedef enum {
 
 typedef struct world *World;
 
+typedef struct{
+    const char *menuOptions[3];
+    int selected;
+    int count;
+} Menu;
+
 typedef struct {
     int health;
     int mana;
@@ -130,9 +136,10 @@ typedef struct {
 } ConnectedPlayers;
 
 typedef enum GameState {
-    //GAME_HOST
-    GAME_INIT,
     GAME_MENY,
+    GAME_HOST,
+    GAME_JOIN,
+    GAME_INIT,
     GAME_TCP_INIT,
     GAME_TCP_HANDSHAKE,
     GAME_TCP_VERIFYING_HANDSHAKE,
@@ -154,6 +161,7 @@ struct appState {
     Uint64 lastTime; //LOCAL
     ServerState serverState;
     GameState gameState;
+    Menu mainMenu;
 
     Player players [MAX_PLAYERS]; //SEE STRUCT
     SDL_FRect camera; //LOCAL
@@ -164,12 +172,12 @@ struct appState {
 
     //WORLD
     World world; //LOCAL
-
     ConnectedPlayers connectedPlayers;
 
     // Server IP
     NET_Address *serverIP;
-
+    char hostIP[16];
+    int hostIPLen;
     // UDP
     NET_DatagramSocket *udpSocket;
     NET_Datagram **udpPacket;

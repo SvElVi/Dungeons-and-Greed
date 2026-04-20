@@ -17,6 +17,11 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
 
     AppState state = createAppState();
     state->gameState = GAME_INIT;
+    state->mainMenu = (Menu){
+        .menuOptions = {"Join", "Host", "Quit(current start)"},
+        .selected = 0,
+        .count = 3
+    };
     if(!state) return SDL_APP_FAILURE;
 
     if(initDisplay(state)) return SDL_APP_FAILURE; //Initiate and display window
@@ -67,8 +72,16 @@ SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
 
         case GAME_MENY:
             // Meny passar bra att fixa här, oavsett vart i koden den ligger...
-            state->gameState = GAME_TCP_INIT;
+            //state->gameState = GAME_TCP_INIT;
             SDL_Log("GAME_MENY\n");
+            break;
+
+        case GAME_HOST:
+            SDL_Log("GAME_HOST (waiting for IP input)\n");
+            break;
+            
+        case GAME_JOIN:
+            SDL_Log("GAME_JOIN (waiting for IP input)\n");
             break;
 
         case GAME_TCP_INIT:

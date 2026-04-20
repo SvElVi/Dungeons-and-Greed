@@ -2,32 +2,138 @@
 #include <string.h>
 
 int renderFrame(AppState state) {
-    if(state->gameState == GAME_START){
-        const char *message = "Press SPACE to start";
-        const char *title = "GREEDY DELVERS";
-        int w = 0, h = 0;
-        float titleX, titleY;
-        float x, y;
-        const float scale = 4.0f;
 
-        /* Center the message and scale it up */
-        SDL_GetRenderOutputSize(state->renderer, &w, &h);
-        SDL_SetRenderScale(state->renderer, scale, scale);
-        x = ((w / scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE * SDL_strlen(message)) / 2;
-        y = ((h / scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE) / 2;
-        titleX = ((w / scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE * SDL_strlen(message)) / 2;
-        titleY = (h / scale) * 0.05f;
-
-        /* Draw the message */
-        SDL_SetRenderDrawColor(state->renderer, 0, 0, 0, 255);
-        SDL_RenderClear(state->renderer);
-        SDL_SetRenderDrawColor(state->renderer, 255, 255, 255, 255);
-        SDL_RenderDebugText(state->renderer, x, y, message);
-        SDL_RenderDebugText(state->renderer, titleX, titleY, title);
-        SDL_SetRenderScale(state->renderer, 1.0f, 1.0f);
+    if(state->gameState == GAME_MENY){
+        menu_screen(&state->mainMenu, state);
     }
     else if(state->gameState == GAME_PAUSE){
-        const char *message = "Press SPACE to continue";
+        pause_screen(state);   
+    }
+    else if(state->gameState == GAME_HOST){
+        host_screen(state);
+    }
+    else if(state->gameState == GAME_JOIN){
+        join_screen(state);
+    }
+    else if(state->gameState == GAME_TCP_INIT){
+        host_screen(state);
+    }
+    else if(state->gameState == GAME_TCP_HANDSHAKE){
+        host_screen(state);
+    }
+    else if(state->gameState == GAME_TCP_VERIFYING_HANDSHAKE){
+        host_screen(state);
+    }
+    
+    else if (state->gameState == GAME_PLAYING) {
+        renderGamePlay(state);
+    }
+    SDL_RenderPresent(state->renderer);
+    state->computedEvent = false;
+    
+    return SDL_APP_CONTINUE;
+}
+
+int render(AppState state) { //current but should be changed to call back style, also with vsync and variable refreshrate
+    Uint64 currentTime = SDL_GetTicks();
+    if(currentTime >= state->lastTime + SDL_round(1000/state->framerate)){ //renderflag unused
+        state->deltaTime = currentTime - state->lastTime;
+        state->lastTime = currentTime;
+        // if(state->renderFlag) {
+        if(state->gameState == GAME_PLAYING){
+            movement(&(state->players[0]), state->players, state->deltaTime);
+            animatePlayers(state->players, &(state->animationTime), state->framerate, &(state->computedEvent));
+        }
+        
+
+        if(renderFrame(state)) return SDL_APP_FAILURE;
+        // }
+    }
+    return SDL_APP_CONTINUE;
+}
+
+void menu_screen(Menu *menu, AppState state){
+    int w, h;
+    float titleX, titleY, menuY;
+    float x, y;
+    const float scale = 4.0f;
+    const char *title = "GREEDY DELVERS";
+    SDL_GetRenderOutputSize(state->renderer, &w, &h);
+
+    SDL_SetRenderScale(state->renderer, scale, scale);
+    SDL_SetRenderDrawColor(state->renderer, 0, 0, 0, 255);
+    SDL_RenderClear(state->renderer);
+    titleX = ((w / scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE * SDL_strlen(title)) / 2;
+    titleY = (h / scale) * 0.1f;    
+    SDL_SetRenderDrawColor(state->renderer, 255, 255, 255, 255);
+    SDL_RenderDebugText(state->renderer, titleX, titleY, title);
+    menuY= (h / scale) *0.4f;
+    for(int i = 0; i < menu->count; i++)
+    {
+        x = ((w / scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE* SDL_strlen(menu->menuOptions[i]))/2;
+        y = menuY + i *20;
+
+        if(i == menu->selected)
+        {
+            SDL_SetRenderDrawColor(state->renderer, 255, 255, 0, 255);
+        }
+        else
+        {
+            SDL_SetRenderDrawColor(state->renderer, 255, 255, 255, 255);
+        }
+        SDL_RenderDebugText(state->renderer, x, y, menu->menuOptions[i]);
+    }
+    SDL_SetRenderScale(state->renderer, 1.0f, 1.0f);
+}
+
+void join_screen(AppState state){
+    int w, h;
+    float  x, y;
+    const float scale = 4.0f;
+    const char *title = "ENTER IP HOST to join:";
+    SDL_GetRenderOutputSize(state->renderer, &w, &h);
+    SDL_SetRenderScale(state->renderer, scale, scale);
+    SDL_SetRenderDrawColor(state->renderer, 0, 0, 0, 255);
+    SDL_RenderClear(state->renderer);
+
+    x = ((w/ scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE * SDL_strlen(title)) /2;
+    y = (h/ scale) /2;
+
+    SDL_SetRenderDrawColor(state->renderer, 255, 255, 255, 255);
+    SDL_RenderDebugText(state->renderer, x, y, title);
+
+    y += 40;
+    x= ((w/ scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE *SDL_strlen(state->hostIP)) /2;
+
+    SDL_RenderDebugText(state->renderer, x, y, state->hostIP);
+    SDL_SetRenderScale(state->renderer, 1.0f, 1.0f);
+}
+
+void host_screen(AppState state){
+    int w, h;
+    float  x, y;
+    const float scale = 4.0f;
+    const char *title = "ENTER IP HOST";
+    SDL_GetRenderOutputSize(state->renderer, &w, &h);
+    SDL_SetRenderScale(state->renderer, scale, scale);
+    SDL_SetRenderDrawColor(state->renderer, 0, 0, 0, 255);
+    SDL_RenderClear(state->renderer);
+
+    x = ((w/ scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE * SDL_strlen(title)) /2;
+    y = (h/ scale) /2;
+
+    SDL_SetRenderDrawColor(state->renderer, 255, 255, 255, 255);
+    SDL_RenderDebugText(state->renderer, x, y, title);
+
+    y += 40;
+    x= ((w/ scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE *SDL_strlen(state->hostIP)) /2;
+
+    SDL_RenderDebugText(state->renderer, x, y, state->hostIP);
+    SDL_SetRenderScale(state->renderer, 1.0f, 1.0f);
+}
+
+void pause_screen(AppState state){
+       const char *message = "Press SPACE to continue";
         const char *title = "GREEDY DELVERS";
         int w = 0, h = 0;
         float titleX, titleY;
@@ -50,8 +156,9 @@ int renderFrame(AppState state) {
         SDL_RenderDebugText(state->renderer, titleX, titleY, title);
         SDL_SetRenderScale(state->renderer, 1.0f, 1.0f);
     } 
-    else {
-        SDL_FRect temp;
+
+int renderGamePlay(AppState state){
+            SDL_FRect temp;
         Vector2D tempV, renderOrder[MAX_PLAYERS];
         SDL_SetRenderDrawColor(state->renderer,37,19,26,1);
         SDL_RenderClear(state->renderer);
@@ -90,27 +197,3 @@ int renderFrame(AppState state) {
             }
         }
     }
-
-    SDL_RenderPresent(state->renderer);
-    state->computedEvent = false;
-
-    return SDL_APP_CONTINUE;
-}
-
-int render(AppState state) { //current but should be changed to call back style, also with vsync and variable refreshrate
-    Uint64 currentTime = SDL_GetTicks();
-    if(currentTime >= state->lastTime + SDL_round(1000/state->framerate)){ //renderflag unused
-        state->deltaTime = currentTime - state->lastTime;
-        state->lastTime = currentTime;
-        // if(state->renderFlag) {
-        if(state->gameState == GAME_PLAYING){
-            movement(&(state->players[0]), state->players, state->deltaTime);
-            animatePlayers(state->players, &(state->animationTime), state->framerate, &(state->computedEvent));
-        }
-        
-
-        if(renderFrame(state)) return SDL_APP_FAILURE;
-        // }
-    }
-    return SDL_APP_CONTINUE;
-}

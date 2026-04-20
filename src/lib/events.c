@@ -1,5 +1,6 @@
 #include <SDL3/SDL.h>
 #include "inits.h"
+#include "render.h"
 
 int QuitEvent(AppState state, SDL_Event* event, const bool* keylist) {
     if (keylist[SDL_SCANCODE_ESCAPE] ||
@@ -38,6 +39,71 @@ int checkEvents(AppState state, SDL_Event* event) { //Check all in game events u
     int quitEvent = QuitEvent(state, event, keylist);
     if(quitEvent) return quitEvent;
 
+    if(state->gameState ==GAME_MENY){
+        static bool upLast = false;
+        static bool downLast = false;
+        static bool enterLast = false;
+
+        if((keylist[SDL_SCANCODE_UP] || keylist[SDL_SCANCODE_W]) && !upLast){
+            state->mainMenu.selected--;
+            if(state->mainMenu.selected < 0) state->mainMenu.selected = state->mainMenu.count -1;
+        }
+        if((keylist[SDL_SCANCODE_DOWN] || keylist[SDL_SCANCODE_S]) && !downLast){
+            state->mainMenu.selected++;
+            if(state->mainMenu.selected >= state->mainMenu.count) state->mainMenu.selected = 0;
+        }
+        if(keylist[SDL_SCANCODE_RETURN] && !enterLast){
+            switch(state->mainMenu.selected){
+                case 0:
+                    state->gameState =GAME_JOIN;
+                    state->hostIPLen = 0;
+                    state->hostIP[0] = '\0';
+                    SDL_StartTextInput(state->window);
+                break;
+                case 1:
+                state->gameState = GAME_HOST;
+                state->hostIPLen = 0;
+                state->hostIP[0] = '\0';
+                SDL_StartTextInput(state->window);
+
+                break;
+                case 2:
+                state->gameState = GAME_PLAYING;
+                break;
+            }
+        }
+        upLast = keylist[SDL_SCANCODE_UP];
+        downLast = keylist[SDL_SCANCODE_DOWN];
+        enterLast = keylist[SDL_SCANCODE_RETURN];
+    }
+    if(state->gameState == GAME_HOST || state->gameState == GAME_JOIN){
+
+        if(event->type == SDL_EVENT_KEY_DOWN){
+            if(event->key.key == SDLK_BACKSPACE){
+                if(state->hostIPLen > 0){
+                    state->hostIPLen--;
+                    state->hostIP[state->hostIPLen]='\0';
+                }
+            }
+            else if(event->key.key == SDLK_RETURN){
+                SDL_StopTextInput(state->window);
+                SDL_Log("Connecting/hosting with IP: %s", state->hostIP);
+            }
+            else{
+                char c = 0;
+                if(event->key.key >= SDLK_0 && event->key.key <= SDLK_9){
+                    c = '0' + (event->key.key - SDLK_0);
+                }
+                else if(event->key.key == SDLK_PERIOD){
+                    c = '.';
+                }
+                if(c != 0 && state->hostIPLen <16){
+                    state->hostIP[state->hostIPLen++] = c;
+                    state->hostIP[state->hostIPLen] = '\0';
+                }
+            }
+            }
+        }
     //Non quit functions
     if(state->gameState == GAME_PLAYING){
         moveFlag(&(state->players[0].flags), keylist, &(state->computedEvent));

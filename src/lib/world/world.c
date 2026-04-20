@@ -271,9 +271,9 @@ void polishDungeon(World w) { //Fix tileset in dungeon
 
                     } else if(chunks->tileType[y][x] == WALL) {
                          if (dir[WEST] && dir[EAST]) { //North wall
-                            if((y < (CHUNK_SIZE-1) && chunks->tileType[y+1][x] == FLOOR) || (y == 0 && tempC >= w->chunks && tempC->tileType[y][x] == FLOOR)) { //Point up wall
+                            if((y < (CHUNK_SIZE-1) && chunks->tileType[y+1][x] == FLOOR) || (y == 0 && tempC >= w->chunks && tempC->tileType[y][x] == FLOOR)) { //Point down wall
                                 tempS->tileType[y][x] = 56 + SDL_rand(3);
-                            } else if((y > 0 && chunks->tileType[y-1][x] == FLOOR) || (y == (CHUNK_SIZE-1) && tempC >= w->chunks && tempC->tileType[y][x] == FLOOR)) { //Point down wall
+                            } else if((y > 0 && chunks->tileType[y-1][x] == FLOOR) || (y == (CHUNK_SIZE-1) && tempC >= w->chunks && tempC->tileType[y][x] == FLOOR)) { //Point up wall
                                 tempS->tileType[y][x] = 42 + SDL_rand(6);
                             } else if(y > 0 && x < (CHUNK_SIZE-1) && chunks->tileType[y-1][x+1] == FLOOR) {
                                 tempS->tileType[y][x] = 48;
@@ -305,7 +305,21 @@ void polishDungeon(World w) { //Fix tileset in dungeon
                                 tempS->tileType[y][x] = 40;
                             }
                         } else {
-                            tempS->tileType[y][x] = 40;
+                            if((!dir[WEST] && !dir[NORTH] && dir[SOUTH] && dir[EAST]) && (y > 0 && x > 0 && chunks->tileType[y-1][x-1] == FLOOR)){
+                                tempS->tileType[y][x] = 60 + SDL_rand(2);  
+                            } else if((dir[WEST] && !dir[NORTH] && dir[SOUTH] && !dir[EAST]) && (y > 0 && x < (CHUNK_SIZE-1) && chunks->tileType[y-1][x+1] == FLOOR)){
+                                tempS->tileType[y][x] = 62 + SDL_rand(2);  
+                            } else if((!dir[WEST] && dir[NORTH] && !dir[SOUTH] && dir[EAST]) && (y < (CHUNK_SIZE-1) && x > 0 && chunks->tileType[y+1][x-1] == FLOOR)) {
+                                tempS->tileType[y][x] = 56 + SDL_rand(3);
+                            } else if((dir[WEST] && dir[NORTH] && !dir[SOUTH] && !dir[EAST]) && (y < (CHUNK_SIZE-1) && x < (CHUNK_SIZE-1) && chunks->tileType[y+1][x+1] == FLOOR)) {
+                                tempS->tileType[y][x] = 56 + SDL_rand(3);
+                            } else if(y > 0 && x < (CHUNK_SIZE-1) && chunks->tileType[y-1][x+1] == FLOOR) {
+                                tempS->tileType[y][x] = 48;
+                            } else if(y > 0 && x > 0 && chunks->tileType[y-1][x-1] == FLOOR) {
+                                tempS->tileType[y][x] = 41;
+                            } else {
+                                tempS->tileType[y][x] = 40;
+                            }
                         }
                     }
                 }

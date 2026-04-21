@@ -5,7 +5,7 @@
 
 #define MAX_PLAYERS 5
 #define PLAYER_SIZE 48
-#define RENDER_SCALE 2
+#define RENDER_SCALE 4
 #define ANIMATION_TIME 4
 #define PLAYER_NAME_MAX 30
 

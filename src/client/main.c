@@ -7,6 +7,7 @@
 #include "../lib/NET/networkInterface.h"
 #include "client-lib/clientNet.h"
 #include "../lib/player.h" //All dependencies of [x] included
+#include "../lib/enemy.h"  //All dependencies of [x] included
 
 char ip[15] = "127.0.0.1";
 
@@ -48,6 +49,10 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
     updatePlayer(&(state->players[2]), tempVec, CLASS_NONE, tempStats, state->renderer);
     SDL_strlcpy(state->players[2].name, "Player3", sizeof(state->players[2].name));
 
+    // enemy
+    Vector2D enemyPos = {200, 100};
+    Stats enemyStats = {100, 0, 5, 10, 1};
+    updateEnemy(&state->enemies[0], enemyPos, ENEMY_SKELETON, enemyStats, state->renderer);
     *appstate = state; //Share the appstate to callbacks below
     // state->renderFlag = 1;
 

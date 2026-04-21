@@ -241,7 +241,7 @@ static bool drawHpBarAbove(SDL_Renderer *renderer, const Stats *stats, const SDL
 {
     
     float barHeight = 4.0f * RENDER_SCALE;
-    float barWidth = spriteRect->w * 0.75;
+    float barWidth = spriteRect->w * 0.5;
 
     float hpRatio = 0.0f;
     if (stats->maxHealth > 0) {

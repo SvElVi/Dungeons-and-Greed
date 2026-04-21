@@ -29,7 +29,10 @@ int initDisplay(AppState state) {
     }
 
     SDL_SetDefaultTextureScaleMode(state->renderer, SDL_SCALEMODE_PIXELART);
-    SDL_SetRenderVSync(state->renderer, 1);
+    if(!SDL_SetRenderVSync(state->renderer, SDL_RENDERER_VSYNC_ADAPTIVE)) {
+        SDL_SetRenderVSync(state->renderer, 1);
+    }
+    
 
     return SDL_APP_CONTINUE;
 }

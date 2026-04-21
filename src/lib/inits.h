@@ -89,6 +89,7 @@ typedef struct {
     SDL_FlipMode flip; //SYNC MULTIPLAYER
     NET_StreamSocket **playerStreamSocket;
     char name[PLAYER_NAME_MAX]; // player name string
+    Uint32 enemyCollisionTimer; // ms counter for character colliding with emeny
 } Player;
 
 typedef enum {

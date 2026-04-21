@@ -43,7 +43,7 @@ int render(AppState state) { //current but should be changed to call back style,
         state->lastTime = currentTime;
         // if(state->renderFlag) {
         if(state->gameState == GAME_PLAYING){
-            movement(&(state->players[0]), state->players, state->deltaTime);
+            movement(&(state->players[0]), state->players, state->enemies, state->deltaTime);
             animatePlayers(state->players, &(state->animationTime), state->framerate, &(state->computedEvent));
 
             for (int i = 0; i < MAX_ENEMIES; i++)
@@ -51,6 +51,7 @@ int render(AppState state) { //current but should be changed to call back style,
                 if (state->enemies[i].state != ENEMY_DEAD)
                     enemyMovement(&state->enemies[i], state->players, state->deltaTime);
             }
+            playerEnemyCollision(&(state->players[0]), state->enemies, state->deltaTime);
             animateEnemies(state->enemies, &state->enemyAnimationTime, state->framerate, &state->computedEvent);
         }
         
@@ -254,7 +255,7 @@ static bool drawHpBarAbove(SDL_Renderer *renderer, const Stats *stats, const SDL
 
     SDL_FRect backGroundRect = {
         spriteRect->x + (spriteRect->w - barWidth) * 0.5f,
-        spriteRect->y + 4*barHeight,
+        spriteRect->y + 4*barHeight,    // adding y axel decrease the distance gap
         barWidth,
         barHeight
     };

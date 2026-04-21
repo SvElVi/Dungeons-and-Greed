@@ -1,4 +1,5 @@
 #include "inits.h"
+#include "player.h"
 #define SPEED 0.25*RENDER_SCALE
 
 bool collision(SDL_FRect a, SDL_FRect b)    //beräkna rektangel a med rektangel b
@@ -16,7 +17,7 @@ bool collision(SDL_FRect a, SDL_FRect b)    //beräkna rektangel a med rektangel
     }
 }
 
-bool willCollide(Player* player, Player players[MAX_PLAYERS], float futureX, float futureY){
+bool willCollide(Player* player, Player players[MAX_PLAYERS], Enemy enemies[MAX_ENEMIES], float futureX, float futureY){
     SDL_FRect futurePos = player->hitBox; //Testar framtida position för att minska buggar
     futurePos.x = futureX;
     futurePos.y = futureY;
@@ -25,21 +26,28 @@ bool willCollide(Player* player, Player players[MAX_PLAYERS], float futureX, flo
     {
         if(&players[i] == player)continue;  //Hoppa dig själv
         if(collision(futurePos, players[i].hitBox)) //Kolla din framtida position med hitbox av andra spelare
-        return true;
+            return true;
+    }
+    for(int i = 0; i < MAX_ENEMIES;i++)
+    {
+        if(collision(futurePos, enemies[i].hitBox)){
+            return true;
+        }     
     }
     return false;
 }
 
-void movement(Player* player, Player players[MAX_PLAYERS], int deltatime) {
+void movement(Player* player, Player players[MAX_PLAYERS], Enemy enemies[MAX_ENEMIES], int deltatime) {
+
     if(player->flags.moveX != 0){
-        if(!willCollide(player, players, player->pos.x - player->flags.moveX * deltatime * SPEED, player->pos.y)) //testa ny x-position 
+        if(!willCollide(player, players, enemies, player->pos.x - player->flags.moveX * deltatime * SPEED, player->pos.y)) //testa ny x-position 
         {
             player->pos.x -= player->flags.moveX * deltatime * SPEED;
         }
         player->facing = player->flags.moveX + 1;
     }
     if(player->flags.moveY != 0){
-        if(!willCollide(player, players, player->pos.x , player->pos.y - player->flags.moveY * deltatime * SPEED)) //testa ny y-position
+        if(!willCollide(player, players, enemies, player->pos.x , player->pos.y - player->flags.moveY * deltatime * SPEED)) //testa ny y-position
         {
             player->pos.y -= player->flags.moveY * deltatime * SPEED;
         }
@@ -49,6 +57,34 @@ void movement(Player* player, Player players[MAX_PLAYERS], int deltatime) {
     player->hitBox.y = player->pos.y;
 
 } 
+
+bool playerEnemyCollision(Player* player, Enemy enemies[MAX_ENEMIES], Uint32 deltatime){
+    bool playerEnemyCollided = false;
+
+    for (int i = 0; i < MAX_ENEMIES; i++){
+        if(collision(player->hitBox, enemies[i].hitBox)){
+            playerEnemyCollided = true;
+            break;
+        }
+    }
+
+    if(playerEnemyCollided){
+        player->enemyCollisionTimer += deltatime;
+
+        while(player->enemyCollisionTimer >= 1000){
+            if(player->stats.health > 0){
+                player->stats.health -= 10;
+            }
+            else player->stats.health = 100;
+
+            player->enemyCollisionTimer -= 1000;
+        }
+    }
+    else player->enemyCollisionTimer = 0;
+
+    return playerEnemyCollided;
+}
+
  //&& (player->flags.moveX || player->flags.moveY)
  // || 
 void animatePlayers(Player players[MAX_PLAYERS], Uint8* counter, Uint16 framerate, bool* flag) {
@@ -145,6 +181,7 @@ void updatePlayer(Player* player, Vector2D pos, Player_Class class, Stats stats,
     player->hitBox.x = player->pos.x;
     player->hitBox.y = player->pos.y;
     player->class = class;
+    player->enemyCollisionTimer = 0;
     updateClass(player, renderer);
 
     // temporary health reset when it goes down to 0

@@ -5,9 +5,11 @@
 
 bool collision(SDL_FRect a, SDL_FRect b);
 
-bool willCollide(Player* player, Player players[MAX_PLAYERS], float futureX, float futureY);
+bool willCollide(Player* player, Player players[MAX_PLAYERS], Enemy enemies[MAX_ENEMIES], float futureX, float futureY);
 
-void movement(Player* player, Player players[MAX_PLAYERS], int deltatime);
+void movement(Player* player, Player players[MAX_PLAYERS], Enemy enemies[MAX_ENEMIES], int deltatime);
+
+bool playerEnemyCollision(Player* player, Enemy enemies[MAX_ENEMIES], Uint32 deltatime);
 
 void animatePlayers(Player players[MAX_PLAYERS], Uint8* counter, Uint16 framerate, bool* flag);
 

@@ -9,7 +9,7 @@
 #define ANIMATION_TIME 4
 #define PLAYER_NAME_MAX 30
 
-#define MAX_ENEMIES 1
+#define MAX_ENEMIES 20
 #define ENEMY_SIZE 48
 #define ENEMY_AGGRO_RANGE 150
 #define ENEMY_ATTACK_RANGE 20
@@ -93,6 +93,7 @@ typedef struct {
 
 typedef enum {
     ENEMY_SKELETON,
+    ENEMY_VAMPIRE,
 } Enemy_Type;
 
 typedef enum {
@@ -114,8 +115,8 @@ typedef struct {
     Enemy_State state;
     Stats stats;
 
-    int moveX;
-    int moveY;
+    float moveX;
+    float moveY;
 } Enemy;
 
 // Serverside player struct
@@ -168,10 +169,7 @@ struct appState {
     Player players [MAX_PLAYERS]; //SEE STRUCT
     SDL_FRect camera; //LOCAL
 
-    Enemy enemies [MAX_ENEMIES];
-
     Uint8 animationTime; //LOCAL
-    Uint8 enemyAnimationTime; //LOCAL
     bool running; //LOCAL
     bool computedEvent; //LOCAL
 

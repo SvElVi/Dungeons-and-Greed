@@ -1,39 +1,23 @@
 #include "player.h"
-#include "enemy.h"
 #include <string.h>
 
-<<<<<<< HEAD
 static bool drawHpBarAbove(SDL_Renderer *renderer, const Player *player, const SDL_FRect *spriteRect);
 static bool drawPlayerNameBelow(SDL_Renderer *renderer, const Player *player, const SDL_FRect *spriteRect);
 
 int renderFrame(AppState state) {
-=======
-int renderFrame(AppState state)
-{
->>>>>>> daf1802b1c79c881c3543afb80e08f842aedb605
 
-    if (state->gameState == GAME_MENY)
-    {
+    if(state->gameState == GAME_MENY){
         menu_screen(&state->mainMenu, state);
     }
-<<<<<<< HEAD
     else if(state->gameState == GAME_PAUSE){
         pause_screen(state, "Press SPACE to continue");   
-=======
-    else if (state->gameState == GAME_PAUSE)
-    {
-        pause_screen(state);
->>>>>>> daf1802b1c79c881c3543afb80e08f842aedb605
     }
-    else if (state->gameState == GAME_HOST)
-    {
+    else if(state->gameState == GAME_HOST){
         host_screen(state);
     }
-    else if (state->gameState == GAME_JOIN)
-    {
+    else if(state->gameState == GAME_JOIN){
         join_screen(state);
     }
-<<<<<<< HEAD
     else if(state->gameState == GAME_TCP_INIT){
         pause_screen(state, "Connecting...");
     }
@@ -42,61 +26,36 @@ int renderFrame(AppState state)
     }
     else if(state->gameState == GAME_TCP_VERIFYING_HANDSHAKE){
         pause_screen(state, "Veryfying handshake...");
-=======
-    else if (state->gameState == GAME_TCP_INIT)
-    {
-        host_screen(state);
     }
-    else if (state->gameState == GAME_TCP_HANDSHAKE)
-    {
-        host_screen(state);
-    }
-    else if (state->gameState == GAME_TCP_VERIFYING_HANDSHAKE)
-    {
-        host_screen(state);
->>>>>>> daf1802b1c79c881c3543afb80e08f842aedb605
-    }
-
-    else if (state->gameState == GAME_PLAYING)
-    {
+    
+    else if (state->gameState == GAME_PLAYING) {
         renderGamePlay(state);
     }
     SDL_RenderPresent(state->renderer);
     state->computedEvent = false;
-
+    
     return SDL_APP_CONTINUE;
 }
 
-int render(AppState state)
-{ // current but should be changed to call back style, also with vsync and variable refreshrate
+int render(AppState state) { //current but should be changed to call back style, also with vsync and variable refreshrate
     Uint64 currentTime = SDL_GetTicks();
-    if (currentTime >= state->lastTime + SDL_round(1000 / state->framerate))
-    { // renderflag unused
+    if(currentTime >= state->lastTime + SDL_round(1000/state->framerate)){ //renderflag unused
         state->deltaTime = currentTime - state->lastTime;
         state->lastTime = currentTime;
         // if(state->renderFlag) {
-        if (state->gameState == GAME_PLAYING)
-        {
+        if(state->gameState == GAME_PLAYING){
             movement(&(state->players[0]), state->players, state->deltaTime);
             animatePlayers(state->players, &(state->animationTime), state->framerate, &(state->computedEvent));
-
-            for (int i = 0; i < MAX_ENEMIES; i++)
-            {
-                if (state->enemies[i].state != ENEMY_DEAD)
-                    enemyMovement(&state->enemies[i], state->players, state->deltaTime);
-            }
-            animateEnemies(state->enemies, &state->enemyAnimationTime, state->framerate, &state->computedEvent);
         }
+        
 
-        if (renderFrame(state))
-            return SDL_APP_FAILURE;
+        if(renderFrame(state)) return SDL_APP_FAILURE;
         // }
     }
     return SDL_APP_CONTINUE;
 }
 
-void menu_screen(Menu *menu, AppState state)
-{
+void menu_screen(Menu *menu, AppState state){
     int w, h;
     float titleX, titleY, menuY;
     float x, y;
@@ -108,16 +67,16 @@ void menu_screen(Menu *menu, AppState state)
     SDL_SetRenderDrawColor(state->renderer, 0, 0, 0, 255);
     SDL_RenderClear(state->renderer);
     titleX = ((w / scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE * SDL_strlen(title)) / 2;
-    titleY = (h / scale) * 0.1f;
+    titleY = (h / scale) * 0.1f;    
     SDL_SetRenderDrawColor(state->renderer, 255, 255, 255, 255);
     SDL_RenderDebugText(state->renderer, titleX, titleY, title);
-    menuY = (h / scale) * 0.4f;
-    for (int i = 0; i < menu->count; i++)
+    menuY= (h / scale) *0.4f;
+    for(int i = 0; i < menu->count; i++)
     {
-        x = ((w / scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE * SDL_strlen(menu->menuOptions[i])) / 2;
-        y = menuY + i * 20;
+        x = ((w / scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE* SDL_strlen(menu->menuOptions[i]))/2;
+        y = menuY + i *20;
 
-        if (i == menu->selected)
+        if(i == menu->selected)
         {
             SDL_SetRenderDrawColor(state->renderer, 255, 255, 0, 255);
         }
@@ -130,10 +89,9 @@ void menu_screen(Menu *menu, AppState state)
     SDL_SetRenderScale(state->renderer, 1.0f, 1.0f);
 }
 
-void join_screen(AppState state)
-{
+void join_screen(AppState state){
     int w, h;
-    float x, y;
+    float  x, y;
     const float scale = 4.0f;
     const char *title = "ENTER IP HOST to join:";
     SDL_GetRenderOutputSize(state->renderer, &w, &h);
@@ -141,23 +99,22 @@ void join_screen(AppState state)
     SDL_SetRenderDrawColor(state->renderer, 0, 0, 0, 255);
     SDL_RenderClear(state->renderer);
 
-    x = ((w / scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE * SDL_strlen(title)) / 2;
-    y = (h / scale) / 2;
+    x = ((w/ scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE * SDL_strlen(title)) /2;
+    y = (h/ scale) /2;
 
     SDL_SetRenderDrawColor(state->renderer, 255, 255, 255, 255);
     SDL_RenderDebugText(state->renderer, x, y, title);
 
     y += 40;
-    x = ((w / scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE * SDL_strlen(state->hostIP)) / 2;
+    x= ((w/ scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE *SDL_strlen(state->hostIP)) /2;
 
     SDL_RenderDebugText(state->renderer, x, y, state->hostIP);
     SDL_SetRenderScale(state->renderer, 1.0f, 1.0f);
 }
 
-void host_screen(AppState state)
-{
+void host_screen(AppState state){
     int w, h;
-    float x, y;
+    float  x, y;
     const float scale = 4.0f;
     const char *title = "ENTER IP HOST";
     SDL_GetRenderOutputSize(state->renderer, &w, &h);
@@ -165,20 +122,19 @@ void host_screen(AppState state)
     SDL_SetRenderDrawColor(state->renderer, 0, 0, 0, 255);
     SDL_RenderClear(state->renderer);
 
-    x = ((w / scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE * SDL_strlen(title)) / 2;
-    y = (h / scale) / 2;
+    x = ((w/ scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE * SDL_strlen(title)) /2;
+    y = (h/ scale) /2;
 
     SDL_SetRenderDrawColor(state->renderer, 255, 255, 255, 255);
     SDL_RenderDebugText(state->renderer, x, y, title);
 
     y += 40;
-    x = ((w / scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE * SDL_strlen(state->hostIP)) / 2;
+    x= ((w/ scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE *SDL_strlen(state->hostIP)) /2;
 
     SDL_RenderDebugText(state->renderer, x, y, state->hostIP);
     SDL_SetRenderScale(state->renderer, 1.0f, 1.0f);
 }
 
-<<<<<<< HEAD
 void pause_screen(AppState state, const char *inputMes){
         const char *message = inputMes;
         const char *title = "GREEDY DELVERS";
@@ -186,61 +142,39 @@ void pause_screen(AppState state, const char *inputMes){
         float titleX, titleY;
         float x, y;
         const float scale = 4.0f;
-=======
-void pause_screen(AppState state)
-{
-    const char *message = "Press SPACE to continue";
-    const char *title = "GREEDY DELVERS";
-    int w = 0, h = 0;
-    float titleX, titleY;
-    float x, y;
-    const float scale = 4.0f;
->>>>>>> daf1802b1c79c881c3543afb80e08f842aedb605
 
-    /* Center the message and scale it up */
-    SDL_GetRenderOutputSize(state->renderer, &w, &h);
-    SDL_SetRenderScale(state->renderer, scale, scale);
-    x = ((w / scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE * SDL_strlen(message)) / 2;
-    y = ((h / scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE) / 2;
-    titleX = ((w / scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE * SDL_strlen(message)) / 2;
-    titleY = (h / scale) * 0.05f;
+        /* Center the message and scale it up */
+        SDL_GetRenderOutputSize(state->renderer, &w, &h);
+        SDL_SetRenderScale(state->renderer, scale, scale);
+        x = ((w / scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE * SDL_strlen(message)) / 2;
+        y = ((h / scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE) / 2;
+        titleX = ((w / scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE * SDL_strlen(message)) / 2;
+        titleY = (h / scale) * 0.05f;
 
-    /* Draw the message */
-    SDL_SetRenderDrawColor(state->renderer, 0, 0, 0, 255);
-    SDL_RenderClear(state->renderer);
-    SDL_SetRenderDrawColor(state->renderer, 255, 255, 255, 255);
-    SDL_RenderDebugText(state->renderer, x, y, message);
-    SDL_RenderDebugText(state->renderer, titleX, titleY, title);
-    SDL_SetRenderScale(state->renderer, 1.0f, 1.0f);
-}
+        /* Draw the message */
+        SDL_SetRenderDrawColor(state->renderer, 0, 0, 0, 255);
+        SDL_RenderClear(state->renderer);
+        SDL_SetRenderDrawColor(state->renderer, 255, 255, 255, 255);
+        SDL_RenderDebugText(state->renderer, x, y, message);
+        SDL_RenderDebugText(state->renderer, titleX, titleY, title);
+        SDL_SetRenderScale(state->renderer, 1.0f, 1.0f);
+    } 
 
-<<<<<<< HEAD
 int renderGamePlay(AppState state){
     SDL_FRect temp;
     Vector2D tempV, renderOrder[MAX_PLAYERS];
     SDL_SetRenderDrawColor(state->renderer,37,19,26,1);
         SDL_RenderClear(state->renderer);
-=======
-int renderGamePlay(AppState state)
-{
-    SDL_FRect temp;
-    Vector2D tempV, renderOrder[MAX_PLAYERS];
-    SDL_SetRenderDrawColor(state->renderer, 37, 19, 26, 1);
-    SDL_RenderClear(state->renderer);
->>>>>>> daf1802b1c79c881c3543afb80e08f842aedb605
 
-    if (!renderDungeon(state))
-    {
-        return SDL_APP_FAILURE;
-    }
+        if(!renderDungeon(state)) {
+            return SDL_APP_FAILURE;
+        }
 
-    for (int j = 0; j < MAX_PLAYERS; j++)
-    {
-        renderOrder[j].x = j;
-        renderOrder[j].y = state->players[j].pos.y;
-    }
+        for(int j = 0; j < MAX_PLAYERS; j++) {
+            renderOrder[j].x = j;
+            renderOrder[j].y = state->players[j].pos.y;
+        }
 
-<<<<<<< HEAD
         for (int a = 0; a < MAX_PLAYERS -1; a++) {
             for (int b = 0; b < MAX_PLAYERS -1 - a; b++) {
                 if (renderOrder[b].y < renderOrder[b+1].y) {
@@ -272,20 +206,8 @@ int renderGamePlay(AppState state)
                     return SDL_APP_FAILURE;
                 }
                 
-=======
-    for (int a = 0; a < MAX_PLAYERS - 1; a++)
-    {
-        for (int b = 0; b < MAX_PLAYERS - 1 - a; b++)
-        {
-            if (renderOrder[b].y < renderOrder[b + 1].y)
-            {
-                tempV = renderOrder[b];
-                renderOrder[b] = renderOrder[b + 1];
-                renderOrder[b + 1] = tempV;
->>>>>>> daf1802b1c79c881c3543afb80e08f842aedb605
             }
     }
-<<<<<<< HEAD
 }
 
 static bool drawHpBarAbove(SDL_Renderer *renderer, const Player *player, const SDL_FRect *spriteRect)
@@ -356,42 +278,4 @@ static bool drawPlayerNameBelow(SDL_Renderer *renderer, const Player *player, co
     }
 
     return true;
-=======
-
-    for (int i = 0; i < MAX_PLAYERS; i++)
-    {
-        if (state->players[renderOrder[i].x].texture)
-        {
-
-            temp.h = PLAYER_SIZE * RENDER_SCALE;
-            temp.w = PLAYER_SIZE * RENDER_SCALE;
-            temp.x = state->camera.x + (state->players[0].pos.x - state->players[renderOrder[i].x].pos.x);
-            temp.y = state->camera.y + (state->players[0].pos.y - state->players[renderOrder[i].x].pos.y);
-
-            if (!(SDL_RenderTextureRotated(state->renderer, state->players[renderOrder[i].x].texture, &(state->players[renderOrder[i].x].aniBox), &(temp), 0, NULL, state->players[renderOrder[i].x].flip)))
-            {
-                SDL_Log("FAILED RENDERING TEXTURE: %s", SDL_GetError());
-                return SDL_APP_FAILURE;
-            }
-        }
-    }
-
-    for (int i = 0; i < MAX_ENEMIES; i++)
-    {
-        if (state->enemies[i].texture && state->enemies[i].state != ENEMY_DEAD)
-        {
-            SDL_FRect dst = {
-                .w = ENEMY_SIZE * RENDER_SCALE,
-                .h = ENEMY_SIZE * RENDER_SCALE,
-                .x = state->camera.x + (state->players[0].pos.x - state->enemies[i].pos.x),
-                .y = state->camera.y + (state->players[0].pos.y - state->enemies[i].pos.y)};
-
-            SDL_RenderTextureRotated(state->renderer, state->enemies[i].texture,
-                                     &state->enemies[i].aniBox, &dst,
-                                     0, NULL, state->enemies[i].flip);
-        }
-    }
-
-    return SDL_APP_CONTINUE;
->>>>>>> daf1802b1c79c881c3543afb80e08f842aedb605
 }

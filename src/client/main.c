@@ -51,7 +51,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
 
     // enemy
     Vector2D enemyPos = {200, 100};
-    Stats enemyStats = {100, 0, 5, 10, 1};
+    Stats enemyStats = {100, 100, 0, 5, 10, 1};
     updateEnemy(&state->enemies[0], enemyPos, ENEMY_SKELETON, enemyStats, state->renderer);
     *appstate = state; //Share the appstate to callbacks below
     // state->renderFlag = 1;

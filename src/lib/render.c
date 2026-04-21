@@ -2,7 +2,7 @@
 #include "enemy.h"
 #include <string.h>
 
-static bool drawHpBarAbove(SDL_Renderer *renderer, const Player *player, const SDL_FRect *spriteRect);
+static bool drawHpBarAbove(SDL_Renderer *renderer, const Stats *stats, const SDL_FRect *spriteRect);
 static bool drawPlayerNameBelow(SDL_Renderer *renderer, const Player *player, const SDL_FRect *spriteRect);
 
 int renderFrame(AppState state) {
@@ -206,7 +206,7 @@ int renderGamePlay(AppState state){
                 return SDL_APP_FAILURE;
             }
 
-            if (!drawHpBarAbove(state->renderer, &state->players[renderOrder[i].x], &temp)) {
+            if (!drawHpBarAbove(state->renderer, &state->players[renderOrder[i].x].stats, &temp)) {
                 return SDL_APP_FAILURE;
             }
 
@@ -227,23 +227,26 @@ int renderGamePlay(AppState state){
                 .y = state->camera.y + (state->players[0].pos.y - state->enemies[i].pos.y)};
 
             SDL_RenderTextureRotated(state->renderer, state->enemies[i].texture,
-                                     &state->enemies[i].aniBox, &dst,
-                                     0, NULL, state->enemies[i].flip);
+                &state->enemies[i].aniBox, &dst, 0, NULL, state->enemies[i].flip);
+            
+            if (!drawHpBarAbove(state->renderer, &state->enemies[i].stats, &dst)) {
+                return SDL_APP_FAILURE;
+            }
         }
     }
 
     return SDL_APP_CONTINUE;
 }
 
-static bool drawHpBarAbove(SDL_Renderer *renderer, const Player *player, const SDL_FRect *spriteRect)
+static bool drawHpBarAbove(SDL_Renderer *renderer, const Stats *stats, const SDL_FRect *spriteRect)
 {
     
     float barHeight = 4.0f * RENDER_SCALE;
     float barWidth = spriteRect->w;
 
     float hpRatio = 0.0f;
-    if (player->stats.maxHealth > 0) {
-        hpRatio = (float)player->stats.health / (float)player->stats.maxHealth;
+    if (stats->maxHealth > 0) {
+        hpRatio = (float)stats->health / (float)stats->maxHealth;
     }
 
     if (hpRatio < 0.0f) 

@@ -104,8 +104,8 @@ void updateEnemy(Enemy *enemy, Vector2D pos, Enemy_Type type, Stats stats, SDL_R
 {
     enemy->aniBox.w = ENEMY_SIZE;
     enemy->aniBox.h = ENEMY_SIZE;
-    enemy->hitBox.w = 20 * RENDER_SCALE;
-    enemy->hitBox.h = 10 * RENDER_SCALE;
+    enemy->hitBox.w = 9 * RENDER_SCALE;
+    enemy->hitBox.h = 2 * RENDER_SCALE;
     enemy->aniBox.x = 0;
     enemy->aniBox.y = 0;
     enemy->pos = pos;

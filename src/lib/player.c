@@ -62,7 +62,14 @@ bool playerEnemyCollision(Player* player, Enemy enemies[MAX_ENEMIES], Uint32 del
     bool playerEnemyCollided = false;
 
     for (int i = 0; i < MAX_ENEMIES; i++){
-        if(collision(player->hitBox, enemies[i].hitBox)){
+        SDL_FRect dotDmgHitBox = enemies[i].hitBox;
+
+        dotDmgHitBox.x -= RENDER_SCALE;
+        dotDmgHitBox.y -= RENDER_SCALE;
+        dotDmgHitBox.w += RENDER_SCALE*2;
+        dotDmgHitBox.h += RENDER_SCALE*2;
+
+        if(collision(player->hitBox, dotDmgHitBox)){
             playerEnemyCollided = true;
             break;
         }

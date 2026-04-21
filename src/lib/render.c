@@ -1,9 +1,7 @@
 #include "player.h"
 #include "enemy.h"
 #include <string.h>
-
-static bool drawHpBarAbove(SDL_Renderer *renderer, const Stats *stats, const SDL_FRect *spriteRect);
-static bool drawPlayerNameBelow(SDL_Renderer *renderer, const Player *player, const SDL_FRect *spriteRect);
+#include "render.h"
 
 int renderFrame(AppState state) {
 
@@ -242,7 +240,7 @@ static bool drawHpBarAbove(SDL_Renderer *renderer, const Stats *stats, const SDL
 {
     
     float barHeight = 4.0f * RENDER_SCALE;
-    float barWidth = spriteRect->w;
+    float barWidth = spriteRect->w * 0.75;
 
     float hpRatio = 0.0f;
     if (stats->maxHealth > 0) {
@@ -255,8 +253,8 @@ static bool drawHpBarAbove(SDL_Renderer *renderer, const Stats *stats, const SDL
         hpRatio = 1.0f;
 
     SDL_FRect backGroundRect = {
-        spriteRect->x,
-        spriteRect->y,
+        spriteRect->x + (spriteRect->w - barWidth) * 0.5f,
+        spriteRect->y + 4*barHeight,
         barWidth,
         barHeight
     };

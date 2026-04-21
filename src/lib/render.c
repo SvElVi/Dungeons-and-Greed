@@ -2,28 +2,16 @@
 #include "enemy.h"
 #include <string.h>
 
-<<<<<<< HEAD
-static bool drawHpBarAbove(SDL_Renderer *renderer, const Player *player, const SDL_FRect *spriteRect);
-static bool drawPlayerNameBelow(SDL_Renderer *renderer, const Player *player, const SDL_FRect *spriteRect);
-
-int renderFrame(AppState state) {
-=======
 int renderFrame(AppState state)
 {
->>>>>>> daf1802b1c79c881c3543afb80e08f842aedb605
 
     if (state->gameState == GAME_MENY)
     {
         menu_screen(&state->mainMenu, state);
     }
-<<<<<<< HEAD
-    else if(state->gameState == GAME_PAUSE){
-        pause_screen(state, "Press SPACE to continue");   
-=======
     else if (state->gameState == GAME_PAUSE)
     {
         pause_screen(state);
->>>>>>> daf1802b1c79c881c3543afb80e08f842aedb605
     }
     else if (state->gameState == GAME_HOST)
     {
@@ -33,16 +21,6 @@ int renderFrame(AppState state)
     {
         join_screen(state);
     }
-<<<<<<< HEAD
-    else if(state->gameState == GAME_TCP_INIT){
-        pause_screen(state, "Connecting...");
-    }
-    else if(state->gameState == GAME_TCP_HANDSHAKE){
-        pause_screen(state, "Handshake...");
-    }
-    else if(state->gameState == GAME_TCP_VERIFYING_HANDSHAKE){
-        pause_screen(state, "Veryfying handshake...");
-=======
     else if (state->gameState == GAME_TCP_INIT)
     {
         host_screen(state);
@@ -54,7 +32,6 @@ int renderFrame(AppState state)
     else if (state->gameState == GAME_TCP_VERIFYING_HANDSHAKE)
     {
         host_screen(state);
->>>>>>> daf1802b1c79c881c3543afb80e08f842aedb605
     }
 
     else if (state->gameState == GAME_PLAYING)
@@ -178,15 +155,6 @@ void host_screen(AppState state)
     SDL_SetRenderScale(state->renderer, 1.0f, 1.0f);
 }
 
-<<<<<<< HEAD
-void pause_screen(AppState state, const char *inputMes){
-        const char *message = inputMes;
-        const char *title = "GREEDY DELVERS";
-        int w = 0, h = 0;
-        float titleX, titleY;
-        float x, y;
-        const float scale = 4.0f;
-=======
 void pause_screen(AppState state)
 {
     const char *message = "Press SPACE to continue";
@@ -195,7 +163,6 @@ void pause_screen(AppState state)
     float titleX, titleY;
     float x, y;
     const float scale = 4.0f;
->>>>>>> daf1802b1c79c881c3543afb80e08f842aedb605
 
     /* Center the message and scale it up */
     SDL_GetRenderOutputSize(state->renderer, &w, &h);
@@ -214,20 +181,12 @@ void pause_screen(AppState state)
     SDL_SetRenderScale(state->renderer, 1.0f, 1.0f);
 }
 
-<<<<<<< HEAD
-int renderGamePlay(AppState state){
-    SDL_FRect temp;
-    Vector2D tempV, renderOrder[MAX_PLAYERS];
-    SDL_SetRenderDrawColor(state->renderer,37,19,26,1);
-        SDL_RenderClear(state->renderer);
-=======
 int renderGamePlay(AppState state)
 {
     SDL_FRect temp;
     Vector2D tempV, renderOrder[MAX_PLAYERS];
     SDL_SetRenderDrawColor(state->renderer, 37, 19, 26, 1);
     SDL_RenderClear(state->renderer);
->>>>>>> daf1802b1c79c881c3543afb80e08f842aedb605
 
     if (!renderDungeon(state))
     {
@@ -240,39 +199,6 @@ int renderGamePlay(AppState state)
         renderOrder[j].y = state->players[j].pos.y;
     }
 
-<<<<<<< HEAD
-        for (int a = 0; a < MAX_PLAYERS -1; a++) {
-            for (int b = 0; b < MAX_PLAYERS -1 - a; b++) {
-                if (renderOrder[b].y < renderOrder[b+1].y) {
-                    tempV = renderOrder[b];
-                    renderOrder[b] = renderOrder[b+1];
-                    renderOrder[b+1] = tempV;
-                }
-            }
-        }
-
-        for(int i = 0; i < MAX_PLAYERS; i++) {
-            if(state->players[renderOrder[i].x].texture) {
-
-                temp.h = PLAYER_SIZE*RENDER_SCALE;
-                temp.w = PLAYER_SIZE*RENDER_SCALE;
-                temp.x = state->camera.x + (state->players[0].pos.x - state->players[renderOrder[i].x].pos.x);
-                temp.y = state->camera.y + (state->players[0].pos.y - state->players[renderOrder[i].x].pos.y);
-
-                if(!(SDL_RenderTextureRotated(state->renderer, state->players[renderOrder[i].x].texture, &(state->players[renderOrder[i].x].aniBox), &(temp), 0, NULL, state->players[renderOrder[i].x].flip))) {
-                    SDL_Log("FAILED RENDERING TEXTURE: %s", SDL_GetError());
-                    return SDL_APP_FAILURE;
-                }
-
-                if (!drawHpBarAbove(state->renderer, &state->players[renderOrder[i].x], &temp)) {
-                    return SDL_APP_FAILURE;
-                }
-
-                if (!drawPlayerNameBelow(state->renderer, &state->players[renderOrder[i].x], &temp)) {
-                    return SDL_APP_FAILURE;
-                }
-                
-=======
     for (int a = 0; a < MAX_PLAYERS - 1; a++)
     {
         for (int b = 0; b < MAX_PLAYERS - 1 - a; b++)
@@ -282,81 +208,8 @@ int renderGamePlay(AppState state)
                 tempV = renderOrder[b];
                 renderOrder[b] = renderOrder[b + 1];
                 renderOrder[b + 1] = tempV;
->>>>>>> daf1802b1c79c881c3543afb80e08f842aedb605
             }
     }
-<<<<<<< HEAD
-}
-
-static bool drawHpBarAbove(SDL_Renderer *renderer, const Player *player, const SDL_FRect *spriteRect)
-{
-    
-    float barHeight = 4.0f * RENDER_SCALE;
-    float barWidth = spriteRect->w;
-
-    float hpRatio = 0.0f;
-    if (player->stats.maxHealth > 0) {
-        hpRatio = (float)player->stats.health / (float)player->stats.maxHealth;
-    }
-
-    if (hpRatio < 0.0f) 
-        hpRatio = 0.0f;
-    else if (hpRatio > 1.0f) 
-        hpRatio = 1.0f;
-
-    SDL_FRect backGroundRect = {
-        spriteRect->x,
-        spriteRect->y,
-        barWidth,
-        barHeight
-    };
-
-    SDL_FRect fillRect = {
-        backGroundRect.x + 1.0f,
-        backGroundRect.y + 1.0f,
-        (backGroundRect.w - 2.0f) * hpRatio,
-        backGroundRect.h - 2.0f
-    };
-
-    // draw background
-    SDL_SetRenderDrawColor(renderer, 30, 30, 30, 255);
-    if (!SDL_RenderFillRect(renderer, &backGroundRect)) {
-        SDL_Log("FAILED DRAWING HP BAR BACKGROUND: %s", SDL_GetError());
-        return false;
-    }
-
-    // draw red hp bar fill
-    SDL_SetRenderDrawColor(renderer, 200, 40, 40, 255);
-    if (!SDL_RenderFillRect(renderer, &fillRect)) {
-        SDL_Log("FAILED DRAWING HP BAR FILL: %s", SDL_GetError());
-        return false;
-    }
-
-    // draw white border
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    if (!SDL_RenderRect(renderer, &backGroundRect)) {
-        SDL_Log("FAILED DRAWING HP BAR BORDER: %s", SDL_GetError());
-        return false;
-    }
-
-    return true;
-}
-
-static bool drawPlayerNameBelow(SDL_Renderer *renderer, const Player *player, const SDL_FRect *spriteRect)
-{
-    float textWidth = (float)(SDL_strlen(player->name) * SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE);
-
-    float textX = spriteRect->x + (spriteRect->w - textWidth) * 0.5f;   // centrerad x axel
-    float textY = spriteRect->y + spriteRect->h;    // right below character y-axel
-
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    if (!SDL_RenderDebugText(renderer, textX, textY, player->name)) {
-        SDL_Log("FAILED DRAWING PLAYER NAME: %s", SDL_GetError());
-        return false;
-    }
-
-    return true;
-=======
 
     for (int i = 0; i < MAX_PLAYERS; i++)
     {
@@ -393,5 +246,4 @@ static bool drawPlayerNameBelow(SDL_Renderer *renderer, const Player *player, co
     }
 
     return SDL_APP_CONTINUE;
->>>>>>> daf1802b1c79c881c3543afb80e08f842aedb605
 }

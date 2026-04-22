@@ -159,12 +159,24 @@ bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms, Uint8 fDir
 }
 
 void test() {
-    Uint64 rowData = 1;
-    Uint64 currentData = 1;
+    int back;
 
-    for(int i = 0; i < 1 && rowData; i++) { //i < 24
+    Uint64 rowData = 1;
+    Uint64 currentData;
+
+    for(int i = 0; i < 3 && rowData; i++) { //i < 24
         rowData = CircleRoom[i];
-        for(int j = 0; j < 8 && currentData; j++) { //Limit 8 because that is how many steps can be taken through Uint64
+        currentData = 1;
+
+        back = 0;
+        do { //Assign last valid data row from index
+            rowData = CircleRoom[i-back];
+
+            SDL_Log("Back: %d", i-back);
+            back++;
+        } while(rowData == 0xFF && back <= i);
+
+        for(int j = 0; j < 8 && currentData > 0; j++) { //Limit 8 because that is how many steps can be taken through Uint64
 
             currentData = rowData >> (0x8*j) & 0xFF; //Move to steps to the right for every step j
 

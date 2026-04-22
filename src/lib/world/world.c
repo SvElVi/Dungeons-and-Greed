@@ -53,9 +53,8 @@ bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms, Uint8 fDir
 
     c->tileType[0][0] = 99;
 
-    Uint64 rowData = 0;
-    Uint8 currentData = 0;
-
+    Uint64 rowData = 1;
+    Uint64 currentData = 1;
 
     if(fDir < 4) {
         fDir = (fDir + 2) % 4;
@@ -140,20 +139,38 @@ bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms, Uint8 fDir
                     }
                 }
             }
-            SDL_Log("I: %d", CircleRoom[0]);
             break;
-        case ROOM_CIRCLE:
-            for(int i = 0; i < 24; i++) {
-                rowData = CircleRoom[i];
-                for(int j = 0; j < 12; i++) {
-                    if(j != 0) {
-                        currentData = rowData / (0xFF*(j*2)) | 0xFF;
-                    } else {
-                        currentData = rowData | 0xFF;
-                    }
-                }
-            }
-            break;
+        // case ROOM_CIRCLE:
+        //     for(int i = 0; i < 4 && rowData; i++) { //i < 24
+        //         rowData = CircleRoom[i];
+        //         currentData = rowData;
+        //         for(int j = 0; j < 12 && currentData; j++) {
+
+        //             currentData << (0xFF*j*2);
+        //             currentData & 0xFF;
+
+        //             SDL_Log("Form: %x", 0xFF*j*2);
+        //             SDL_Log("Full: %x, Part: %x", rowData, currentData);
+        //         }
+        //         SDL_Log("I: %d", i);
+        //     }
+        //     break;
+    }
+}
+
+void test() {
+    Uint64 rowData = 1;
+    Uint64 currentData = 1;
+
+    for(int i = 0; i < 1 && rowData; i++) { //i < 24
+        rowData = CircleRoom[i];
+        for(int j = 0; j < 8 && currentData; j++) { //Limit 8 because that is how many steps can be taken through Uint64
+
+            currentData = rowData >> (0x8*j) & 0xFF; //Move to steps to the right for every step j
+
+            SDL_Log("Full: %x, Part: %x", rowData, currentData);
+        }
+        SDL_Log("I: %d", i);
     }
 }
 
@@ -187,6 +204,8 @@ void generateDungeon(World w, Uint8* nrOfRooms) { //Room placements
     generateRoom(w->chunks, temp, &(w->size), nrOfRooms, 5);
 
     SDL_Log("---------------------");
+
+    // test();
 }
 
 void polishDungeon(World w) { //Fix tileset in dungeon

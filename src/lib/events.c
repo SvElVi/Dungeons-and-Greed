@@ -1,10 +1,10 @@
 #include <SDL3/SDL.h>
 #include "inits.h"
 #include "render.h"
+#include "menu.h"
 
 int QuitEvent(AppState state, SDL_Event* event, const bool* keylist) {
-    if (keylist[SDL_SCANCODE_ESCAPE] ||
-        event->type == SDL_EVENT_QUIT) {
+    if (event->type == SDL_EVENT_QUIT) {
         state->running = false;
         return SDL_APP_SUCCESS;
     }
@@ -61,14 +61,11 @@ int checkEvents(AppState state, SDL_Event* event) { //Check all in game events u
                     SDL_StartTextInput(state->window);
                 break;
                 case 1:
-                state->gameState = GAME_HOST;
-                state->hostIPLen = 0;
-                state->hostIP[0] = '\0';
-                SDL_StartTextInput(state->window);
-
+                    state->gameState = GAME_PLAYING;
                 break;
                 case 2:
-                state->gameState = GAME_PLAYING;
+                    state->running = false;
+                    return SDL_APP_SUCCESS;
                 break;
             }
         }
@@ -90,6 +87,9 @@ int checkEvents(AppState state, SDL_Event* event) { //Check all in game events u
                 SDL_Log("Connecting/hosting with IP: %s", state->hostIP);
                 state->gameState = GAME_TCP_INIT;
             }
+            else if(event->key.key ==SDLK_ESCAPE){
+                state->gameState = GAME_MENY;
+            }
             else{
                 char c = 0;
                 if(event->key.key >= SDLK_0 && event->key.key <= SDLK_9){
@@ -103,21 +103,30 @@ int checkEvents(AppState state, SDL_Event* event) { //Check all in game events u
                     state->hostIP[state->hostIPLen] = '\0';
                 }
             }
-            }
         }
+    }
     //Non quit functions
+    static bool escLast = false;
     if(state->gameState == GAME_PLAYING){
         moveFlag(&(state->players[0].flags), keylist, &(state->computedEvent));
-    }
-    if(keylist[SDL_SCANCODE_SPACE]) {
-        if((state->gameState == GAME_START) || (state->gameState == GAME_PAUSE)) {
-            state->gameState = GAME_PLAYING;
-        }
-        else if(state->gameState == GAME_PLAYING){
+
+        if(keylist[SDL_SCANCODE_ESCAPE] && !escLast) {
             state->gameState = GAME_PAUSE;
         }
+
     }
-    
+    else if(state->gameState == GAME_PAUSE){
+        if(keylist[SDL_SCANCODE_ESCAPE] && !escLast) {
+            state->running = false;
+            return SDL_APP_SUCCESS;
+
+        }
+        else if(keylist[SDL_SCANCODE_SPACE]){
+            state->gameState = GAME_PLAYING;
+        }
+    }
+    escLast = keylist[SDL_SCANCODE_ESCAPE];
+
     //if frame altering function then set state->computedEvent = true and add to the if statement in the render() function
 
 

@@ -83,7 +83,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
         case GAME_MENY:
             // Meny passar bra att fixa här, oavsett vart i koden den ligger...
             //state->gameState = GAME_TCP_INIT;
-            SDL_Log("GAME_MENY\n");
+            // SDL_Log("GAME_MENY\n");
             break;
 
         case GAME_HOST:

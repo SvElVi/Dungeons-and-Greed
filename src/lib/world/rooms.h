@@ -5,7 +5,8 @@
 #define TILE_SIZE 16
 
 typedef enum {
-    TEST
+    TEST,
+    ROOM_CIRCLE
 } ROOM_TYPE;
 
 typedef enum {
@@ -18,8 +19,11 @@ typedef struct {
     Uint8 tileType[CHUNK_SIZE][CHUNK_SIZE];
 } Chunk;
 
-Uint64 CircleRoom[48] = {
-    0x0B180B,
+const Uint64 CircleRoom[24] = {
+    0x1221050F,
     0xFF,
+    0x1223030F,
+    0x15230F,
+    0x18220D,
     0x00
 };

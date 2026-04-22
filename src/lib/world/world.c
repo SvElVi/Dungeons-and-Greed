@@ -51,7 +51,11 @@ bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms, Uint8 fDir
     const int rowSize = (int)SDL_sqrt(*wSize);
     bool genDir[4] = {0}; //For generating exits, default all false
 
-    c->tileType[0][0] = 99; 
+    c->tileType[0][0] = 99;
+
+    Uint64 rowData = 0;
+    Uint8 currentData = 0;
+
 
     if(fDir < 4) {
         fDir = (fDir + 2) % 4;
@@ -136,6 +140,20 @@ bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms, Uint8 fDir
                     }
                 }
             }
+            SDL_Log("I: %d", CircleRoom[0]);
+            break;
+        case ROOM_CIRCLE:
+            for(int i = 0; i < 24; i++) {
+                rowData = CircleRoom[i];
+                for(int j = 0; j < 12; i++) {
+                    if(j != 0) {
+                        currentData = rowData / (0xFF*(j*2)) | 0xFF;
+                    } else {
+                        currentData = rowData | 0xFF;
+                    }
+                }
+            }
+            break;
     }
 }
 

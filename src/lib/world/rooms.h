@@ -20,10 +20,12 @@ typedef struct {
 } Chunk;
 
 const Uint64 CircleRoom[24] = {
-    0x1221050F,
+    0x1221060F,
     0xFF,
-    0x1223030F,
-    0x15230F,
-    0x18220D,
+    0x1223040F,
+    0x1523010F,
+    0x18220E,
+    0x1A220C,
+    0x1C210B,
     0x00
 };

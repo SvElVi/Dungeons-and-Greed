@@ -161,10 +161,10 @@ bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms, Uint8 fDir
 void test() {
     int back;
 
-    Uint64 rowData = 1;
-    Uint64 currentData;
+    Uint64 rowData = 1; //Information of a whole data row (+1 row keeping in mind the data is mirrored across 4 pieces)
+    Uint8 currentData; //Two hex value, left value for tile id and right for number of tiles.
 
-    for(int i = 0; i < 3 && rowData; i++) { //i < 24
+    for(int i = 0; i < 3 && rowData; i++) { //i < 24 //Stop if a row is fully empty (use 0x10 to mark empty but still continue)
         rowData = CircleRoom[i];
         currentData = 1;
 

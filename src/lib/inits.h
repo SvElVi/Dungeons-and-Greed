@@ -83,13 +83,13 @@ typedef struct {
     Player_Class class; //SYNC MULTIPLAYER
     Stats stats; //SYNC MULTIPLAYER
     SDL_Texture* texture; //LOCAL
-    SDL_FRect hitBox;
+    SDL_FRect hitBox; 
     SDL_FRect aniBox; //LOCAL
     direction facing; //SYNC MULTIPLAYER
     SDL_FlipMode flip; //SYNC MULTIPLAYER
     NET_StreamSocket **playerStreamSocket;
     char name[PLAYER_NAME_MAX]; // player name string
-    Uint32 enemyCollisionTimer; // ms counter for character colliding with emeny
+    Uint32 enemyCollisionTimer; // ms counter for character colliding with emeny. SYNC MULTIPLAYER
 } Player;
 
 typedef enum {

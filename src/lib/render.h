@@ -10,7 +10,5 @@ void join_screen(AppState state);
 void host_screen(AppState state);
 void pause_screen(AppState state, const char *inputMes);
 int render(AppState state);
-static bool drawHpBarAbove(SDL_Renderer *renderer, const Stats *stats, const SDL_FRect *spriteRect);
-static bool drawPlayerNameBelow(SDL_Renderer *renderer, const Player *player, const SDL_FRect *spriteRect);
 
 #endif

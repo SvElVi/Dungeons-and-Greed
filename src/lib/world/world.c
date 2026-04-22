@@ -1,23 +1,6 @@
 #include <SDL3/SDL.h>
 #include "../inits.h"
-
-#define CHUNK_SIZE 32
-#define ROOM_TYPES 1
-#define TILE_SIZE 16
-
-typedef enum {
-    TEST
-} ROOM_TYPE;
-
-typedef enum {
-    BLANK,
-    FLOOR,
-    WALL
-} TILE_TYPE;
-
-typedef struct {
-    Uint8 tileType[CHUNK_SIZE][CHUNK_SIZE];
-} Chunk;
+#include "rooms.h"
 
 struct world {
     Chunk* chunks;

@@ -17,7 +17,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once 
     AppState state = createAppState();
     state->gameState = GAME_INIT;
     state->mainMenu = (Menu){
-        .menuOptions = {"Join", "Play offline", "Quit"},
+        .menuOptions = {"Play", "Join", "Quit"},
         .selected = 0,
         .count = 3};
     if (!state)

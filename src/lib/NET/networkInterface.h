@@ -57,6 +57,6 @@ void sendDatagram(AppState state, NET_Address *ptrRxAdr, int portnumber, void *d
 
 // A blocking function that initializes a network address given in the char* argument,
 // and then saves it into the given pointer to pointer space of NET_Address type.
-int initAddress(NET_Address **adress, char *);
+NET_Status initAddress(NET_Address **adress, char *);
 
 #endif

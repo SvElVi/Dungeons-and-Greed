@@ -1,5 +1,7 @@
 #define SDL_MAIN_USE_CALLBACKS 1 // Flag to use callbacks
-#define SERVER_PORT 2000         // As of now... hardwired...
+#define TCP_PORT 2000
+#define UDP_PORT 2020
+
 #define DEBUG 0
 #define NET_DEBUG 1
 
@@ -33,7 +35,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once 
     if (startSDLNet() == NET_FAILURE)
         return SDL_APP_FAILURE;
 
-    createUDPSocket(&state->udpSocket, SERVER_PORT);
+    createUDPSocket(&state->udpSocket, UDP_PORT);
 
     state->udpPacket = SDL_calloc(1, sizeof(NET_Datagram));
 
@@ -84,7 +86,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
     case INIT_OF_SERVER:
         if (NET_DEBUG)
             SDL_Log("Current state: INIT_OF_SERVER\n");
-        createTCPServer(SERVER_PORT, state);
+        createTCPServer(TCP_PORT, state);
         state->serverState = WAITING_FOR_PLAYERS;
         break;
 
@@ -93,7 +95,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
             SDL_Log("Current state: WAITING_FOR_PLAYERS\n");
         if (NET_AcceptClient(state->tcpServer, state->serverStreamSocket))
         {
-            if (*(state->serverStreamSocket) != NULL)
+            if ((state->serverStreamSocket) != NULL)
             {
                 if (NET_DEBUG)
                     SDL_Log("Found a client!\n");

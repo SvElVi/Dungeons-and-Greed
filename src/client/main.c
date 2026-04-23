@@ -1,6 +1,6 @@
 #define SDL_MAIN_USE_CALLBACKS 1 // Flag to use callbacks
-#define SERVER_PORT 2000         // As of now... hardwired...
-#define CLIENT_PORT 2001         // As of now... hardwired...
+#define TCP_PORT 2000
+#define UDP_PORT 2020
 #define DEBUG 1
 
 #include <SDL3/SDL_main.h>
@@ -30,7 +30,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once 
     if (startSDLNet() == NET_FAILURE)
         return SDL_APP_FAILURE;
 
-    createUDPSocket(&state->udpSocket, SERVER_PORT);
+    createUDPSocket(&state->udpSocket, UDP_PORT);
 
     state->udpPacket = SDL_calloc(1, sizeof(NET_Datagram));
 
@@ -91,11 +91,15 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         break;
 
     case GAME_TCP_INIT:
-        if (initAddress(&state->serverIP, state->hostIP) < 0)
-        {
-            createTCPClient(state->serverIP, SERVER_PORT, state);
+        switch (initAddress(&state->serverIP, state->hostIP)) {
+            case NET_SUCCESS:
+                createTCPClient(state->serverIP, TCP_PORT, state);
+                state->gameState = GAME_TCP_HANDSHAKE;
+                break;
+
+            default:
+                SDL_Log("Pending...");
         }
-        state->gameState = GAME_TCP_HANDSHAKE;
         SDL_Log("GAME_TCP_INIT\n");
         break;
 
@@ -114,7 +118,6 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
             break;
         }
 
-        SDL_Log("GAME_TCP_HANDSHAKE\n");
         break;
 
     case GAME_TCP_VERIFYING_HANDSHAKE:

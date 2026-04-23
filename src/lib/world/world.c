@@ -46,6 +46,7 @@ void changeSeed(World w, Uint64 seed) {
 
 void generateConnections(Chunk* c, bool genDir[4]) {
     const int startpos = ((int)(CHUNK_SIZE/2) -2 -(int)(CHUNK_SIZE/32));
+    bool stop = false;
 
     if(genDir[WEST]) {
         for(int y = 0; y < ((int)(CHUNK_SIZE/16)+3); y++) {
@@ -83,12 +84,14 @@ void generateConnections(Chunk* c, bool genDir[4]) {
                     if(x != 0 && x != ((int)(CHUNK_SIZE/16)+2)) {
                         c->tileType[y][startpos+x] = FLOOR;
                     }
+                    stop = true;
                 }
             }
-            if(c->tileType[y][0] == WALL) {
+            if(stop) {
                 break;
             }
         }
+        stop = false;
     }
 
     if(genDir[EAST]) {
@@ -127,12 +130,14 @@ void generateConnections(Chunk* c, bool genDir[4]) {
                     if(x != 0 && x != ((int)(CHUNK_SIZE/16)+2)) {
                         c->tileType[(CHUNK_SIZE-1)-y][startpos+x] = FLOOR;
                     }
+                    stop = true;
                 }
             }
-            if(c->tileType[(CHUNK_SIZE-1)-y][0] == WALL) {
+            if(stop) {
                 break;
             }
         }
+        stop = false;
     }
 }
 

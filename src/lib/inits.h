@@ -50,6 +50,9 @@ typedef enum {
 typedef enum {
     INIT_OF_SERVER,
     WAITING_FOR_PLAYERS,
+    ASSIGNING_PLAYER_ID,
+    SENDING_PLAYER_ID,
+    CONFIRMING_PLAYER_ID_RECIVE,
     STARTING_GAME,
     GAME_ONGOING,
     SERVER_CLEANUP
@@ -151,7 +154,8 @@ typedef enum GameState {
     GAME_START,
     GAME_PLAYING,
     GAME_PAUSE,
-    GAME_OVER   
+    GAME_OVER,
+    SERVER
 } GameState;
 
 struct appState {
@@ -190,6 +194,7 @@ struct appState {
 
     // Server TCP
     NET_Server *tcpServer;
+    NET_StreamSocket *serverStreamSocket;
 
     // Client TCP
     NET_StreamSocket *tcpClient;

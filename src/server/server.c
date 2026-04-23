@@ -1,7 +1,7 @@
 #define SDL_MAIN_USE_CALLBACKS 1 //Flag to use callbacks
 #define SERVER_PORT 2000 // As of now... hardwired...
-#define CLIENT_PORT 2001 // As of now... hardwired...
-#define DEBUG 1
+#define DEBUG 0
+#define NET_DEBUG 1
 
 #include <SDL3/SDL_main.h>
 #include "../lib/NET/networkInterface.h"
@@ -25,10 +25,15 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
     };
     if(!state) return SDL_APP_FAILURE;
 
+    state->serverState = INIT_OF_SERVER;
+    state->gameState = SERVER;
+
     if(initDisplay(state)) return SDL_APP_FAILURE; //Initiate and display window
     initCam(state);
 
-    if(startSDLNet() == NET_FAILURE) return SDL_APP_FAILURE;
+    if (startSDLNet() == NET_FAILURE)
+        return SDL_APP_FAILURE;
+    initAddress(&state->serverIP, ip);
 
     createUDPSocket(&state->udpSocket, SERVER_PORT);
 
@@ -59,8 +64,6 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
     state->world = createWorld(5, (Uint64)SDL_rand(0), state->renderer);
 
     createDungeon(state->world, 20);
-    
-    state->gameState = GAME_PLAYING;
 
     return SDL_APP_CONTINUE;
 }
@@ -75,6 +78,112 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) //Runs on every eve
 SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
 {
     AppState state = (AppState)appstate;
+    NETPacket packet;
+    void *rxData, *txData;
+
+    switch (state->serverState)
+    {
+    case INIT_OF_SERVER:
+        state->gameState = GAME_PLAYING;
+        if (NET_DEBUG)
+            SDL_Log("Current state: INIT_OF_SERVER\n");
+        createTCPServer(state->serverIP, SERVER_PORT, state);
+        state->serverState = WAITING_FOR_PLAYERS;
+        break;
+
+    case WAITING_FOR_PLAYERS:
+        if (NET_DEBUG)
+            SDL_Log("Current state: WAITING_FOR_PLAYERS\n");
+        if (NET_AcceptClient(state->tcpServer, &state->serverStreamSocket))
+        {
+            if (state->serverStreamSocket != NULL)
+            {
+                if (NET_DEBUG)
+                    SDL_Log("Found a client!\n");
+                state->serverState = ASSIGNING_PLAYER_ID;
+            }
+        }
+        break;
+
+    case ASSIGNING_PLAYER_ID:
+        if (NET_DEBUG)
+            SDL_Log("Current state: ASSIGNING_PLAYER_ID\n");
+        if (NET_ReadFromStreamSocket(state->serverStreamSocket, rxData, sizeof(NETPacket)) > 0)
+        {
+            switch ((*(NETPacket *)rxData).command)
+            {
+            case REQUESTING_PLAYER_ID:
+                state->serverState = SENDING_PLAYER_ID;
+                break;
+
+            default:
+                SDL_Log("Incorrect command during player assignment!\n");
+                state->serverState = WAITING_FOR_PLAYERS;
+            }
+        }
+        break;
+
+    case SENDING_PLAYER_ID:
+        if (NET_DEBUG)
+            SDL_Log("Current state: SENDING_PLAYER_ID\n");
+        packet.command = APPROVED_PLAYER;
+        packet.PlayerID = state->connectedPlayers.amountOfPlayers;
+
+        txData = &packet;
+        NET_WriteToStreamSocket(state->serverStreamSocket, txData, sizeof(NETPacket));
+        state->serverState = CONFIRMING_PLAYER_ID_RECIVE;
+
+        break;
+
+    case CONFIRMING_PLAYER_ID_RECIVE:
+        if (NET_DEBUG)
+            SDL_Log("Current state: CONFIRMING_PLAYER_ID_RECIVE\n");
+        if (NET_ReadFromStreamSocket(state->serverStreamSocket, rxData, sizeof(NETPacket)) > 0)
+        {
+            switch ((*(NETPacket *)rxData).command)
+            {
+            case CONFIRMING_RECIVED_PLAYER_ID:
+                if ((*(NETPacket *)rxData).PlayerID != state->connectedPlayers.amountOfPlayers)
+                {
+                    SDL_Log("PlayerID error during confirmation!\n");
+                    state->serverState = WAITING_FOR_PLAYERS;
+                }
+                else
+                {
+                    if (state->connectedPlayers.amountOfPlayers >= MAX_PLAYERS)
+                    {
+                        NET_DestroyStreamSocket(state->serverStreamSocket);
+                        state->serverState = STARTING_GAME;
+                    }
+                    else
+                    {
+                        state->serverState = WAITING_FOR_PLAYERS;
+                        state->connectedPlayers.amountOfPlayers++;
+                        NET_DestroyStreamSocket(state->serverStreamSocket);
+                        SDL_Log("Waiting for players: %d/5\n", state->connectedPlayers.amountOfPlayers);
+                    }
+                }
+                break;
+
+            default:
+                SDL_Log("Incorrect command during player assignment!\n");
+                state->serverState = WAITING_FOR_PLAYERS;
+            }
+        }
+        break;
+
+    case STARTING_GAME:
+        SDL_Log("STARTING GAME!\n");
+        break;
+
+    case GAME_ONGOING:
+
+        break;
+
+    case SERVER_CLEANUP:
+
+        break;
+    }
 
     return render(state);
 }
@@ -86,6 +195,7 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result) //Runs after returning AP
         AppState state = (AppState)appstate;
 
         destoryUDPSocket(state->udpSocket);
+        SDL_free(state->udpPacket);
         stopSDLNet();
 
         for (int x = 0; x < MAX_PLAYERS; x++) {

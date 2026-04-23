@@ -53,8 +53,9 @@ bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms, Uint8 fDir
 
     c->tileType[0][0] = 99;
 
-    Uint64 rowData = 1;
-    Uint64 currentData = 1;
+    int back, tilestep = 0;
+    Uint64 rowData = 1; //Information of a whole data row (+1 row keeping in mind the data is mirrored across 4 pieces)
+    Uint8 currentData; //Two hex value, left value for tile id and right for number of tiles.
 
     if(fDir < 4) {
         fDir = (fDir + 2) % 4;
@@ -140,49 +141,36 @@ bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms, Uint8 fDir
                 }
             }
             break;
-        // case ROOM_CIRCLE:
-        //     for(int i = 0; i < 4 && rowData; i++) { //i < 24
-        //         rowData = CircleRoom[i];
-        //         currentData = rowData;
-        //         for(int j = 0; j < 12 && currentData; j++) {
+        case ROOM_CIRCLE:
+            for(int i = 0; i < 3 && rowData; i++) { //i < 24 //Stop if a row is fully empty (use 0x10 to mark empty but still continue)
+                rowData = CircleRoom[i];
+                currentData = 1;
 
-        //             currentData << (0xFF*j*2);
-        //             currentData & 0xFF;
+                back = 0;
+                do { //Assign last valid data row from index
+                    rowData = CircleRoom[i-back];
 
-        //             SDL_Log("Form: %x", 0xFF*j*2);
-        //             SDL_Log("Full: %x, Part: %x", rowData, currentData);
-        //         }
-        //         SDL_Log("I: %d", i);
-        //     }
-        //     break;
-    }
-}
+                    SDL_Log("Back: %d", i-back);
+                    back++;
+                } while(rowData == 0xF0 && back <= i);
 
-void test() {
-    int back;
+                currentData = rowData & 0xFF;
+                for(int j = 1; j < 8 && currentData > 0; j++) { //Limit 8 because that is how many steps can be taken through Uint64
 
-    Uint64 rowData = 1; //Information of a whole data row (+1 row keeping in mind the data is mirrored across 4 pieces)
-    Uint8 currentData; //Two hex value, left value for tile id and right for number of tiles.
+                    for(int n = 0; n < (rowData & 0xF); n++) {
 
-    for(int i = 0; i < 3 && rowData; i++) { //i < 24 //Stop if a row is fully empty (use 0x10 to mark empty but still continue)
-        rowData = CircleRoom[i];
-        currentData = 1;
+                        c->tileType[0][0] == rowData >> 0x4;
 
-        back = 0;
-        do { //Assign last valid data row from index
-            rowData = CircleRoom[i-back];
+                        if(n == (rowData-1)){
+                            tilestep += n;
+                        }
+                    }
 
-            SDL_Log("Back: %d", i-back);
-            back++;
-        } while(rowData == 0xFF && back <= i);
-
-        for(int j = 0; j < 8 && currentData > 0; j++) { //Limit 8 because that is how many steps can be taken through Uint64
-
-            currentData = rowData >> (0x8*j) & 0xFF; //Move to steps to the right for every step j
-
-            SDL_Log("Full: %x, Part: %x", rowData, currentData);
-        }
-        SDL_Log("I: %d", i);
+                    SDL_Log("Full: %x, Part: %x", rowData, currentData);
+                    currentData = rowData >> (0x8*j) & 0xFF; //Move to steps to the right for every step j
+                }
+                SDL_Log("I: %d", i);
+            }
     }
 }
 
@@ -216,8 +204,6 @@ void generateDungeon(World w, Uint8* nrOfRooms) { //Room placements
     generateRoom(w->chunks, temp, &(w->size), nrOfRooms, 5);
 
     SDL_Log("---------------------");
-
-    // test();
 }
 
 void polishDungeon(World w) { //Fix tileset in dungeon

@@ -1,5 +1,5 @@
-#define SDL_MAIN_USE_CALLBACKS 1 //Flag to use callbacks
-#define SERVER_PORT 2000 // As of now... hardwired...
+#define SDL_MAIN_USE_CALLBACKS 1 // Flag to use callbacks
+#define SERVER_PORT 2000         // As of now... hardwired...
 #define DEBUG 0
 #define NET_DEBUG 1
 
@@ -11,24 +11,25 @@
 
 char ip[15] = "127.0.0.1";
 
-SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once at the begining of the program
+SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once at the begining of the program
 {
     SDL_Log("\n\n --------------- Starting Greedy-Delvers ---------------\n");
-    SDL_InitSubSystem(SDL_INIT_VIDEO); //Also initilizes appevents
+    SDL_InitSubSystem(SDL_INIT_VIDEO); // Also initilizes appevents
 
     AppState state = createAppState();
     state->gameState = GAME_INIT;
     state->mainMenu = (Menu){
         .menuOptions = {"Join", "Play offline", "Quit"},
         .selected = 0,
-        .count = 3
-    };
-    if(!state) return SDL_APP_FAILURE;
+        .count = 3};
+    if (!state)
+        return SDL_APP_FAILURE;
 
     state->serverState = INIT_OF_SERVER;
     state->gameState = SERVER;
 
-    if(initDisplay(state)) return SDL_APP_FAILURE; //Initiate and display window
+    if (initDisplay(state))
+        return SDL_APP_FAILURE; // Initiate and display window
     initCam(state);
 
     if (startSDLNet() == NET_FAILURE)
@@ -39,12 +40,12 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
 
     state->udpPacket = SDL_calloc(1, sizeof(NET_Datagram));
 
-    state->running = true; //Custom flag to mark the program as running
+    state->running = true; // Custom flag to mark the program as running
 
     Vector2D tempVec = {0, 0};
-    Stats fullHp = {100,100};
-    Stats halfHp = {50,100};
-    Stats smallHp = {10,100};
+    Stats fullHp = {100, 100};
+    Stats halfHp = {50, 100};
+    Stats smallHp = {10, 100};
     updatePlayer(&(state->players[0]), tempVec, CLASS_NONE, fullHp, state->renderer);
     SDL_strlcpy(state->players[0].name, "Player1", sizeof(state->players[0].name));
     tempVec.x = 120;
@@ -58,7 +59,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
     Vector2D enemyPos = {200, 100};
     Stats enemyStats = {100, 100, 0, 5, 10, 1};
     updateEnemy(&state->enemies[0], enemyPos, ENEMY_SKELETON, enemyStats, state->renderer);
-    *appstate = state; //Share the appstate to callbacks below
+    *appstate = state; // Share the appstate to callbacks below
     // state->renderFlag = 1;
 
     state->world = createWorld(5, (Uint64)SDL_rand(0), state->renderer);
@@ -68,14 +69,14 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
     return SDL_APP_CONTINUE;
 }
 
-SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) //Runs on every event update
+SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) // Runs on every event update
 {
     AppState state = (AppState)appstate;
 
     return checkEvents(state, event);
 }
 
-SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
+SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
 {
     AppState state = (AppState)appstate;
     NETPacket packet;
@@ -188,21 +189,25 @@ SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
     return render(state);
 }
 
-
-void SDL_AppQuit(void *appstate, SDL_AppResult result) //Runs after returning APP_SUCESS or SDL_FAILURE
+void SDL_AppQuit(void *appstate, SDL_AppResult result) // Runs after returning APP_SUCESS or SDL_FAILURE
 {
-    if(appstate != NULL) {
+    if (appstate != NULL)
+    {
         AppState state = (AppState)appstate;
 
         destoryUDPSocket(state->udpSocket);
         SDL_free(state->udpPacket);
         stopSDLNet();
 
-        for (int x = 0; x < MAX_PLAYERS; x++) {
-            if(state->players[x].texture) SDL_DestroyTexture(state->players[x].texture);
+        for (int x = 0; x < MAX_PLAYERS; x++)
+        {
+            if (state->players[x].texture)
+                SDL_DestroyTexture(state->players[x].texture);
         }
-        if(state->renderer) SDL_DestroyRenderer(state->renderer);
-        if(state->window) SDL_DestroyWindow(state->window);
+        if (state->renderer)
+            SDL_DestroyRenderer(state->renderer);
+        if (state->window)
+            SDL_DestroyWindow(state->window);
         destroyWorld(state->world);
         SDL_free(state);
     }

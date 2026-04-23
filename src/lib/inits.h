@@ -14,18 +14,21 @@
 #define ENEMY_AGGRO_RANGE 150
 #define ENEMY_ATTACK_RANGE 20
 
-typedef struct {
+typedef struct
+{
     int x, y;
 } Vector2D;
 
-typedef enum {
+typedef enum
+{
     WEST,
     NORTH,
     EAST,
     SOUTH
 } direction;
 
-typedef enum{
+typedef enum
+{
     IDLE_SOUTH,
     IDLE_HORIZONTAL,
     IDLE_NORTH,
@@ -37,17 +40,19 @@ typedef enum{
     ATTACK_NORTH
 } AniState;
 
-typedef enum {
-    CLASS_NONE, //0
+typedef enum
+{
+    CLASS_NONE, // 0
     CLASS_MAGE,
     CLASS_PRIEST,
     CLASS_HUNTER,
     CLASS_SWORDMASTER,
-    CLASS_KNIGHT //5
+    CLASS_KNIGHT // 5
 } Player_Class;
 
 // Serverside state
-typedef enum {
+typedef enum
+{
     INIT_OF_SERVER,
     WAITING_FOR_PLAYERS,
     ASSIGNING_PLAYER_ID,
@@ -60,13 +65,15 @@ typedef enum {
 
 typedef struct world *World;
 
-typedef struct{
+typedef struct
+{
     const char *menuOptions[3];
     int selected;
     int count;
 } Menu;
 
-typedef struct {
+typedef struct
+{
     int health;
     int maxHealth;
     int mana;
@@ -75,42 +82,47 @@ typedef struct {
     int attackSpeed;
 } Stats;
 
-typedef struct {
+typedef struct
+{
     int moveX;
     int moveY;
 } Player_Flags;
 
-typedef struct {
-    Vector2D pos; ////SYNC MULTIPLAYER
-    Player_Flags flags; //SYNC MULTIPLAYER
-    Player_Class class; //SYNC MULTIPLAYER
-    Stats stats; //SYNC MULTIPLAYER
-    SDL_Texture* texture; //LOCAL
-    SDL_FRect hitBox; 
-    SDL_FRect aniBox; //LOCAL
-    direction facing; //SYNC MULTIPLAYER
-    SDL_FlipMode flip; //SYNC MULTIPLAYER
+typedef struct
+{
+    Vector2D pos;         ////SYNC MULTIPLAYER
+    Player_Flags flags;   // SYNC MULTIPLAYER
+    Player_Class class;   // SYNC MULTIPLAYER
+    Stats stats;          // SYNC MULTIPLAYER
+    SDL_Texture *texture; // LOCAL
+    SDL_FRect hitBox;
+    SDL_FRect aniBox;  // LOCAL
+    direction facing;  // SYNC MULTIPLAYER
+    SDL_FlipMode flip; // SYNC MULTIPLAYER
     NET_StreamSocket **playerStreamSocket;
     char name[PLAYER_NAME_MAX]; // player name string
     Uint32 enemyCollisionTimer; // ms counter for character colliding with emeny. SYNC MULTIPLAYER
 } Player;
 
-typedef enum {
+typedef enum
+{
     ENEMY_SKELETON,
 } Enemy_Type;
 
-typedef enum {
+typedef enum
+{
     ENEMY_IDLE,
     ENEMY_CHASE,
     ENEMY_ATTACK,
     ENEMY_DEAD
 } Enemy_State;
 
-typedef struct {
+typedef struct
+{
     Vector2D pos;
     SDL_FRect hitBox;
     SDL_FRect aniBox;
-    SDL_Texture* texture;
+    SDL_Texture *texture;
     SDL_FlipMode flip;
     direction facing;
 
@@ -123,7 +135,8 @@ typedef struct {
 } Enemy;
 
 // Serverside player struct
-typedef struct {
+typedef struct
+{
     Vector2D pos;
     Player_Flags flags;
     Player_Class class;
@@ -135,13 +148,15 @@ typedef struct {
 } ServerPlayer;
 
 // Serverside players
-typedef struct {
+typedef struct
+{
     int amountOfPlayers;
     ServerPlayer players[MAX_PLAYERS];
 
 } ConnectedPlayers;
 
-typedef enum GameState {
+typedef enum GameState
+{
     GAME_MENY,
     GAME_HOST,
     GAME_JOIN,
@@ -158,30 +173,31 @@ typedef enum GameState {
     SERVER
 } GameState;
 
-struct appState {
-    SDL_Window *window; //LOCAL
-    SDL_Renderer *renderer; //LOCAL
-    SDL_DisplayID displayID; //LOCAL
-    const SDL_DisplayMode* displayMode; //LOCAL
-    float framerate; //LOCAL
-    Uint64 deltaTime; //LOCAL
-    Uint64 lastTime; //LOCAL
+struct appState
+{
+    SDL_Window *window;                 // LOCAL
+    SDL_Renderer *renderer;             // LOCAL
+    SDL_DisplayID displayID;            // LOCAL
+    const SDL_DisplayMode *displayMode; // LOCAL
+    float framerate;                    // LOCAL
+    Uint64 deltaTime;                   // LOCAL
+    Uint64 lastTime;                    // LOCAL
     ServerState serverState;
     GameState gameState;
     Menu mainMenu;
 
-    Player players [MAX_PLAYERS]; //SEE STRUCT
-    SDL_FRect camera; //LOCAL
+    Player players[MAX_PLAYERS]; // SEE STRUCT
+    SDL_FRect camera;            // LOCAL
 
-    Enemy enemies [MAX_ENEMIES];
+    Enemy enemies[MAX_ENEMIES];
 
-    Uint8 animationTime; //LOCAL
-    Uint8 enemyAnimationTime; //LOCAL
-    bool running; //LOCAL
-    bool computedEvent; //LOCAL
+    Uint8 animationTime;      // LOCAL
+    Uint8 enemyAnimationTime; // LOCAL
+    bool running;             // LOCAL
+    bool computedEvent;       // LOCAL
 
-    //WORLD
-    World world; //LOCAL
+    // WORLD
+    World world; // LOCAL
     ConnectedPlayers connectedPlayers;
 
     // Server IP
@@ -198,7 +214,6 @@ struct appState {
 
     // Client TCP
     NET_StreamSocket *tcpClient;
-
 };
 
 typedef struct appState *AppState;

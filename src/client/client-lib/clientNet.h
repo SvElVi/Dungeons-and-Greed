@@ -15,7 +15,7 @@ NET_Status checkStreamsocketConnection(AppState state);
 
 // Takes the AppState and the data casted as void*, and then adds it to the TCP buffer,
 // for sending, this is a non-blocking function.
-void sendTCPData(AppState, void*);
+void sendTCPData(AppState, void *);
 
 NET_Status handshakeDone(AppState state);
 

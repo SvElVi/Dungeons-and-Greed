@@ -11,6 +11,6 @@
 // Note that the NET_Address must be resolved before calling this function!
 void createTCPServer(NET_Address *adr, int portNumber, AppState state);
 
-void sendTCPData(AppState, void*);
+void sendTCPData(AppState, void *);
 
 #endif

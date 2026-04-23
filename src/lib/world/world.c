@@ -48,6 +48,60 @@ void generateConnections(Chunk* c, bool genDir[4]) {
     //Test
 }
 
+void generateMirroredRoom(Chunk *c, const Uint64* room, bool genDir[4], bool horizontal, bool vertical) {
+    int back, tilestep = 0, n;
+    Uint64 rowData = 1; //Information of a whole data row (+1 row keeping in mind the data is mirrored across 4 pieces)
+    Uint8 currentData; //Two hex value, left value for tile id and right for number of tiles.
+    Uint8 size = 24; //The size described by the data
+
+    if(!horizontal) {
+        size*2;
+    }
+
+    if(!vertical) {
+        size*2;
+    }
+
+
+    for(int i = 0; i < size && rowData; i++) { //Stop if a row is fully empty (use 0x10 to mark empty but still continue)
+        rowData = room[i];
+        currentData = 1;
+
+        back = 0;
+        do { //Assign last valid data row from index
+            rowData = room[i-back];
+            back++;
+
+        } while(rowData == 0xF0 && back <= i);
+
+        currentData = rowData & 0xFF;
+        for(int j = 1; j < 8 && currentData > 0; j++) { //Limit 8 because that is how many steps can be taken through Uint64
+
+            for(n = 0; n < (currentData & 0xF); n++) {
+
+                //Mirroring below
+                c->tileType[(int)((tilestep+n)/size)][(int)((tilestep+n)%size)] = currentData >> 0x4; //Left upper quarter
+
+                if(horizontal) {
+                    c->tileType[(int)((tilestep+n)/size)][(CHUNK_SIZE-1)-(int)((tilestep+n)%size)] = currentData >> 0x4; //Right upper quarter
+                }
+
+                if(vertical) {
+                    c->tileType[(CHUNK_SIZE-1)-(int)((tilestep+n)/size)][(int)((tilestep+n)%size)] = currentData >> 0x4; //Left lower quarter
+                    if(horizontal) {
+                        c->tileType[(CHUNK_SIZE-1)-(int)((tilestep+n)/size)][(CHUNK_SIZE-1)-(int)((tilestep+n)%size)] = currentData >> 0x4; //Right lower quarter
+                    }
+                }
+            }
+            tilestep += n;
+
+            currentData = rowData >> (0x8*j) & 0xFF; //Move to steps to the right for every step j
+        }
+    }
+    generateConnections(c, genDir);
+
+}
+
 bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms, Uint8 fDir) { //org for origin pointer, c for relative, wSize for boundries, nrOfRooms for room limit, fDir for the direction from previus generation
     Chunk* tempC = c;
     float hop = SDL_rand(4); //To make splits in same line more common
@@ -56,10 +110,6 @@ bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms, Uint8 fDir
     bool genDir[4] = {0}; //For generating exits, default all false
 
     c->tileType[0][0] = 99;
-
-    int back, tilestep = 0, n;
-    Uint64 rowData = 1; //Information of a whole data row (+1 row keeping in mind the data is mirrored across 4 pieces)
-    Uint8 currentData; //Two hex value, left value for tile id and right for number of tiles.
 
     if(fDir < 4) {
         fDir = (fDir + 2) % 4;
@@ -145,35 +195,9 @@ bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms, Uint8 fDir
                 }
             }
             break;
-        case ROOM_CIRCLE: //Double mirrored room, for next mirrored room migrate to function
-            for(int i = 0; i < 24 && rowData; i++) { //Stop if a row is fully empty (use 0x10 to mark empty but still continue)
-                rowData = CircleRoom[i];
-                currentData = 1;
-
-                back = 0;
-                do { //Assign last valid data row from index
-                    rowData = CircleRoom[i-back];
-                    back++;
-
-                } while(rowData == 0xF0 && back <= i);
-
-                currentData = rowData & 0xFF;
-                for(int j = 1; j < 8 && currentData > 0; j++) { //Limit 8 because that is how many steps can be taken through Uint64
-
-                    for(n = 0; n < (currentData & 0xF); n++) {
-
-                        //Mirroring below
-                        c->tileType[(int)((tilestep+n)/24)][(int)((tilestep+n)%24)] = currentData >> 0x4; //Left upper quarter
-                        c->tileType[(int)((tilestep+n)/24)][(CHUNK_SIZE-1)-(int)((tilestep+n)%24)] = currentData >> 0x4; //Right upper quarter
-                        c->tileType[(CHUNK_SIZE-1)-(int)((tilestep+n)/24)][(int)((tilestep+n)%24)] = currentData >> 0x4; //Left lower quarter
-                        c->tileType[(CHUNK_SIZE-1)-(int)((tilestep+n)/24)][(CHUNK_SIZE-1)-(int)((tilestep+n)%24)] = currentData >> 0x4; //Right lower quarter
-                    }
-                    tilestep += n;
-
-                    currentData = rowData >> (0x8*j) & 0xFF; //Move to steps to the right for every step j
-                }
-            }
-            generateConnections(c, genDir);
+        case ROOM_CIRCLE: //Double mirrored room
+            generateMirroredRoom(c, CircleRoom, genDir, 1, 1);
+            break;
     }
 }
 

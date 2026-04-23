@@ -51,10 +51,7 @@ bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms, Uint8 fDir
     const int rowSize = (int)SDL_sqrt(*wSize);
     bool genDir[4] = {0}; //For generating exits, default all false
 
-    c->tileType[0][0] = 99;
-
-    Uint64 rowData = 1;
-    Uint64 currentData = 1;
+    c->tileType[0][0] = 99; 
 
     if(fDir < 4) {
         fDir = (fDir + 2) % 4;
@@ -139,50 +136,6 @@ bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms, Uint8 fDir
                     }
                 }
             }
-            break;
-        // case ROOM_CIRCLE:
-        //     for(int i = 0; i < 4 && rowData; i++) { //i < 24
-        //         rowData = CircleRoom[i];
-        //         currentData = rowData;
-        //         for(int j = 0; j < 12 && currentData; j++) {
-
-        //             currentData << (0xFF*j*2);
-        //             currentData & 0xFF;
-
-        //             SDL_Log("Form: %x", 0xFF*j*2);
-        //             SDL_Log("Full: %x, Part: %x", rowData, currentData);
-        //         }
-        //         SDL_Log("I: %d", i);
-        //     }
-        //     break;
-    }
-}
-
-void test() {
-    int back;
-
-    Uint64 rowData = 1; //Information of a whole data row (+1 row keeping in mind the data is mirrored across 4 pieces)
-    Uint8 currentData; //Two hex value, left value for tile id and right for number of tiles.
-
-    for(int i = 0; i < 3 && rowData; i++) { //i < 24 //Stop if a row is fully empty (use 0x10 to mark empty but still continue)
-        rowData = CircleRoom[i];
-        currentData = 1;
-
-        back = 0;
-        do { //Assign last valid data row from index
-            rowData = CircleRoom[i-back];
-
-            SDL_Log("Back: %d", i-back);
-            back++;
-        } while(rowData == 0xFF && back <= i);
-
-        for(int j = 0; j < 8 && currentData > 0; j++) { //Limit 8 because that is how many steps can be taken through Uint64
-
-            currentData = rowData >> (0x8*j) & 0xFF; //Move to steps to the right for every step j
-
-            SDL_Log("Full: %x, Part: %x", rowData, currentData);
-        }
-        SDL_Log("I: %d", i);
     }
 }
 
@@ -216,8 +169,6 @@ void generateDungeon(World w, Uint8* nrOfRooms) { //Room placements
     generateRoom(w->chunks, temp, &(w->size), nrOfRooms, 5);
 
     SDL_Log("---------------------");
-
-    // test();
 }
 
 void polishDungeon(World w) { //Fix tileset in dungeon

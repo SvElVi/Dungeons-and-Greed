@@ -8,7 +8,6 @@ void createTCPClient(NET_Address *adr, int portNumber, AppState state)
 
 NET_Status checkStreamsocketConnection(AppState state)
 {
-    return NET_SUCCESS;
     switch (NET_GetConnectionStatus(state->tcpClient))
     {
     case NET_SUCCESS:
@@ -26,39 +25,39 @@ NET_Status checkStreamsocketConnection(AppState state)
 
 void sendTCPData(AppState state, void *data)
 {
-    NET_WriteToStreamSocket(state->tcpClient, data, sizeof(*data));
+    NET_WriteToStreamSocket(state->tcpClient, data, sizeof(NETPacket));
 }
 
 void clientTCPHandshake(AppState state)
 {
-    SDL_Log("TEST!");
     NETPacket packet = {REQUESTING_PLAYER_ID, 0};
 
-    void *data;
-    data = SDL_calloc(1, sizeof(packet));
-
-    *(NETPacket *)data = packet;
+    void *data = &packet;
 
     sendTCPData(state, data);
-    SDL_free(data);
 }
 
 NET_Status handshakeDone(AppState state)
 {
     void *data = NULL;
 
-    NET_ReadFromStreamSocket(state->tcpClient, data, sizeof(NETPacket));
-
-    if (data != NULL)
+    switch (NET_ReadFromStreamSocket(state->tcpClient, data, sizeof(NETPacket)))
     {
-        NETPacket packet = (*(NETPacket *)data);
-
-        if (packet.command == APPROVED_PLAYER)
+    case NET_SUCCESS:
+        if (data != NULL)
         {
-            SDL_Log("Server: You're playerID is: %d\n", packet.PlayerID);
-            return NET_SUCCESS;
+            NETPacket packet = (*(NETPacket *)data);
+
+            if (packet.command == APPROVED_PLAYER)
+            {
+                SDL_Log("Server: You're playerID is: %d\n", packet.PlayerID);
+                return NET_SUCCESS;
+            }
         }
 
+    case NET_FAILURE:
         return NET_FAILURE;
     }
+
+    return NET_WAITING;
 }

@@ -9,8 +9,6 @@
 #include "../lib/player.h" //All dependencies of [x] included
 #include "../lib/enemy.h"  //All dependencies of [x] included
 
-char ip[15] = "127.0.0.1";
-
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once at the begining of the program
 {
     SDL_Log("\n\n --------------- Starting Greedy-Delvers ---------------\n");
@@ -84,21 +82,16 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         break;
 
     case GAME_MENY:
-        // Meny passar bra att fixa här, oavsett vart i koden den ligger...
-        // state->gameState = GAME_TCP_INIT;
-        // SDL_Log("GAME_MENY\n");
         break;
 
     case GAME_HOST:
-        // SDL_Log("GAME_HOST (waiting for IP input)\n");
         break;
 
     case GAME_JOIN:
-        // SDL_Log("GAME_JOIN (waiting for IP input)\n");
         break;
 
     case GAME_TCP_INIT:
-        if (initAddress(&state->serverIP, ip) < 0)
+        if (initAddress(&state->serverIP, state->hostIP) < 0)
         {
             createTCPClient(state->serverIP, SERVER_PORT, state);
         }
@@ -107,19 +100,39 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         break;
 
     case GAME_TCP_HANDSHAKE:
-        if (checkStreamsocketConnection(state) == NET_SUCCESS)
+        switch (checkStreamsocketConnection(state))
         {
+        case NET_SUCCESS:
             clientTCPHandshake(state);
             state->gameState = GAME_TCP_VERIFYING_HANDSHAKE;
+            break;
+
+        case NET_FAILURE:
+            break;
+
+        default:
+            break;
         }
+
         SDL_Log("GAME_TCP_HANDSHAKE\n");
         break;
 
     case GAME_TCP_VERIFYING_HANDSHAKE:
-        if (handshakeDone(state) == NET_SUCCESS)
+        switch (handshakeDone(state))
+        {
+        case NET_SUCCESS:
             state->gameState = GAME_START;
+            break;
+
+        case NET_FAILURE:
+            state->gameState = GAME_TCP_INIT;
+            NET_DestroyStreamSocket(state->tcpClient);
+            break;
+
+        default:
+            break;
+        }
         SDL_Log("GAME_TCP_VER\n");
-        state->gameState = GAME_START;
         break;
 
     case GAME_START:

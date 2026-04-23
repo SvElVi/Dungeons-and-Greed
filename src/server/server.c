@@ -9,8 +9,6 @@
 #include "../lib/player.h" //All dependencies of [x] included
 #include "../lib/enemy.h"  //All dependencies of [x] included
 
-char ip[15] = "127.0.0.1";
-
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once at the begining of the program
 {
     SDL_Log("\n\n --------------- Starting Greedy-Delvers ---------------\n");
@@ -34,7 +32,6 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once 
 
     if (startSDLNet() == NET_FAILURE)
         return SDL_APP_FAILURE;
-    initAddress(&state->serverIP, ip);
 
     createUDPSocket(&state->udpSocket, SERVER_PORT);
 
@@ -85,19 +82,18 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
     switch (state->serverState)
     {
     case INIT_OF_SERVER:
-        state->gameState = GAME_PLAYING;
         if (NET_DEBUG)
             SDL_Log("Current state: INIT_OF_SERVER\n");
-        createTCPServer(state->serverIP, SERVER_PORT, state);
+        createTCPServer(SERVER_PORT, state);
         state->serverState = WAITING_FOR_PLAYERS;
         break;
 
     case WAITING_FOR_PLAYERS:
         if (NET_DEBUG)
             SDL_Log("Current state: WAITING_FOR_PLAYERS\n");
-        if (NET_AcceptClient(state->tcpServer, &state->serverStreamSocket))
+        if (NET_AcceptClient(state->tcpServer, state->serverStreamSocket))
         {
-            if (state->serverStreamSocket != NULL)
+            if (*(state->serverStreamSocket) != NULL)
             {
                 if (NET_DEBUG)
                     SDL_Log("Found a client!\n");
@@ -109,7 +105,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
     case ASSIGNING_PLAYER_ID:
         if (NET_DEBUG)
             SDL_Log("Current state: ASSIGNING_PLAYER_ID\n");
-        if (NET_ReadFromStreamSocket(state->serverStreamSocket, rxData, sizeof(NETPacket)) > 0)
+        if (NET_ReadFromStreamSocket(*(state->serverStreamSocket), rxData, sizeof(NETPacket)) > 0)
         {
             switch ((*(NETPacket *)rxData).command)
             {
@@ -131,7 +127,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         packet.PlayerID = state->connectedPlayers.amountOfPlayers;
 
         txData = &packet;
-        NET_WriteToStreamSocket(state->serverStreamSocket, txData, sizeof(NETPacket));
+        NET_WriteToStreamSocket(*(state->serverStreamSocket), txData, sizeof(NETPacket));
         state->serverState = CONFIRMING_PLAYER_ID_RECIVE;
 
         break;
@@ -139,7 +135,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
     case CONFIRMING_PLAYER_ID_RECIVE:
         if (NET_DEBUG)
             SDL_Log("Current state: CONFIRMING_PLAYER_ID_RECIVE\n");
-        if (NET_ReadFromStreamSocket(state->serverStreamSocket, rxData, sizeof(NETPacket)) > 0)
+        if (NET_ReadFromStreamSocket(*(state->serverStreamSocket), rxData, sizeof(NETPacket)) > 0)
         {
             switch ((*(NETPacket *)rxData).command)
             {
@@ -153,14 +149,14 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
                 {
                     if (state->connectedPlayers.amountOfPlayers >= MAX_PLAYERS)
                     {
-                        NET_DestroyStreamSocket(state->serverStreamSocket);
+                        NET_DestroyStreamSocket(*(state->serverStreamSocket));
                         state->serverState = STARTING_GAME;
                     }
                     else
                     {
                         state->serverState = WAITING_FOR_PLAYERS;
                         state->connectedPlayers.amountOfPlayers++;
-                        NET_DestroyStreamSocket(state->serverStreamSocket);
+                        NET_DestroyStreamSocket(*(state->serverStreamSocket));
                         SDL_Log("Waiting for players: %d/5\n", state->connectedPlayers.amountOfPlayers);
                     }
                 }

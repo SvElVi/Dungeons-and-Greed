@@ -45,7 +45,52 @@ void changeSeed(World w, Uint64 seed) {
 }
 
 void generateConnections(Chunk* c, bool genDir[4]) {
-    //Test
+    const int startpos = ((int)(CHUNK_SIZE/2) -2 -(int)(CHUNK_SIZE/32));
+
+    if(genDir[WEST]) {
+        for(int y = 0; y < ((int)(CHUNK_SIZE/16)+3); y++) {
+            for(int x = 0; x < CHUNK_SIZE/2; x++) {
+                if(c->tileType[startpos+y][x] == BLANK) {
+
+                    if(y != 0 && y != ((int)(CHUNK_SIZE/16)+2)) {
+                        c->tileType[startpos+y][x] = FLOOR;
+                    } else {
+                        c->tileType[startpos+y][x] = WALL;
+                    }
+                } else if(c->tileType[startpos+y][x] == WALL) {
+
+                    if(y != 0 && y != ((int)(CHUNK_SIZE/16)+2)) {
+                        c->tileType[startpos+y][x] = FLOOR;
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    if(genDir[NORTH]) {
+        for(int y = 0; y < ((int)(CHUNK_SIZE/16)+1); y++) {
+            for(int x = 0; x < CHUNK_SIZE/2; x++) {
+
+            }
+        }
+    }
+
+    if(genDir[EAST]) {
+        for(int y = 0; y < ((int)(CHUNK_SIZE/16)+1); y++) {
+            for(int x = 0; x < CHUNK_SIZE/2; x++) {
+
+            }
+        }
+    }
+
+    if(genDir[SOUTH]) {
+        for(int y = 0; y < ((int)(CHUNK_SIZE/16)+1); y++) {
+            for(int x = 0; x < CHUNK_SIZE/2; x++) {
+
+            }
+        }
+    }
 }
 
 void generateMirroredRoom(Chunk *c, const Uint64* room, bool genDir[4], bool horizontal, bool vertical) {

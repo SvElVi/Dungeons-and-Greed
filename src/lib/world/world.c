@@ -44,6 +44,10 @@ void changeSeed(World w, Uint64 seed) {
     w->seed = seed;
 }
 
+void generateConnections(Chunk* c, bool genDir[4]) {
+    //Test
+}
+
 bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms, Uint8 fDir) { //org for origin pointer, c for relative, wSize for boundries, nrOfRooms for room limit, fDir for the direction from previus generation
     Chunk* tempC = c;
     float hop = SDL_rand(4); //To make splits in same line more common
@@ -141,8 +145,8 @@ bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms, Uint8 fDir
                 }
             }
             break;
-        case ROOM_CIRCLE:
-            for(int i = 0; i < 24 && rowData; i++) { //i < 24 //Stop if a row is fully empty (use 0x10 to mark empty but still continue)
+        case ROOM_CIRCLE: //Double mirrored room, for next mirrored room migrate to function
+            for(int i = 0; i < 24 && rowData; i++) { //Stop if a row is fully empty (use 0x10 to mark empty but still continue)
                 rowData = CircleRoom[i];
                 currentData = 1;
 
@@ -156,7 +160,6 @@ bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms, Uint8 fDir
                 currentData = rowData & 0xFF;
                 for(int j = 1; j < 8 && currentData > 0; j++) { //Limit 8 because that is how many steps can be taken through Uint64
 
-                    // SDL_Log("Place %d, %d times", (currentData & 0xF0) >> 0x4, currentData & 0xF);
                     for(n = 0; n < (currentData & 0xF); n++) {
 
                         //Mirroring below
@@ -164,15 +167,13 @@ bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms, Uint8 fDir
                         c->tileType[(int)((tilestep+n)/24)][(CHUNK_SIZE-1)-(int)((tilestep+n)%24)] = currentData >> 0x4; //Right upper quarter
                         c->tileType[(CHUNK_SIZE-1)-(int)((tilestep+n)/24)][(int)((tilestep+n)%24)] = currentData >> 0x4; //Left lower quarter
                         c->tileType[(CHUNK_SIZE-1)-(int)((tilestep+n)/24)][(CHUNK_SIZE-1)-(int)((tilestep+n)%24)] = currentData >> 0x4; //Right lower quarter
-
-                        SDL_Log("Placed at cords Y: %d, X: %d", (int)((tilestep+n)/24), (int)((tilestep+n)%24));
                     }
                     tilestep += n;
 
-                    // SDL_Log("Full: %x, Part: %x", rowData, currentData);
                     currentData = rowData >> (0x8*j) & 0xFF; //Move to steps to the right for every step j
                 }
             }
+            generateConnections(c, genDir);
     }
 }
 

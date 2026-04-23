@@ -69,25 +69,68 @@ void generateConnections(Chunk* c, bool genDir[4]) {
     }
 
     if(genDir[NORTH]) {
-        for(int y = 0; y < ((int)(CHUNK_SIZE/16)+1); y++) {
-            for(int x = 0; x < CHUNK_SIZE/2; x++) {
+        for(int y = 0; y < CHUNK_SIZE/2; y++) {
+            for(int x = 0; x < ((int)(CHUNK_SIZE/16)+3); x++) {
+                if(c->tileType[y][startpos+x] == BLANK) {
 
+                    if(x != 0 && x != ((int)(CHUNK_SIZE/16)+2)) {
+                        c->tileType[y][startpos+x] = FLOOR;
+                    } else {
+                        c->tileType[y][startpos+x] = WALL;
+                    }
+                } else if(c->tileType[y][startpos+x] == WALL) {
+
+                    if(x != 0 && x != ((int)(CHUNK_SIZE/16)+2)) {
+                        c->tileType[y][startpos+x] = FLOOR;
+                    }
+                }
+            }
+            if(c->tileType[y][0] == WALL) {
+                break;
             }
         }
     }
 
     if(genDir[EAST]) {
-        for(int y = 0; y < ((int)(CHUNK_SIZE/16)+1); y++) {
+        for(int y = 0; y < ((int)(CHUNK_SIZE/16)+3); y++) {
             for(int x = 0; x < CHUNK_SIZE/2; x++) {
+                if(c->tileType[startpos+y][(CHUNK_SIZE-1)-x] == BLANK) {
 
+                    if(y != 0 && y != ((int)(CHUNK_SIZE/16)+2)) {
+                        c->tileType[startpos+y][(CHUNK_SIZE-1)-x] = FLOOR;
+                    } else {
+                        c->tileType[startpos+y][(CHUNK_SIZE-1)-x] = WALL;
+                    }
+                } else if(c->tileType[startpos+y][(CHUNK_SIZE-1)-x] == WALL) {
+
+                    if(y != 0 && y != ((int)(CHUNK_SIZE/16)+2)) {
+                        c->tileType[startpos+y][(CHUNK_SIZE-1)-x] = FLOOR;
+                    }
+                    break;
+                }
             }
         }
     }
 
     if(genDir[SOUTH]) {
-        for(int y = 0; y < ((int)(CHUNK_SIZE/16)+1); y++) {
-            for(int x = 0; x < CHUNK_SIZE/2; x++) {
+        for(int y = 0; y < CHUNK_SIZE/2; y++) {
+            for(int x = 0; x < ((int)(CHUNK_SIZE/16)+3); x++) {
+                if(c->tileType[(CHUNK_SIZE-1)-y][startpos+x] == BLANK) {
 
+                    if(x != 0 && x != ((int)(CHUNK_SIZE/16)+2)) {
+                        c->tileType[(CHUNK_SIZE-1)-y][startpos+x] = FLOOR;
+                    } else {
+                        c->tileType[(CHUNK_SIZE-1)-y][startpos+x] = WALL;
+                    }
+                } else if(c->tileType[(CHUNK_SIZE-1)-y][startpos+x] == WALL) {
+
+                    if(x != 0 && x != ((int)(CHUNK_SIZE/16)+2)) {
+                        c->tileType[(CHUNK_SIZE-1)-y][startpos+x] = FLOOR;
+                    }
+                }
+            }
+            if(c->tileType[(CHUNK_SIZE-1)-y][0] == WALL) {
+                break;
             }
         }
     }

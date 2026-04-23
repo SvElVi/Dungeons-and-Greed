@@ -7,6 +7,9 @@
 #include "../lib/NET/networkInterface.h"
 #include "server-lib/serverNet.h"
 #include "../lib/player.h" //All dependencies of [x] included
+#include "../lib/enemy.h"  //All dependencies of [x] included
+
+char ip[15] = "127.0.0.1";
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once at the begining of the program
 {
@@ -14,40 +17,50 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) //Runs once a
     SDL_InitSubSystem(SDL_INIT_VIDEO); //Also initilizes appevents
 
     AppState state = createAppState();
+    state->gameState = GAME_INIT;
+    state->mainMenu = (Menu){
+        .menuOptions = {"Join", "Play offline", "Quit"},
+        .selected = 0,
+        .count = 3
+    };
     if(!state) return SDL_APP_FAILURE;
-
-    state->gameState = GAME_START;
 
     if(initDisplay(state)) return SDL_APP_FAILURE; //Initiate and display window
     initCam(state);
 
     if(startSDLNet() == NET_FAILURE) return SDL_APP_FAILURE;
-    
 
     createUDPSocket(&state->udpSocket, SERVER_PORT);
 
     state->udpPacket = SDL_calloc(1, sizeof(NET_Datagram));
 
-    if (initAddress(&state->serverIP, "127.0.0.1") < 0) return SDL_APP_FAILURE;
-
-    createTCPServer(state->serverIP, SERVER_PORT, state);
-
     state->running = true; //Custom flag to mark the program as running
 
     Vector2D tempVec = {0, 0};
-    Stats tempStats = {0};
-    updatePlayer(&(state->players[0]), tempVec, CLASS_NONE, tempStats, state->renderer);
-    tempVec.x = 50;
-    updatePlayer(&(state->players[1]), tempVec, CLASS_NONE, tempStats, state->renderer);
-    tempVec.x = 100;
-    updatePlayer(&(state->players[2]), tempVec, CLASS_NONE, tempStats, state->renderer);
+    Stats fullHp = {100,100};
+    Stats halfHp = {50,100};
+    Stats smallHp = {10,100};
+    updatePlayer(&(state->players[0]), tempVec, CLASS_NONE, fullHp, state->renderer);
+    SDL_strlcpy(state->players[0].name, "Player1", sizeof(state->players[0].name));
+    tempVec.x = 120;
+    updatePlayer(&(state->players[1]), tempVec, CLASS_NONE, halfHp, state->renderer);
+    SDL_strlcpy(state->players[1].name, "Player2", sizeof(state->players[1].name));
+    tempVec.x = 240;
+    updatePlayer(&(state->players[2]), tempVec, CLASS_NONE, smallHp, state->renderer);
+    SDL_strlcpy(state->players[2].name, "Player3", sizeof(state->players[2].name));
 
+    // enemy
+    Vector2D enemyPos = {200, 100};
+    Stats enemyStats = {100, 100, 0, 5, 10, 1};
+    updateEnemy(&state->enemies[0], enemyPos, ENEMY_SKELETON, enemyStats, state->renderer);
     *appstate = state; //Share the appstate to callbacks below
     // state->renderFlag = 1;
 
     state->world = createWorld(5, (Uint64)SDL_rand(0), state->renderer);
 
     createDungeon(state->world, 20);
+    
+    state->gameState = GAME_PLAYING;
 
     return SDL_APP_CONTINUE;
 }
@@ -62,13 +75,6 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) //Runs on every eve
 SDL_AppResult SDL_AppIterate(void *appstate) //Superloop
 {
     AppState state = (AppState)appstate;
-
-    NETPacket packet = {UPDATE_PLAYER, ZERO};
-
-    sendDatagram(state, state->serverIP, SERVER_PORT, (void *)&packet);
-
-    void *data;
-    checkForDatagram(state, &data);
 
     return render(state);
 }

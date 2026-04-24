@@ -157,7 +157,6 @@ void generateMirroredRoom(Chunk *c, const Uint64* room, bool genDir[4], bool hor
 
 
     for(int i = 0; i < size && rowData; i++) { //Stop if a row is fully empty (use 0x10 to mark empty but still continue)
-        rowData = room[i];
         currentData = 1;
 
         back = 0;
@@ -168,7 +167,7 @@ void generateMirroredRoom(Chunk *c, const Uint64* room, bool genDir[4], bool hor
         } while(rowData == 0xF0 && back <= i);
 
         currentData = rowData & 0xFF;
-        for(int j = 1; j < 8 && currentData > 0; j++) { //Limit 8 because that is how many steps can be taken through Uint64
+        for(int j = 1; j < 9 && currentData > 0; j++) { //Limit 8 because that is how many steps can be taken through Uint64
 
             for(n = 0; n < (currentData & 0xF); n++) {
 
@@ -307,6 +306,9 @@ bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms, Uint8 fDir
             break;
         case ROOM_CUBE:
             generateMirroredRoom(c, cubeRoom, genDir, 1, 1);
+            break;
+        case ROOM_RUGGED_CUBE: 
+            generateMirroredRoom(c, ruggedCubeRoom, genDir, 1, 1);
             break;
     }
 }

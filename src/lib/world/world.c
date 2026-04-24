@@ -291,6 +291,9 @@ bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms, Uint8 fDir
         case ROOM_CIRCLE: //Double mirrored room
             generateMirroredRoom(c, CircleRoom, genDir, 1, 1);
             break;
+        case ROOM_SIX_HALL:
+            generateMirroredRoom(c, SixHallRoom, genDir, 1, 1);
+            break;
     }
 }
 

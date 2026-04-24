@@ -1,14 +1,15 @@
 #include <SDL3/SDL.h>
 
 #define CHUNK_SIZE 48
-#define ROOM_TYPES 4
+#define ROOM_TYPES 5
 #define TILE_SIZE 16
 
 typedef enum {
     TEST,
     ROOM_CIRCLE,
     ROOM_SIX_HALL,
-    ROOM_OCTAGONAL
+    ROOM_OCTAGONAL,
+    ROOM_NINE_CIRCLE
 } ROOM_TYPE;
 
 typedef enum {
@@ -21,7 +22,7 @@ typedef struct {
     Uint8 tileType[CHUNK_SIZE][CHUNK_SIZE];
 } Chunk;
 
-const Uint64 CircleRoom[24] = {
+const Uint64 circleRoom[24] = {
     0x090F,
     0xF0,
     0x26030F,
@@ -53,7 +54,7 @@ const Uint64 CircleRoom[24] = {
     0x18221B2102
 };
 
-const Uint64 SixHallRoom[24] = {
+const Uint64 sixHallRoom[24] = {
     0x090F,
     0xF0,
     0xF0,
@@ -85,7 +86,7 @@ const Uint64 SixHallRoom[24] = {
     0xF0
 };
 
-const Uint64 OctagonalRoom[24] = {
+const Uint64 octagonalRoom[24] = {
     0x090F,
     0xF0,
     0xF0,
@@ -113,6 +114,38 @@ const Uint64 OctagonalRoom[24] = {
 
     0x12221F2104,
     0xF0,
+    0x141F2104,
+    0xF0
+};
+
+const Uint64 nineCircleRoom[24] = {
+    0x090F,
+    0xF0,
+    0xF0,
+    0xF0,
+
+    0x24062806,
+    0x13220422162205,
+    0x14220222182204,
+    0x15241A2104,
+
+    0x141F2104,
+    0xF0,
+    0xF0,
+    0xF0,
+
+    0x15241A2104,
+    0x14220222182204,
+    0x13220422162205,
+    0x12220622142206,
+
+    0x12210821142107,
+    0xF0,
+    0x12220622142206,
+    0x13220422162205,
+
+    0x14220222182204,
+    0x15241A2104,
     0x141F2104,
     0xF0
 };

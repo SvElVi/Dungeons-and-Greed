@@ -91,11 +91,16 @@ int checkEvents(AppState state, SDL_Event *event)
                 break;
             }
         }
+        if(keylist[SDL_SCANCODE_ESCAPE])
+        {
+            state->running = false;
+            return SDL_APP_SUCCESS;
+        }
         upLast = keylist[SDL_SCANCODE_UP];
         downLast = keylist[SDL_SCANCODE_DOWN];
         enterLast = keylist[SDL_SCANCODE_RETURN];
     }
-    if (state->gameState == GAME_HOST || state->gameState == GAME_JOIN)
+    if (state->gameState == GAME_JOIN)
     {
 
         if (event->type == SDL_EVENT_KEY_DOWN)
@@ -135,6 +140,13 @@ int checkEvents(AppState state, SDL_Event *event)
                     state->hostIP[state->hostIPLen] = '\0';
                 }
             }
+        }
+    }
+    if(state->gameState == GAME_HOST)
+    {
+        if(keylist[SDL_SCANCODE_SPACE])
+        {
+            //Här ska det hamna kod som fixar ready
         }
     }
     // Non quit functions

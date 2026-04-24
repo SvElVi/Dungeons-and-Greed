@@ -93,7 +93,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         {
             if (state->serverStreamSocket != NULL)
             {
-                SDL_Log("Hittade en spelare med IP: %s\n", NET_GetStreamSocketAddress(state->serverStreamSocket));
+                SDL_Log("Hittade en spelare med IP: %s\n", NET_GetAddressString(NET_GetStreamSocketAddress(state->serverStreamSocket)));
                 state->serverState = ASSIGNING_PLAYER_ID;
             }
         }
@@ -106,7 +106,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
             switch ((*(NETPacket *)rxData).command)
             {
             case REQUESTING_PLAYER_ID:
-                SDL_Log("Förfrågan om PlayerID från klient: %s\n", NET_GetStreamSocketAddress(state->serverStreamSocket));
+                SDL_Log("Förfrågan om PlayerID från klient: %s\n", NET_GetAddressString(NET_GetStreamSocketAddress(state->serverStreamSocket)));
                 state->serverState = SENDING_PLAYER_ID;
                 break;
 
@@ -120,7 +120,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
     case SENDING_PLAYER_ID:
         packet.command = APPROVED_PLAYER;
         packet.PlayerID = state->connectedPlayers.amountOfPlayers;
-        SDL_Log("Skickar PlayerID %d till klient: %s\n", packet.PlayerID, NET_GetStreamSocketAddress(state->serverStreamSocket));
+        SDL_Log("Skickar PlayerID %d till klient: %s\n", packet.PlayerID, NET_GetAddressString(NET_GetStreamSocketAddress(state->serverStreamSocket)));
 
         txData = &packet;
         NET_WriteToStreamSocket(state->serverStreamSocket, txData, sizeof(NETPacket));

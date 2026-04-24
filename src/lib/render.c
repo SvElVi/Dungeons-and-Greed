@@ -16,6 +16,9 @@ int renderFrame(AppState state) {
     else if(state->gameState == GAME_JOIN){
         join_screen(state);
     }
+    else if(state->gameState == GAME_HOST){
+        host_screen(state);
+    }
     else if(state->gameState == GAME_TCP_INIT){
         string_screen(state, "Connecting...");
     }

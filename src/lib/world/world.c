@@ -259,40 +259,40 @@ bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms, Uint8 fDir
     }
 
     switch(SDL_rand(ROOM_TYPES)) {
-        case TEST:
-            for(int y = 0; y < CHUNK_SIZE; y++) {
-                for(int x = 0; x < CHUNK_SIZE; x++) {
-                    if(!x || x == (CHUNK_SIZE-1) || !y || y == (CHUNK_SIZE-1)) {
-                        c->tileType[y][x] = WALL;
-                    } else {
-                        c->tileType[y][x] = FLOOR;
-                    }
-                }
-            }
+        // case TEST:
+        //     for(int y = 0; y < CHUNK_SIZE; y++) {
+        //         for(int x = 0; x < CHUNK_SIZE; x++) {
+        //             if(!x || x == (CHUNK_SIZE-1) || !y || y == (CHUNK_SIZE-1)) {
+        //                 c->tileType[y][x] = WALL;
+        //             } else {
+        //                 c->tileType[y][x] = FLOOR;
+        //             }
+        //         }
+        //     }
             
-            for(int i = 0; i < 4; i++) {
-                if(genDir[i]) {
-                    for(int j = 0; j < CHUNK_SIZE; j++) {
-                        if(j <= ((int)(CHUNK_SIZE/2) + (int)(CHUNK_SIZE/32)) && j >= ((int)(CHUNK_SIZE/2) -1 -(int)(CHUNK_SIZE/32))) {
-                            switch(i) {
-                                case WEST:
-                                    c->tileType[j][0] = 1;
-                                    break;
-                                case NORTH:
-                                    c->tileType[0][j] = 1;
-                                    break;
-                                case EAST:
-                                    c->tileType[j][CHUNK_SIZE-1] = 1;
-                                    break;
-                                case SOUTH:
-                                    c->tileType[CHUNK_SIZE-1][j] = 1;
-                                    break;  
-                            }
-                        }
-                    }
-                }
-            }
-            break;
+        //     for(int i = 0; i < 4; i++) {
+        //         if(genDir[i]) {
+        //             for(int j = 0; j < CHUNK_SIZE; j++) {
+        //                 if(j <= ((int)(CHUNK_SIZE/2) + (int)(CHUNK_SIZE/32)) && j >= ((int)(CHUNK_SIZE/2) -1 -(int)(CHUNK_SIZE/32))) {
+        //                     switch(i) {
+        //                         case WEST:
+        //                             c->tileType[j][0] = 1;
+        //                             break;
+        //                         case NORTH:
+        //                             c->tileType[0][j] = 1;
+        //                             break;
+        //                         case EAST:
+        //                             c->tileType[j][CHUNK_SIZE-1] = 1;
+        //                             break;
+        //                         case SOUTH:
+        //                             c->tileType[CHUNK_SIZE-1][j] = 1;
+        //                             break;  
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     break;
         case ROOM_CIRCLE: //Double mirrored room
             generateMirroredRoom(c, circleRoom, genDir, 1, 1);
             break;
@@ -304,6 +304,9 @@ bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms, Uint8 fDir
             break;
         case ROOM_NINE_CIRCLE:
             generateMirroredRoom(c, nineCircleRoom, genDir, 1, 1);
+            break;
+        case ROOM_CUBE:
+            generateMirroredRoom(c, cubeRoom, genDir, 1, 1);
             break;
     }
 }

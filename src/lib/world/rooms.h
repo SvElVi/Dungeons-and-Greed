@@ -5,11 +5,12 @@
 #define TILE_SIZE 16
 
 typedef enum {
-    TEST,
+    // TEST,
     ROOM_CIRCLE,
     ROOM_SIX_HALL,
     ROOM_OCTAGONAL,
-    ROOM_NINE_CIRCLE
+    ROOM_NINE_CIRCLE,
+    ROOM_CUBE
 } ROOM_TYPE;
 
 typedef enum {
@@ -147,5 +148,37 @@ const Uint64 nineCircleRoom[24] = {
     0x14220222182204,
     0x15241A2104,
     0x141F2104,
+    0xF0
+};
+
+Uint64 cubeRoom[24] = {
+    0x090F,
+    0xF0,
+    0xF0,
+    0x23060F,
+
+    0x122101212F04,
+    0x122101211E2104,
+    0x12231E2104,
+    0x141F2104,
+
+    0xF0,
+    0xF0,
+    0xF0,
+    0xF0,
+
+    0xF0,
+    0xF0,
+    0xF0,
+    0xF0,
+
+    0xF0,
+    0xF0,
+    0xF0,
+    0x121F2304,
+
+    0x121F2106,
+    0x121F2403,
+    0x151F2103,
     0xF0
 };

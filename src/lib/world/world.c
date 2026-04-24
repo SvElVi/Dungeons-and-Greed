@@ -191,6 +191,11 @@ void generateMirroredRoom(Chunk *c, const Uint64* room, bool genDir[4], bool hor
             currentData = rowData >> (0x8*j) & 0xFF; //Move to steps to the right for every step j
         }
     }
+
+    if(c->tileType[0][0] == 0) {
+        c->tileType[0][0] = 99;
+    }
+
     generateConnections(c, genDir);
 
 }

@@ -100,7 +100,6 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
             default:
                 SDL_Log("Pending...");
         }
-        SDL_Log("GAME_TCP_INIT\n");
         break;
 
     case GAME_TCP_HANDSHAKE:
@@ -135,7 +134,6 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         default:
             break;
         }
-        SDL_Log("GAME_TCP_VER\n");
         break;
 
     case GAME_START:

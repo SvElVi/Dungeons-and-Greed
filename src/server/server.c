@@ -84,26 +84,29 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
     switch (state->serverState)
     {
     case INIT_OF_SERVER:
-        if (NET_DEBUG)
-            SDL_Log("Current state: INIT_OF_SERVER\n");
         createTCPServer(TCP_PORT, state);
         state->serverState = WAITING_FOR_PLAYERS;
         break;
 
     case WAITING_FOR_PLAYERS:
         if (NET_AcceptClient(state->tcpServer, &state->serverStreamSocket))
+        {
             if (state->serverStreamSocket != NULL)
+            {
+                SDL_Log("Hittade en spelare med IP: %s\n", NET_GetStreamSocketAddress(state->serverStreamSocket));
                 state->serverState = ASSIGNING_PLAYER_ID;
+            }
+        }
+
         break;
 
     case ASSIGNING_PLAYER_ID:
-        if (NET_DEBUG)
-            SDL_Log("Current state: ASSIGNING_PLAYER_ID\n");
         if (NET_ReadFromStreamSocket(state->serverStreamSocket, rxData, sizeof(NETPacket)) > 0)
         {
             switch ((*(NETPacket *)rxData).command)
             {
             case REQUESTING_PLAYER_ID:
+                SDL_Log("Förfrågan om PlayerID från klient: %s\n", NET_GetStreamSocketAddress(state->serverStreamSocket));
                 state->serverState = SENDING_PLAYER_ID;
                 break;
 
@@ -115,10 +118,9 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         break;
 
     case SENDING_PLAYER_ID:
-        if (NET_DEBUG)
-            SDL_Log("Current state: SENDING_PLAYER_ID\n");
         packet.command = APPROVED_PLAYER;
         packet.PlayerID = state->connectedPlayers.amountOfPlayers;
+        SDL_Log("Skickar PlayerID %d till klient: %s\n", packet.PlayerID, NET_GetStreamSocketAddress(state->serverStreamSocket));
 
         txData = &packet;
         NET_WriteToStreamSocket(state->serverStreamSocket, txData, sizeof(NETPacket));
@@ -127,8 +129,6 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         break;
 
     case CONFIRMING_PLAYER_ID_RECIVE:
-        if (NET_DEBUG)
-            SDL_Log("Current state: CONFIRMING_PLAYER_ID_RECIVE\n");
         if (NET_ReadFromStreamSocket(state->serverStreamSocket, rxData, sizeof(NETPacket)) > 0)
         {
             switch ((*(NETPacket *)rxData).command)

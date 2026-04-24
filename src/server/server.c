@@ -80,6 +80,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
     AppState state = (AppState)appstate;
     NETPacket packet;
     void *rxData, *txData;
+    static bool hasAnnounceAmountOfPlayers = false;
 
     switch (state->serverState)
     {
@@ -89,11 +90,17 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         break;
 
     case WAITING_FOR_PLAYERS:
+        if (!hasAnnounceAmountOfPlayers) {
+            SDL_Log("Waiting for players: %d/5\n", state->connectedPlayers.amountOfPlayers);
+            hasAnnounceAmountOfPlayers = true;
+        }
         if (NET_AcceptClient(state->tcpServer, &state->serverStreamSocket))
         {
             if (state->serverStreamSocket != NULL)
             {
-                SDL_Log("Hittade en spelare med IP: %s\n", NET_GetAddressString(NET_GetStreamSocketAddress(state->serverStreamSocket)));
+                hasAnnounceAmountOfPlayers = false;
+                SDL_Log("\n---------- TCP handshake ----------\n");
+                SDL_Log("Incoming connection from: %s\n", NET_GetAddressString(NET_GetStreamSocketAddress(state->serverStreamSocket)));
                 state->serverState = ASSIGNING_PLAYER_ID;
             }
         }
@@ -106,12 +113,12 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
             switch ((*(NETPacket *)rxData).command)
             {
             case REQUESTING_PLAYER_ID:
-                SDL_Log("Förfrågan om PlayerID från klient: %s\n", NET_GetAddressString(NET_GetStreamSocketAddress(state->serverStreamSocket)));
+                SDL_Log("Client is requesting a playerID!\n");
                 state->serverState = SENDING_PLAYER_ID;
                 break;
 
             default:
-                SDL_Log("Incorrect command during player assignment!\n");
+                SDL_Log("Error: Client out of sync, not requesting a playerID during ASSIGNING_PLAYER_ID state!\n");
                 state->serverState = WAITING_FOR_PLAYERS;
             }
         }
@@ -120,7 +127,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
     case SENDING_PLAYER_ID:
         packet.command = APPROVED_PLAYER;
         packet.PlayerID = state->connectedPlayers.amountOfPlayers;
-        SDL_Log("Skickar PlayerID %d till klient: %s\n", packet.PlayerID, NET_GetAddressString(NET_GetStreamSocketAddress(state->serverStreamSocket)));
+        SDL_Log("Assigning the client playerID %d, and sending it to: %s\n", packet.PlayerID, NET_GetAddressString(NET_GetStreamSocketAddress(state->serverStreamSocket)));
 
         txData = &packet;
         NET_WriteToStreamSocket(state->serverStreamSocket, txData, sizeof(NETPacket));
@@ -136,35 +143,36 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
             case CONFIRMING_RECIVED_PLAYER_ID:
                 if ((*(NETPacket *)rxData).PlayerID != state->connectedPlayers.amountOfPlayers)
                 {
-                    SDL_Log("PlayerID error during confirmation!\n");
+                    SDL_Log("Error: Client and server playerID out of sync!\n");
                     state->serverState = WAITING_FOR_PLAYERS;
                 }
                 else
                 {
+                    state->connectedPlayers.amountOfPlayers++;
                     if (state->connectedPlayers.amountOfPlayers >= MAX_PLAYERS)
                     {
                         NET_DestroyStreamSocket(state->serverStreamSocket);
+                        SDL_Log("-----------------------------------\n\n");
+                        SDL_Log("Starting game!\n");
                         state->serverState = STARTING_GAME;
                     }
                     else
                     {
                         state->serverState = WAITING_FOR_PLAYERS;
-                        state->connectedPlayers.amountOfPlayers++;
+                        SDL_Log("-----------------------------------\n\n");
                         NET_DestroyStreamSocket(state->serverStreamSocket);
-                        SDL_Log("Waiting for players: %d/5\n", state->connectedPlayers.amountOfPlayers);
                     }
                 }
                 break;
 
             default:
-                SDL_Log("Incorrect command during player assignment!\n");
+                SDL_Log("Error: Client out of sync, not confirming a playerID during CONFIRMING_PLAYER_ID_RECIVE!\n");
                 state->serverState = WAITING_FOR_PLAYERS;
             }
         }
         break;
 
     case STARTING_GAME:
-        SDL_Log("STARTING GAME!\n");
         break;
 
     case GAME_ONGOING:

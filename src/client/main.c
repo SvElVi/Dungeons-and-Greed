@@ -73,6 +73,8 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) // Runs on every ev
 SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
 {
     AppState state = (AppState)appstate;
+    NETPacket packet;
+    void *txData, *rxData;
 
     switch (state->gameState)
     {
@@ -91,14 +93,15 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         break;
 
     case GAME_TCP_INIT:
-        switch (initAddress(&state->serverIP, state->hostIP)) {
-            case NET_SUCCESS:
-                createTCPClient(state->serverIP, TCP_PORT, state);
-                state->gameState = GAME_TCP_HANDSHAKE;
-                break;
+        switch (initAddress(&state->serverIP, state->hostIP))
+        {
+        case NET_SUCCESS:
+            createTCPClient(state->serverIP, TCP_PORT, state);
+            state->gameState = GAME_TCP_HANDSHAKE;
+            break;
 
-            default:
-                SDL_Log("Pending...");
+        default:
+            SDL_Log("Pending...");
         }
         break;
 
@@ -120,19 +123,18 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         break;
 
     case GAME_TCP_VERIFYING_HANDSHAKE:
-        switch (handshakeDone(state))
+        if (NET_ReadFromStreamSocket(state->tcpClient, rxData, sizeof(NETPacket)) > 0)
         {
-        case NET_SUCCESS:
-            state->gameState = GAME_START;
-            break;
+            memcpy(&packet, rxData, sizeof(NETPacket));
 
-        case NET_FAILURE:
-            state->gameState = GAME_TCP_INIT;
-            NET_DestroyStreamSocket(state->tcpClient);
-            break;
-
-        default:
-            break;
+            if (packet.command == APPROVED_PLAYER)
+            {
+                SDL_Log("Server: You're playerID is: %d\n", packet.PlayerID);
+                packet.command = CONFIRMING_RECIVED_PLAYER_ID;
+                txData = &packet;
+                sendTCPData(state, txData);
+                state->gameState = GAME_START;
+            }
         }
         break;
 

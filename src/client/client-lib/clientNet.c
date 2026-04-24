@@ -7,21 +7,25 @@ void createTCPClient(NET_Address *adr, int portNumber, AppState state)
     SDL_Log("Initializing a TCP stream socket...\n");
     state->tcpClient = NET_CreateClient(adr, portNumber);
 
-    switch(NET_WaitUntilConnected(state->tcpClient, TCP_TIMEOUT)) {
-        case NET_SUCCESS:
-            if (NET_DEBUG) SDL_Log("Created server and connected!\n");
-            break;
+    switch (NET_WaitUntilConnected(state->tcpClient, TCP_TIMEOUT))
+    {
+    case NET_SUCCESS:
+        if (NET_DEBUG)
+            SDL_Log("Created server and connected!\n");
+        break;
 
-        case NET_FAILURE:
-            if (NET_DEBUG) SDL_Log("Something went wrong!\n");
-            break;
+    case NET_FAILURE:
+        if (NET_DEBUG)
+            SDL_Log("Something went wrong!\n");
+        break;
 
-        case NET_WAITING:
-            if (NET_DEBUG) SDL_Log("Waiting!\n");
-            break;
+    case NET_WAITING:
+        if (NET_DEBUG)
+            SDL_Log("Waiting!\n");
+        break;
 
-        default:
-            SDL_Log("Something went terribly wrong!\n");
+    default:
+        SDL_Log("Something went terribly wrong!\n");
     }
 }
 
@@ -56,27 +60,20 @@ void clientTCPHandshake(AppState state)
     sendTCPData(state, data);
 }
 
-NET_Status handshakeDone(AppState state)
+/* NET_Status handshakeDone(AppState state)
 {
     void *data = NULL;
 
-    switch (NET_ReadFromStreamSocket(state->tcpClient, data, sizeof(NETPacket)))
+    if (NET_ReadFromStreamSocket(state->tcpClient, data, sizeof(NETPacket)) > 0)
     {
-    case NET_SUCCESS:
-        if (data != NULL)
+        NETPacket packet = (*(NETPacket *)data);
+
+        if (packet.command == APPROVED_PLAYER)
         {
-            NETPacket packet = (*(NETPacket *)data);
-
-            if (packet.command == APPROVED_PLAYER)
-            {
-                SDL_Log("Server: You're playerID is: %d\n", packet.PlayerID);
-                return NET_SUCCESS;
-            }
+            SDL_Log("Server: You're playerID is: %d\n", packet.PlayerID);
+            return NET_SUCCESS;
         }
-
-    case NET_FAILURE:
-        return NET_FAILURE;
     }
 
     return NET_WAITING;
-}
+} */

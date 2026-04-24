@@ -10,7 +10,7 @@ typedef enum {
     ROOM_OCTAGONAL,
     ROOM_NINE_CIRCLE,
     ROOM_CUBE,
-    ROOM_RUGGED_CUBE
+    ROOM_RAGGED_CUBE
 } ROOM_TYPE;
 
 typedef enum {
@@ -183,7 +183,7 @@ Uint64 cubeRoom[24] = {
     0xF0
 };
 
-Uint64 ruggedCubeRoom[24] = {
+Uint64 raggedCubeRoom[24] = {
     0x090F,
     0xF0,
     0xF0,

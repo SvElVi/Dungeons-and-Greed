@@ -5,7 +5,6 @@
 #define TILE_SIZE 16
 
 typedef enum {
-    // TEST,
     ROOM_CIRCLE,
     ROOM_SIX_HALL,
     ROOM_OCTAGONAL,

@@ -91,23 +91,15 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         break;
 
     case WAITING_FOR_PLAYERS:
-        if (NET_DEBUG)
-            SDL_Log("Current state: WAITING_FOR_PLAYERS\n");
-        if (NET_AcceptClient(state->tcpServer, state->serverStreamSocket))
-        {
-            if ((state->serverStreamSocket) != NULL)
-            {
-                if (NET_DEBUG)
-                    SDL_Log("Found a client!\n");
+        if (NET_AcceptClient(state->tcpServer, &state->serverStreamSocket))
+            if (state->serverStreamSocket != NULL)
                 state->serverState = ASSIGNING_PLAYER_ID;
-            }
-        }
         break;
 
     case ASSIGNING_PLAYER_ID:
         if (NET_DEBUG)
             SDL_Log("Current state: ASSIGNING_PLAYER_ID\n");
-        if (NET_ReadFromStreamSocket(*(state->serverStreamSocket), rxData, sizeof(NETPacket)) > 0)
+        if (NET_ReadFromStreamSocket(state->serverStreamSocket, rxData, sizeof(NETPacket)) > 0)
         {
             switch ((*(NETPacket *)rxData).command)
             {
@@ -129,7 +121,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         packet.PlayerID = state->connectedPlayers.amountOfPlayers;
 
         txData = &packet;
-        NET_WriteToStreamSocket(*(state->serverStreamSocket), txData, sizeof(NETPacket));
+        NET_WriteToStreamSocket(state->serverStreamSocket, txData, sizeof(NETPacket));
         state->serverState = CONFIRMING_PLAYER_ID_RECIVE;
 
         break;
@@ -137,7 +129,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
     case CONFIRMING_PLAYER_ID_RECIVE:
         if (NET_DEBUG)
             SDL_Log("Current state: CONFIRMING_PLAYER_ID_RECIVE\n");
-        if (NET_ReadFromStreamSocket(*(state->serverStreamSocket), rxData, sizeof(NETPacket)) > 0)
+        if (NET_ReadFromStreamSocket(state->serverStreamSocket, rxData, sizeof(NETPacket)) > 0)
         {
             switch ((*(NETPacket *)rxData).command)
             {
@@ -151,14 +143,14 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
                 {
                     if (state->connectedPlayers.amountOfPlayers >= MAX_PLAYERS)
                     {
-                        NET_DestroyStreamSocket(*(state->serverStreamSocket));
+                        NET_DestroyStreamSocket(state->serverStreamSocket);
                         state->serverState = STARTING_GAME;
                     }
                     else
                     {
                         state->serverState = WAITING_FOR_PLAYERS;
                         state->connectedPlayers.amountOfPlayers++;
-                        NET_DestroyStreamSocket(*(state->serverStreamSocket));
+                        NET_DestroyStreamSocket(state->serverStreamSocket);
                         SDL_Log("Waiting for players: %d/5\n", state->connectedPlayers.amountOfPlayers);
                     }
                 }

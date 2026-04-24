@@ -11,7 +11,7 @@ int renderFrame(AppState state) {
         menu_screen(&state->mainMenu, state);
     }
     else if(state->gameState == GAME_PAUSE){
-        string_screen(state, "Press SPACE to continue, esc to quit");   
+        string_screen(state, "Press SPACE to continue or ESC to quit!");   
     }
     else if(state->gameState == GAME_JOIN){
         join_screen(state);
@@ -23,7 +23,7 @@ int renderFrame(AppState state) {
         string_screen(state, "Handshake...");
     }
     else if(state->gameState == GAME_TCP_VERIFYING_HANDSHAKE){
-        string_screen(state, "Veryfying handshake...");
+        string_screen(state, "Verifying handshake...");
     }
     
     else if (state->gameState == GAME_PLAYING) {

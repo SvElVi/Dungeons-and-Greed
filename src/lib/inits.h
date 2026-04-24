@@ -210,7 +210,7 @@ struct appState
 
     // Server TCP
     NET_Server *tcpServer;
-    NET_StreamSocket **serverStreamSocket;
+    NET_StreamSocket *serverStreamSocket;
 
     // Client TCP
     NET_StreamSocket *tcpClient;

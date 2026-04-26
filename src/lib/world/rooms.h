@@ -1,7 +1,7 @@
 #include <SDL3/SDL.h>
 
 #define CHUNK_SIZE 48
-#define ROOM_TYPES 9
+#define ROOM_TYPES 10
 #define TILE_SIZE 16
 
 typedef enum {
@@ -13,7 +13,8 @@ typedef enum {
     ROOM_RAGGED_CUBE,
     ROOM_SHURIKEN,
     ROOM_SQUARE_SYMBOL,
-    ROOM_SMALL_CUBE
+    ROOM_SMALL_CUBE,
+    ROOM_CIRCLE_CUBE
 } ROOM_TYPE;
 
 typedef enum {
@@ -312,4 +313,36 @@ Uint64 smallCubeRoom[24] = {
     0xF0,
     0xF0,
     0xF0,
+};
+
+Uint64 circleCubeRoom[24] = {
+    0x090F,
+    0xF0,
+    0xF0,
+    0xF0,
+
+    0x252F04,
+    0x141F2104,
+    0xF0,
+    0x12221F2104,
+
+    0xF0,
+    0x16221B2104,
+    0xF0,
+    0x141F2104,
+
+    0x1A22172104,
+    0xF0,
+    0x141F2104,
+    0xF0,
+
+    0x1D22142104,
+    0xF0,
+    0x141F2104,
+    0xF0,
+
+    0x1F22122104,
+    0xF0,
+    0x141F2104,
+    0xF0
 };

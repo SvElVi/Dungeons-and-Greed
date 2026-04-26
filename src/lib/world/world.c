@@ -279,6 +279,9 @@ bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms, Uint8 fDir
         case ROOM_SHURIKEN:
             generateMirroredRoom(c, shurikenRoom, genDir, 1, 1);
             break;
+        case ROOM_SQUARE_SYMBOL:
+            generateMirroredRoom(c, squareSymbolRoom, genDir, 1, 1);
+            break;
     }
 }
 

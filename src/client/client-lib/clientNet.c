@@ -5,9 +5,9 @@
 void createTCPClient(NET_Address *adr, int portNumber, AppState state)
 {
     SDL_Log("Initializing a TCP stream socket...\n");
-    state->connectedPlayers.tcpClient[0] = NET_CreateClient(adr, portNumber);
+    state->tcpClient = NET_CreateClient(adr, portNumber);
 
-    switch (NET_WaitUntilConnected(state->connectedPlayers.tcpClient[0], TCP_TIMEOUT))
+    switch (NET_WaitUntilConnected(state->tcpClient, TCP_TIMEOUT))
     {
     case NET_SUCCESS:
         if (NET_DEBUG)
@@ -31,7 +31,7 @@ void createTCPClient(NET_Address *adr, int portNumber, AppState state)
 
 NET_Status checkStreamsocketConnection(AppState state)
 {
-    switch (NET_GetConnectionStatus(state->connectedPlayers.tcpClient[0]))
+    switch (NET_GetConnectionStatus(state->tcpClient))
     {
     case NET_SUCCESS:
         return NET_SUCCESS;
@@ -48,7 +48,7 @@ NET_Status checkStreamsocketConnection(AppState state)
 
 void sendTCPData(AppState state, void *data)
 {
-    NET_WriteToStreamSocket(state->connectedPlayers.tcpClient[0], data, sizeof(NETPacket));
+    NET_WriteToStreamSocket(state->tcpClient, data, sizeof(NETPacket));
 }
 
 void clientTCPHandshake(AppState state)
@@ -64,7 +64,7 @@ void clientTCPHandshake(AppState state)
 {
     void *data = NULL;
 
-    if (NET_ReadFromStreamSocket(state->connectedPlayers.tcpClient[0], data, sizeof(NETPacket)) > 0)
+    if (NET_ReadFromStreamSocket(state->tcpClient, data, sizeof(NETPacket)) > 0)
     {
         NETPacket packet = (*(NETPacket *)data);
 

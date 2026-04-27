@@ -10,6 +10,8 @@ int nearestPlayer(Enemy *enemy, Player players[MAX_PLAYERS])
 
 void enemyMovement(Enemy *enemy, Player players[MAX_PLAYERS], int deltatime)
 {
+    enemy->hitBox.x = enemy->pos.x;
+    enemy->hitBox.y = enemy->pos.y;
 }
 
 void animateEnemies(Enemy enemies[MAX_ENEMIES], Uint8 *counter, Uint16 framerate, bool *flag)

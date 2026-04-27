@@ -68,32 +68,32 @@ void tpDungeon(World w, AppState state) {
     }
 }
 
-// void spawnDungeonEnemies(World w, AppState state, Chunk* c,Uint8 nrOfEnemies) {
-//     if(nrOfEnemies > MAX_ENEMIES) {
-//         nrOfEnemies = MAX_ENEMIES;
-//     } 
+void spawnDungeonEnemies(World w, AppState state, Chunk* c,Uint8 nrOfEnemies) {
+    if(nrOfEnemies > MAX_ENEMIES) {
+        nrOfEnemies = MAX_ENEMIES;
+    } 
 
-//     Vector2D chunkPos, enemyPos;
-//     Stats enemyStats = {100, 100, 0, 5, 10, 1};
+    Vector2D chunkPos, enemyPos;
+    Stats enemyStats = {100, 100, 0, 5, 10, 1};
 
-//     chunkPos.y = -((c-w->chunks)/(int)(SDL_sqrt(w->size))*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE - 32*RENDER_SCALE);
-//     chunkPos.x = -((c-w->chunks)%(int)(SDL_sqrt(w->size))*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE - 15*RENDER_SCALE);
+    chunkPos.y = -((c-w->chunks)/(int)(SDL_sqrt(w->size))*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE - 32*RENDER_SCALE);
+    chunkPos.x = -((c-w->chunks)%(int)(SDL_sqrt(w->size))*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE - 15*RENDER_SCALE);
 
-//     SDL_Log("Ccord (%d,%d)", (w->firstChunk-w->chunks)%(int)(SDL_sqrt(w->size)), (w->firstChunk-w->chunks)/(int)(SDL_sqrt(w->size)));
+    SDL_Log("Ccord (%d,%d)", (w->firstChunk-w->chunks)%(int)(SDL_sqrt(w->size)), (w->firstChunk-w->chunks)/(int)(SDL_sqrt(w->size)));
 
-//     for(int y = 0; y < CHUNK_SIZE && nrOfEnemies; y++) {
-//         for(int x = 0; x < CHUNK_SIZE && nrOfEnemies; x++) {
-//             if(w->firstChunk->tileType[y][x] == FLOOR) {
-//                 nrOfEnemies--;
-//                 enemyPos.y = chunkPos.y - y*TILE_SIZE*RENDER_SCALE;
-//                 enemyPos.x = chunkPos.x - x*TILE_SIZE*RENDER_SCALE;
+    for(int y = 0; y < CHUNK_SIZE && nrOfEnemies; y++) {
+        for(int x = 0; x < CHUNK_SIZE && nrOfEnemies; x++) {
+            if(w->firstChunk->tileType[y][x] == FLOOR) {
+                nrOfEnemies--;
+                enemyPos.y = chunkPos.y - y*TILE_SIZE*RENDER_SCALE;
+                enemyPos.x = chunkPos.x - x*TILE_SIZE*RENDER_SCALE;
 
-//                 updateEnemy(&state->enemies[nrOfEnemies], enemyPos, ENEMY_SKELETON, enemyStats, state->renderer);
-//             }
-//         }
-//     }
+                updateEnemy(&state->enemies[nrOfEnemies], enemyPos, ENEMY_SKELETON, enemyStats, state->renderer);
+            }
+        }
+    }
     
-// }
+}
 
 void generateConnections(Chunk* c, bool genDir[4]) {
     const int startpos = ((int)(CHUNK_SIZE/2) -2 -(int)(CHUNK_SIZE/32));
@@ -527,6 +527,7 @@ void polishDungeon(World w) { //Fix tileset in dungeon
 void createDungeon(World w, Uint8 nrOfRooms, AppState state, bool tp) {
     generateDungeon(w, &nrOfRooms);
     if(tp) tpDungeon(w, state); //Should only be used Server side
+    spawnDungeonEnemies(w, state, w->firstChunk, 1);
     polishDungeon(w);
 
 }

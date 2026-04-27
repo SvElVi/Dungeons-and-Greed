@@ -7,6 +7,7 @@ struct world {
     Uint64 seed;
     int size;
     SDL_Texture* texture;
+    Chunk* firstChunk;
 };
 
 void cleanChunks(Chunk* chunks, int size) { //Set all tilevalues in chunks to 0
@@ -42,6 +43,20 @@ void destroyWorld(World w) {
 
 void changeSeed(World w, Uint64 seed) {
     w->seed = seed;
+}
+
+void tpDungeon(World w, AppState state) {
+    int i = MAX_PLAYERS;
+
+    for(int y = 0; y < CHUNK_SIZE && i; y++) {
+        for(int x = 0; x < CHUNK_SIZE && i; x++) {
+            if(w->firstChunk->tileType[y][x] == FLOOR) {
+                i--;
+                // state->players[i].pos.y;
+                // state->players[i].pos.x;
+            }
+        }
+    }
 }
 
 void generateConnections(Chunk* c, bool genDir[4]) {
@@ -318,6 +333,7 @@ void generateDungeon(World w, Uint8* nrOfRooms) { //Room placements
     }
 
     SDL_Log("Dungeon start (1+): %d, TEST RANDOM: %d", temp - w->chunks + 1, SDL_rand(4));
+    w->firstChunk = temp;
     generateRoom(w->chunks, temp, &(w->size), nrOfRooms, 5);
 
     SDL_Log("---------------------");
@@ -472,8 +488,9 @@ void polishDungeon(World w) { //Fix tileset in dungeon
     w->chunks = saveChunks;
 }
 
-void createDungeon(World w, Uint8 nrOfRooms) {
+void createDungeon(World w, Uint8 nrOfRooms, AppState state, bool tp) {
     generateDungeon(w, &nrOfRooms);
+    if(tp) tpDungeon(w, state);
     polishDungeon(w);
 
 }

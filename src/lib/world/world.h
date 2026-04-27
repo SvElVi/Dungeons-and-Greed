@@ -7,7 +7,7 @@ World createWorld(int size, Uint64 seed, SDL_Renderer* renderer); //Create an ar
 
 void destroyWorld(World w); //Delete the memory of the world from the heap
 
-void createDungeon(World w, Uint8 nrOfRooms); //Add dungeon data to the world
+void createDungeon(World w, Uint8 nrOfRooms, AppState state); //Add dungeon data to the world
 
 void changeSeed(World w, Uint64 seed); //Change the world seed
 

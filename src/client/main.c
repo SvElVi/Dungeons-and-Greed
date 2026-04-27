@@ -8,6 +8,7 @@
 #include "client-lib/clientNet.h"
 #include "../lib/player.h" //All dependencies of [x] included
 #include "../lib/enemy.h"  //All dependencies of [x] included
+#include "../lib/world/world.h"
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once at the begining of the program
 {
@@ -47,16 +48,11 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once 
     updatePlayer(&(state->players[2]), tempVec, CLASS_NONE, smallHp, state->renderer);
     SDL_strlcpy(state->players[2].name, "Player3", sizeof(state->players[2].name));
 
-    // enemy
-    Vector2D enemyPos = {200, 100};
-    Stats enemyStats = {100, 100, 0, 5, 10, 1};
-    updateEnemy(&state->enemies[0], enemyPos, ENEMY_SKELETON, enemyStats, state->renderer);
     *appstate = state; // Share the appstate to callbacks below
-    // state->renderFlag = 1;
 
     state->world = createWorld(5, (Uint64)SDL_rand(0), state->renderer);
 
-    createDungeon(state->world, 20, state);
+    createDungeon(state->world, 20, state, 1);
 
     return SDL_APP_CONTINUE;
 }

@@ -1,6 +1,7 @@
 #include <SDL3/SDL.h>
 #include "../inits.h"
 #include "rooms.h"
+#include "../enemy.h"
 
 struct world {
     Chunk* chunks;
@@ -66,6 +67,33 @@ void tpDungeon(World w, AppState state) {
         }
     }
 }
+
+// void spawnDungeonEnemies(World w, AppState state, Chunk* c,Uint8 nrOfEnemies) {
+//     if(nrOfEnemies > MAX_ENEMIES) {
+//         nrOfEnemies = MAX_ENEMIES;
+//     } 
+
+//     Vector2D chunkPos, enemyPos;
+//     Stats enemyStats = {100, 100, 0, 5, 10, 1};
+
+//     chunkPos.y = -((c-w->chunks)/(int)(SDL_sqrt(w->size))*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE - 32*RENDER_SCALE);
+//     chunkPos.x = -((c-w->chunks)%(int)(SDL_sqrt(w->size))*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE - 15*RENDER_SCALE);
+
+//     SDL_Log("Ccord (%d,%d)", (w->firstChunk-w->chunks)%(int)(SDL_sqrt(w->size)), (w->firstChunk-w->chunks)/(int)(SDL_sqrt(w->size)));
+
+//     for(int y = 0; y < CHUNK_SIZE && nrOfEnemies; y++) {
+//         for(int x = 0; x < CHUNK_SIZE && nrOfEnemies; x++) {
+//             if(w->firstChunk->tileType[y][x] == FLOOR) {
+//                 nrOfEnemies--;
+//                 enemyPos.y = chunkPos.y - y*TILE_SIZE*RENDER_SCALE;
+//                 enemyPos.x = chunkPos.x - x*TILE_SIZE*RENDER_SCALE;
+
+//                 updateEnemy(&state->enemies[nrOfEnemies], enemyPos, ENEMY_SKELETON, enemyStats, state->renderer);
+//             }
+//         }
+//     }
+    
+// }
 
 void generateConnections(Chunk* c, bool genDir[4]) {
     const int startpos = ((int)(CHUNK_SIZE/2) -2 -(int)(CHUNK_SIZE/32));

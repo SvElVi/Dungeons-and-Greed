@@ -95,8 +95,6 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         if (!hasAnnounceAmountOfPlayers)
         {
             SDL_Log("Waiting for players: %d/5\n", state->connectedPlayers.amountOfPlayers);
-            if (state->connectedPlayers.amountOfPlayers == 1)
-                SDL_Log("IP of last player: %s\n", NET_GetAddressString(state->connectedPlayers.players[0].ipAddress));
             hasAnnounceAmountOfPlayers = true;
         }
         if (NET_AcceptClient(state->tcpServer, &state->serverStreamSocket))
@@ -132,6 +130,8 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
     case SENDING_PLAYER_ID:
         packet.command = APPROVED_PLAYER;
         packet.PlayerID = state->connectedPlayers.amountOfPlayers;
+        SDL_Log("Assigning the client playerID %d, and sending it to: %s\n", packet.PlayerID, NET_GetAddressString(NET_GetStreamSocketAddress(state->serverStreamSocket)));
+
         txData = &packet;
         NET_WriteToStreamSocket(state->serverStreamSocket, txData, sizeof(NETPacket));
         state->serverState = CONFIRMING_PLAYER_ID_RECIVE;
@@ -157,6 +157,10 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
                         updateServerPlayerIP(state, (*(NETPacket *)rxData).PlayerID, state->serverStreamSocket);
                         NET_DestroyStreamSocket(state->serverStreamSocket);
                         SDL_Log("-----------------------------------\n\n");
+                        for (int index = 0; index < state->connectedPlayers.amountOfPlayers; index++)
+                        {
+                            SDL_Log("Player %d, have the IP: %s\n", index, NET_GetAddressString(state->connectedPlayers.players[index].ipAddress));
+                        }
                         SDL_Log("Starting game!\n");
                         state->serverState = STARTING_GAME;
                     }
@@ -165,6 +169,11 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
                         updateServerPlayerIP(state, (*(NETPacket *)rxData).PlayerID, state->serverStreamSocket);
                         state->serverState = WAITING_FOR_PLAYERS;
                         SDL_Log("-----------------------------------\n\n");
+                        SDL_Log("Players as of now:\n\n");
+                        for (int index = 0; index < state->connectedPlayers.amountOfPlayers; index++)
+                        {
+                            SDL_Log("Player %d, have the IP: %s\n", index, NET_GetAddressString(state->connectedPlayers.players[index].ipAddress));
+                        }
                         NET_DestroyStreamSocket(state->serverStreamSocket);
                     }
                 }
@@ -178,11 +187,6 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         break;
 
     case STARTING_GAME:
-        for (int index = 0; index < 5; index++)
-        {
-            if (NET_DEBUG)
-                SDL_Log("Player %d, have the IP: %s\n", index, NET_GetAddressString(state->connectedPlayers.players[index].ipAddress));
-        }
         break;
 
     case GAME_ONGOING:

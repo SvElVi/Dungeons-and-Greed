@@ -498,7 +498,7 @@ void polishDungeon(World w) { //Fix tileset in dungeon
 
 void createDungeon(World w, Uint8 nrOfRooms, AppState state, bool tp) {
     generateDungeon(w, &nrOfRooms);
-    if(tp) tpDungeon(w, state);
+    if(tp) tpDungeon(w, state); //Should only be used Server side
     polishDungeon(w);
 
 }

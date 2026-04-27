@@ -48,17 +48,20 @@ void changeSeed(World w, Uint64 seed) {
 void tpDungeon(World w, AppState state) {
     int i = MAX_PLAYERS;
     Vector2D chunkPos;
-    chunkPos.y = (w->firstChunk-w->chunks)/(int)(SDL_sqrt(w->size));
-    chunkPos.x = (w->firstChunk-w->chunks)%(int)(SDL_sqrt(w->size));
 
-    SDL_Log("Ccord (%d,%d)", chunkPos.x, chunkPos.y);
+    chunkPos.y = -((w->firstChunk-w->chunks)/(int)(SDL_sqrt(w->size))*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE - 32*RENDER_SCALE);
+    chunkPos.x = -((w->firstChunk-w->chunks)%(int)(SDL_sqrt(w->size))*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE - 15*RENDER_SCALE);
+
+    SDL_Log("Ccord (%d,%d)", (w->firstChunk-w->chunks)%(int)(SDL_sqrt(w->size)), (w->firstChunk-w->chunks)/(int)(SDL_sqrt(w->size)));
 
     for(int y = 0; y < CHUNK_SIZE && i; y++) {
         for(int x = 0; x < CHUNK_SIZE && i; x++) {
             if(w->firstChunk->tileType[y][x] == FLOOR) {
                 i--;
-                // state->players[i].pos.y;
-                // state->players[i].pos.x;
+                state->players[i].pos.y = chunkPos.y - y*TILE_SIZE*RENDER_SCALE;
+                state->players[i].hitBox.y = state->players[i].pos.y;
+                state->players[i].pos.x = chunkPos.x - x*TILE_SIZE*RENDER_SCALE;
+                state->players[i].hitBox.x = state->players[i].pos.x;
             }
         }
     }
@@ -513,8 +516,8 @@ bool renderDungeon(AppState state) {
 
         for(int y = 0; y < CHUNK_SIZE; y++) {
             for(int x = 0; x < CHUNK_SIZE; x++) {
-                dstRect.x = state->camera.x + state->players[0].pos.x + (x+CHUNK_SIZE*((tempC - state->world->chunks) % rowSize))*TILE_SIZE*RENDER_SCALE - rowSize*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE/2;
-                dstRect.y = state->camera.y + state->players[0].pos.y + (y+CHUNK_SIZE*((int)(tempC - state->world->chunks) / rowSize))*TILE_SIZE*RENDER_SCALE - rowSize*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE/2;
+                dstRect.x = state->camera.x + state->players[0].pos.x + (x+CHUNK_SIZE*((tempC - state->world->chunks) % rowSize))*TILE_SIZE*RENDER_SCALE;
+                dstRect.y = state->camera.y + state->players[0].pos.y + (y+CHUNK_SIZE*((int)(tempC - state->world->chunks) / rowSize))*TILE_SIZE*RENDER_SCALE;
 
                 if(dstRect.x >= -(TILE_SIZE*RENDER_SCALE) && dstRect.y >= -(TILE_SIZE*RENDER_SCALE) && dstRect.x <= state->displayMode->w && dstRect.y <= state->displayMode->h && tempC->tileType[y][x] != 0) {
                     srcRect.x = TILE_SIZE*((int)((tempC->tileType[y][x]-1)%10));

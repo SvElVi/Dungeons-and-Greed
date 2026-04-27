@@ -133,7 +133,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
                 packet.command = CONFIRMING_RECIVED_PLAYER_ID;
                 txData = &packet;
                 sendTCPData(state, txData);
-                state->gameState = GAME_START;
+                state->gameState = GAME_WAITING_FOR_OTHER_PLAYERS;
             }
         }
         break;

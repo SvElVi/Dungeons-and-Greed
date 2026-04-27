@@ -54,8 +54,8 @@ void tpDungeon(World w, AppState state) {
 
     SDL_Log("Ccord (%d,%d)", (w->firstChunk-w->chunks)%(int)(SDL_sqrt(w->size)), (w->firstChunk-w->chunks)/(int)(SDL_sqrt(w->size)));
 
-    for(int y = 0; y < CHUNK_SIZE && i; y++) {
-        for(int x = 0; x < CHUNK_SIZE && i; x++) {
+    for(int y = (int)(CHUNK_SIZE/2); y < CHUNK_SIZE && i; y++) {
+        for(int x = (int)(CHUNK_SIZE/2-3); x < CHUNK_SIZE && i; x++) {
             if(w->firstChunk->tileType[y][x] == FLOOR) {
                 i--;
                 state->players[i].pos.y = chunkPos.y - y*TILE_SIZE*RENDER_SCALE;

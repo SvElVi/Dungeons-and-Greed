@@ -36,6 +36,12 @@ int renderFrame(AppState state)
     {
         string_screen(state, "Verifying handshake...");
     }
+    else if (state->gameState == GAME_WAITING_FOR_OTHER_PLAYERS)
+    {
+        char tempStr[64];
+        snprintf(tempStr, 64, "Waiting for other players... %d of 5 connected!", 1);
+        string_screen(state, tempStr);
+    }
 
     else if (state->gameState == GAME_PLAYING)
     {

@@ -203,6 +203,7 @@ struct appState
 
     // Server TCP
     NET_Server *tcpServer;
+    NET_StreamSocket *tcpClient;
 };
 
 typedef struct appState *AppState;

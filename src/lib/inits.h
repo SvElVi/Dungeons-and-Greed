@@ -103,7 +103,7 @@ typedef struct
     char name[PLAYER_NAME_MAX]; // player name string
     Uint32 enemyCollisionTimer; // ms counter for character colliding with emeny. SYNC MULTIPLAYER
 
-    // FOR SERVER, WILL BE NULL CLIENTSIDE
+    // FOR SERVER
     NET_Address *ipAddress;
 } Player;
 
@@ -142,6 +142,7 @@ typedef struct
 {
     int amountOfPlayers;
     Player players[MAX_PLAYERS];
+    NET_StreamSocket *tcpClient[MAX_PLAYERS];
 
 } ConnectedPlayers;
 
@@ -200,10 +201,6 @@ struct appState
 
     // Server TCP
     NET_Server *tcpServer;
-    NET_StreamSocket *serverStreamSocket;
-
-    // Client TCP
-    NET_StreamSocket *tcpClient;
 };
 
 typedef struct appState *AppState;

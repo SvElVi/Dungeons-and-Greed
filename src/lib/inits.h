@@ -50,19 +50,6 @@ typedef enum
     CLASS_KNIGHT // 5
 } Player_Class;
 
-// Serverside state
-typedef enum
-{
-    INIT_OF_SERVER,
-    WAITING_FOR_PLAYERS,
-    ASSIGNING_PLAYER_ID,
-    SENDING_PLAYER_ID,
-    CONFIRMING_PLAYER_ID_RECIVE,
-    STARTING_GAME,
-    GAME_ONGOING,
-    SERVER_CLEANUP
-} ServerState;
-
 typedef struct world *World;
 
 typedef struct
@@ -103,7 +90,7 @@ typedef struct
     char name[PLAYER_NAME_MAX]; // player name string
     Uint32 enemyCollisionTimer; // ms counter for character colliding with emeny. SYNC MULTIPLAYER
 
-    // FOR SERVER, WILL BE NULL CLIENTSIDE
+    // FOR SERVER
     NET_Address *ipAddress;
 } Player;
 
@@ -142,6 +129,7 @@ typedef struct
 {
     int amountOfPlayers;
     Player players[MAX_PLAYERS];
+    NET_StreamSocket *tcpClient[MAX_PLAYERS];
 
 } ConnectedPlayers;
 
@@ -156,12 +144,27 @@ typedef enum GameState
     GAME_TCP_VERIFYING_HANDSHAKE,
     GAME_TCP_HANDSHAKE_SUCCESFULL,
     GAME_TCP_HANDSHAKE_FAILURE,
+    GAME_WAITING_FOR_OTHER_PLAYERS,
     GAME_START,
     GAME_PLAYING,
     GAME_PAUSE,
     GAME_OVER,
     SERVER
 } GameState;
+
+// Serverside state
+typedef enum
+{
+    INIT_OF_SERVER,
+    WAITING_FOR_PLAYERS,
+    ASSIGNING_PLAYER_ID,
+    SENDING_PLAYER_ID,
+    CONFIRMING_PLAYER_ID_RECIVE,
+    UPDATE_WAITING_STATUS,
+    STARTING_GAME,
+    GAME_ONGOING,
+    SERVER_CLEANUP
+} ServerState;
 
 struct appState
 {
@@ -200,9 +203,6 @@ struct appState
 
     // Server TCP
     NET_Server *tcpServer;
-    NET_StreamSocket *serverStreamSocket;
-
-    // Client TCP
     NET_StreamSocket *tcpClient;
 };
 

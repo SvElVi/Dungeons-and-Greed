@@ -123,7 +123,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         break;
 
     case GAME_TCP_VERIFYING_HANDSHAKE:
-        if (NET_ReadFromStreamSocket(state->tcpClient, rxData, sizeof(NETPacket)) > 0)
+        if (NET_ReadFromStreamSocket(state->connectedPlayers.tcpClient[0], rxData, sizeof(NETPacket)) > 0)
         {
             memcpy(&packet, rxData, sizeof(NETPacket));
 

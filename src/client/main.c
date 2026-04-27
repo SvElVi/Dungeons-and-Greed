@@ -36,7 +36,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once 
     state->udpPacket = SDL_calloc(1, sizeof(NET_Datagram));
 
     state->running = true; // Custom flag to mark the program as running
-
+    state->players[0].classLock = false;
+    
     Vector2D tempVec = {0, 0};
     Stats fullHp = {100, 100};
     Stats halfHp = {50, 100};

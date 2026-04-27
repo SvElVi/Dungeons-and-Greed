@@ -58,6 +58,20 @@ void join_screen(AppState state){
     SDL_SetRenderScale(state->renderer, 1.0f, 1.0f);
 }
 
+const char* getClass(Player_Class c)
+{
+    switch(c)
+    {
+        case CLASS_NONE: return "None";
+        case CLASS_MAGE: return "Mage (Locked)";
+        case CLASS_PRIEST: return "Priest (Locked)";
+        case CLASS_HUNTER: return "Hunter (Locked)";
+        case CLASS_SWORDMASTER: return "SwordMaster (Locked)";
+        case CLASS_KNIGHT: return "Knight (Locked)";
+        default: return "None";
+    }
+}
+
 void host_screen(AppState state){
         const char *message = "Press space to ready up";
         const char *title = "GREEDY DELVERS";
@@ -79,16 +93,30 @@ void host_screen(AppState state){
             box.y = h - boxHeight  - 100;
             box.w = boxWidth /2;
             box.h = boxHeight;
-            SDL_SetRenderDrawColor(state->renderer, 50, 50, 50, 255);
-            SDL_RenderFillRect(state->renderer, &box);
 
+            if(state->players[i].classLock)
+            {
+                SDL_SetRenderDrawColor(state->renderer, 80, 80, 80, 255);
+            }
+            else
+            {
+                SDL_SetRenderDrawColor(state->renderer, 50, 50, 50, 255);
+            }
+            SDL_RenderFillRect(state->renderer, &box);
+            const char *className = getClass(state->players[i].class);
             char label[32];
             sprintf(label, "Player %d", i+1);
+            float classX = box.x + 30;
+            float classY = box.y + 40;
             float textX = box.x + 30;
             float textY = box.y - 20;
-            
             SDL_SetRenderDrawColor(state->renderer, 255, 255, 255, 255);
             SDL_RenderDebugText(state->renderer, textX, textY, label);
+            SDL_RenderDebugText(state->renderer, classX, classY, className);
+            if(state->players[i].classLock)
+            {
+                SDL_RenderDebugText(state->renderer, box.x +10, box.y+60, "LOCKED");
+            }
         }
         SDL_SetRenderScale(state->renderer, scale, scale);
 

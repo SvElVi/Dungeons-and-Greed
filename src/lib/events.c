@@ -144,9 +144,30 @@ int checkEvents(AppState state, SDL_Event *event)
     }
     if(state->gameState == GAME_HOST)
     {
+        Player *p = &state->players[0];
+
+        if(keylist[SDL_SCANCODE_ESCAPE])
+        {
+                state->gameState = GAME_MENY;
+        }
+
         if(keylist[SDL_SCANCODE_SPACE])
         {
+         
+            p->classLock = !p->classLock;
             //Här ska det hamna kod som fixar ready
+        }
+        if(!p->classLock)
+        {
+            if(keylist[SDL_SCANCODE_RIGHT] || keylist[SDL_SCANCODE_D])
+            {
+                p->class++;
+                if(p->class > CLASS_KNIGHT) p->class = CLASS_NONE;
+            }
+            else if(keylist[SDL_SCANCODE_LEFT] || keylist[SDL_SCANCODE_A])
+            {
+                p->class = (p->class - 1 +(CLASS_KNIGHT +1)) % (CLASS_KNIGHT +1);
+            }
         }
     }
     // Non quit functions

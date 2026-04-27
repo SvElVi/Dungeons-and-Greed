@@ -89,7 +89,8 @@ typedef struct
     SDL_FlipMode flip; // SYNC MULTIPLAYER
     char name[PLAYER_NAME_MAX]; // player name string
     Uint32 enemyCollisionTimer; // ms counter for character colliding with emeny. SYNC MULTIPLAYER
-
+    
+    bool classLock; //För att låsa klasser LOCAL
     // FOR SERVER
     NET_Address *ipAddress;
 } Player;

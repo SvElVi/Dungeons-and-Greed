@@ -47,6 +47,11 @@ void changeSeed(World w, Uint64 seed) {
 
 void tpDungeon(World w, AppState state) {
     int i = MAX_PLAYERS;
+    Vector2D chunkPos;
+    chunkPos.y = (w->firstChunk-w->chunks)/(int)(SDL_sqrt(w->size));
+    chunkPos.x = (w->firstChunk-w->chunks)%(int)(SDL_sqrt(w->size));
+
+    SDL_Log("Ccord (%d,%d)", chunkPos.x, chunkPos.y);
 
     for(int y = 0; y < CHUNK_SIZE && i; y++) {
         for(int x = 0; x < CHUNK_SIZE && i; x++) {

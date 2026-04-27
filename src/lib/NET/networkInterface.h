@@ -1,6 +1,7 @@
 #ifndef NETWORKINTERFACE_H
 #define NETWORKINTERFACE_H
 #define ADDRESS_LEN 15
+#define RESOLVE_ADDRESS_TIMEOUT 5000
 
 #include <SDL3_Net/SDL_net.h>
 #include "../inits.h"

@@ -198,3 +198,9 @@ void updatePlayer(Player* player, Vector2D pos, Player_Class class, Stats stats,
     player->stats = stats;
     // SDL_Log("Pos: %d Class: %d Stats: %d", pos, class, stats);
 }
+
+void updateServerPlayerIP(AppState state, int playerID, NET_StreamSocket *serverStreamSocket) {
+    state->connectedPlayers.players[playerID].ipAddress = NET_ResolveHostname(NET_GetAddressString(NET_GetStreamSocketAddress(serverStreamSocket)));
+    NET_WaitUntilResolved(state->connectedPlayers.players[playerID].ipAddress, RESOLVE_ADDRESS_TIMEOUT);
+
+}

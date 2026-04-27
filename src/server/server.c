@@ -81,7 +81,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
 {
     AppState state = (AppState)appstate;
     NETPacket packet;
-    void *rxData, *txData;
+    void *rxData, *txData, *udpTX, *udpRX;
     static bool hasAnnounceAmountOfPlayers = false;
 
     switch (state->serverState)
@@ -94,6 +94,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
     case WAITING_FOR_PLAYERS:
         if (!hasAnnounceAmountOfPlayers) {
             SDL_Log("Waiting for players: %d/5\n", state->connectedPlayers.amountOfPlayers);
+            if (state->connectedPlayers.amountOfPlayers == 1) SDL_Log("IP of last player: %s\n", NET_GetAddressString(state->connectedPlayers.players[0].ipAddress));
             hasAnnounceAmountOfPlayers = true;
         }
         if (NET_AcceptClient(state->tcpServer, &state->serverStreamSocket))
@@ -153,6 +154,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
                     state->connectedPlayers.amountOfPlayers++;
                     if (state->connectedPlayers.amountOfPlayers >= MAX_PLAYERS)
                     {
+                        updateServerPlayerIP(state, (*(NETPacket *)rxData).PlayerID, state->serverStreamSocket);
                         NET_DestroyStreamSocket(state->serverStreamSocket);
                         SDL_Log("-----------------------------------\n\n");
                         SDL_Log("Starting game!\n");
@@ -160,6 +162,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
                     }
                     else
                     {
+                        updateServerPlayerIP(state, (*(NETPacket *)rxData).PlayerID, state->serverStreamSocket);
                         state->serverState = WAITING_FOR_PLAYERS;
                         SDL_Log("-----------------------------------\n\n");
                         NET_DestroyStreamSocket(state->serverStreamSocket);

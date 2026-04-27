@@ -90,6 +90,7 @@ typedef struct
 
 typedef struct
 {
+    int playerID;
     Vector2D pos;         ////SYNC MULTIPLAYER
     Player_Flags flags;   // SYNC MULTIPLAYER
     Player_Class class;   // SYNC MULTIPLAYER
@@ -99,9 +100,11 @@ typedef struct
     SDL_FRect aniBox;  // LOCAL
     direction facing;  // SYNC MULTIPLAYER
     SDL_FlipMode flip; // SYNC MULTIPLAYER
-    NET_StreamSocket **playerStreamSocket;
     char name[PLAYER_NAME_MAX]; // player name string
     Uint32 enemyCollisionTimer; // ms counter for character colliding with emeny. SYNC MULTIPLAYER
+
+    // FOR SERVER, WILL BE NULL CLIENTSIDE
+    NET_Address *ipAddress;
 } Player;
 
 typedef enum
@@ -134,24 +137,11 @@ typedef struct
     int moveY;
 } Enemy;
 
-// Serverside player struct
-typedef struct
-{
-    Vector2D pos;
-    Player_Flags flags;
-    Player_Class class;
-    Stats stats;
-    SDL_FRect hitBox;
-    direction facing;
-    SDL_FlipMode flip;
-    NET_StreamSocket **playerStreamSocket;
-} ServerPlayer;
-
 // Serverside players
 typedef struct
 {
     int amountOfPlayers;
-    ServerPlayer players[MAX_PLAYERS];
+    Player players[MAX_PLAYERS];
 
 } ConnectedPlayers;
 
@@ -198,7 +188,7 @@ struct appState
 
     // WORLD
     World world; // LOCAL
-    ConnectedPlayers connectedPlayers;
+    ConnectedPlayers connectedPlayers; // SERVER ONLY
 
     // Server IP
     NET_Address *serverIP;

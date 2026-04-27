@@ -157,11 +157,12 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
                         updateServerPlayerIP(state, (*(NETPacket *)rxData).PlayerID, state->serverStreamSocket);
                         NET_DestroyStreamSocket(state->serverStreamSocket);
                         SDL_Log("-----------------------------------\n\n");
+                        SDL_Log("Players as of now:\n\n");
                         for (int index = 0; index < state->connectedPlayers.amountOfPlayers; index++)
                         {
                             SDL_Log("Player %d, have the IP: %s\n", index, NET_GetAddressString(state->connectedPlayers.players[index].ipAddress));
                         }
-                        SDL_Log("Starting game!\n");
+                        SDL_Log("\n\nStarting game!\n");
                         state->serverState = STARTING_GAME;
                     }
                     else
@@ -174,6 +175,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
                         {
                             SDL_Log("Player %d, have the IP: %s\n", index, NET_GetAddressString(state->connectedPlayers.players[index].ipAddress));
                         }
+                        SDL_Log("\n\n");
                         NET_DestroyStreamSocket(state->serverStreamSocket);
                     }
                 }

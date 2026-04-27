@@ -1,6 +1,8 @@
+#include <string.h>
+#include <stdio.h>
+
 #include "player.h"
 #include "enemy.h"
-#include <string.h>
 #include "render.h"
 #include "hud.h"
 #include "menu.h"

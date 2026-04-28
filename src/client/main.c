@@ -38,7 +38,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once 
 
     state->running = true; // Custom flag to mark the program as running
     state->players[0].classLock = false;
-    
+
     Vector2D tempVec = {0, 0};
     Stats fullHp = {100, 100};
     Stats halfHp = {50, 100};
@@ -119,9 +119,8 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         break;
 
     case GAME_TCP_VERIFYING_HANDSHAKE:
-        if (NET_ReadFromStreamSocket(state->tcpClient, rxData, sizeof(NETPacket)) > 0)
+        if (readTCPData(state, &packet, 0))
         {
-            memcpy(&packet, rxData, sizeof(NETPacket));
 
             if (packet.command == APPROVED_PLAYER)
             {
@@ -135,10 +134,8 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         break;
 
     case GAME_WAITING_FOR_OTHER_PLAYERS:
-        if (NET_ReadFromStreamSocket(state->tcpClient, rxData, sizeof(NETPacket)) > 0)
+        if (readTCPData(state, &packet, 0))
         {
-            memcpy(&packet, rxData, sizeof(NETPacket));
-
             if (packet.command == APPROVED_PLAYER)
             {
                 SDL_Log("Server: You're playerID is: %d\n", packet.PlayerID);

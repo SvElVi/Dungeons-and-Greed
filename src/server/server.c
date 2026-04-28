@@ -66,8 +66,6 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once 
 
     createDungeon(state->world, 20, state, 1);
 
-    SDL_HideWindow(state->window);
-
     return SDL_APP_CONTINUE;
 }
 
@@ -113,9 +111,9 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         break;
 
     case ASSIGNING_PLAYER_ID:
-        if (NET_ReadFromStreamSocket(state->connectedPlayers.tcpClient[currentPlayer], rxData, sizeof(NETPacket)) > 0)
+        if (readTCPData(state, &packet, state->connectedPlayers.amountOfPlayers))
         {
-            switch ((*(NETPacket *)rxData).command)
+            switch (packet.command)
             {
             case REQUESTING_PLAYER_ID:
                 SDL_Log("Client is requesting a playerID!\n");
@@ -141,12 +139,12 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         break;
 
     case CONFIRMING_PLAYER_ID_RECIVE:
-        if (NET_ReadFromStreamSocket(state->connectedPlayers.tcpClient[currentPlayer], rxData, sizeof(NETPacket)) > 0)
+        if (readTCPData(state, &packet, state->connectedPlayers.amountOfPlayers))
         {
-            switch ((*(NETPacket *)rxData).command)
+            switch (packet.command)
             {
             case CONFIRMING_RECIVED_PLAYER_ID:
-                if ((*(NETPacket *)rxData).PlayerID != state->connectedPlayers.amountOfPlayers)
+                if (packet.PlayerID != state->connectedPlayers.amountOfPlayers)
                 {
                     SDL_Log("Error: Client and server playerID out of sync!\n");
                     state->serverState = WAITING_FOR_PLAYERS;
@@ -156,7 +154,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
                     state->connectedPlayers.amountOfPlayers++;
                     if (state->connectedPlayers.amountOfPlayers >= MAX_PLAYERS)
                     {
-                        updateServerPlayerIP(state, (*(NETPacket *)rxData).PlayerID, state->connectedPlayers.tcpClient[currentPlayer]);
+                        updateServerPlayerIP(state, packet.PlayerID, state->connectedPlayers.tcpClient[currentPlayer]);
                         NET_DestroyStreamSocket(state->connectedPlayers.tcpClient[currentPlayer]);
                         SDL_Log("-----------------------------------\n\n");
                         SDL_Log("Players as of now:\n\n");
@@ -169,7 +167,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
                     }
                     else
                     {
-                        updateServerPlayerIP(state, (*(NETPacket *)rxData).PlayerID, state->connectedPlayers.tcpClient[currentPlayer]);
+                        updateServerPlayerIP(state, packet.PlayerID, state->connectedPlayers.tcpClient[currentPlayer]);
                         state->serverState = WAITING_FOR_PLAYERS;
                         SDL_Log("-----------------------------------\n\n");
                         SDL_Log("Players as of now:\n\n");
@@ -213,6 +211,11 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result) // Runs after returning A
 
         destoryUDPSocket(state->udpSocket);
         SDL_free(state->udpPacket);
+        NET_DestroyServer(state->tcpServer);
+        for (int index = 0; index < state->connectedPlayers.amountOfPlayers; index++)
+        {
+            NET_DestroyStreamSocket(state->connectedPlayers.tcpClient[index]);
+        }
         stopSDLNet();
 
         for (int x = 0; x < MAX_PLAYERS; x++)

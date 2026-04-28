@@ -56,6 +56,8 @@ void checkForDatagram(AppState state, void **);
 // casted to the void type. Then sends that information as a UDP packet.
 void sendDatagram(AppState state, NET_Address *ptrRxAdr, int portnumber, void *data);
 
+bool readTCPData(AppState state, NETPacket *packet, int currentPlayer);
+
 // A blocking function that initializes a network address given in the char* argument,
 // and then saves it into the given pointer to pointer space of NET_Address type.
 NET_Status initAddress(NET_Address **adress, char *);

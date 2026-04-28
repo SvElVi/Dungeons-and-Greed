@@ -63,11 +63,11 @@ void sendDatagram(AppState state, NET_Address *ptrRxAdr, int portnumber, void *d
     NET_SendDatagram(state->udpSocket, ptrRxAdr, portnumber, data, sizeof(data));
 }
 
-bool readTCPData(AppState state, NETPacket *packet, int currentPlayer)
+bool readTCPData(AppState state, NETPacket *packet, NET_StreamSocket *streamSocket)
 {
     static int bufLen = 0;
     static unsigned char tcpBuf[sizeof(NETPacket)];
-    bufLen += NET_ReadFromStreamSocket(state->connectedPlayers.tcpClient[currentPlayer], &tcpBuf, sizeof(NETPacket));
+    bufLen += NET_ReadFromStreamSocket(streamSocket, &tcpBuf, sizeof(NETPacket));
 
     if (bufLen == sizeof(NETPacket))
     {
@@ -79,6 +79,11 @@ bool readTCPData(AppState state, NETPacket *packet, int currentPlayer)
     {
         return false;
     }
+}
+
+void sendTCPData(AppState state, NETPacket *packet, NET_StreamSocket *streamSocket)
+{
+    NET_WriteToStreamSocket(streamSocket, (void *)packet, sizeof(NETPacket));
 }
 
 // Blocking

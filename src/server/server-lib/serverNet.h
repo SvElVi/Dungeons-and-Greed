@@ -12,8 +12,6 @@
 // Note that the NET_Address must be resolved before calling this function!
 void createTCPServer(int portNumber, AppState state);
 
-void sendTCPData(AppState, void *);
-
 void broadcastToClients(AppState state, NetCommands command, PlayerID playerID, int intData);
 
 #endif

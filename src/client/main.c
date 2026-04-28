@@ -70,7 +70,6 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
 {
     AppState state = (AppState)appstate;
     NETPacket packet;
-    void *txData, *rxData;
 
     switch (state->gameState)
     {
@@ -105,7 +104,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         switch (checkStreamsocketConnection(state))
         {
         case NET_SUCCESS:
-            clientTCPHandshake(state);
+            clientTCPHandshake(state, state->tcpClient);
             state->gameState = GAME_TCP_VERIFYING_HANDSHAKE;
             break;
 
@@ -119,22 +118,21 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         break;
 
     case GAME_TCP_VERIFYING_HANDSHAKE:
-        if (readTCPData(state, &packet, 0))
+        if (readTCPData(state, &packet, state->tcpClient))
         {
 
             if (packet.command == APPROVED_PLAYER)
             {
                 SDL_Log("Server: You're playerID is: %d\n", packet.PlayerID);
                 packet.command = CONFIRMING_RECIVED_PLAYER_ID;
-                txData = &packet;
-                sendTCPData(state, txData);
+                sendTCPData(state, &packet, state->tcpClient);
                 state->gameState = GAME_WAITING_FOR_OTHER_PLAYERS;
             }
         }
         break;
 
     case GAME_WAITING_FOR_OTHER_PLAYERS:
-        if (readTCPData(state, &packet, 0))
+        if (readTCPData(state, &packet, state->tcpClient))
         {
             if (packet.command == UPDATE_WAITING_STATUS)
             {

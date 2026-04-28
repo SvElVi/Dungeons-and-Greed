@@ -13,12 +13,6 @@ void createTCPClient(NET_Address *adr, int portNumber, AppState state);
 
 NET_Status checkStreamsocketConnection(AppState state);
 
-// Takes the AppState and the data casted as void*, and then adds it to the TCP buffer,
-// for sending, this is a non-blocking function.
-void sendTCPData(AppState, void *);
-
-NET_Status handshakeDone(AppState state);
-
-void clientTCPHandshake(AppState state);
+void clientTCPHandshake(AppState state, NET_StreamSocket *streamSocket);
 
 #endif

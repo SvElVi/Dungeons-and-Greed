@@ -111,7 +111,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         break;
 
     case ASSIGNING_PLAYER_ID:
-        if (readTCPData(state, &packet, state->connectedPlayers.amountOfPlayers))
+        if (readTCPData(state, &packet, state->connectedPlayers.tcpClient[currentPlayer]))
         {
             switch (packet.command)
             {
@@ -129,17 +129,16 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
 
     case SENDING_PLAYER_ID:
         packet.command = APPROVED_PLAYER;
-        packet.PlayerID = state->connectedPlayers.amountOfPlayers;
+        packet.PlayerID = currentPlayer;
         SDL_Log("Assigning the client playerID %d, and sending it to: %s\n", packet.PlayerID, NET_GetAddressString(NET_GetStreamSocketAddress(state->connectedPlayers.tcpClient[currentPlayer])));
 
-        txData = &packet;
-        NET_WriteToStreamSocket(state->connectedPlayers.tcpClient[currentPlayer], txData, sizeof(NETPacket));
+        sendTCPData(state, &packet, state->connectedPlayers.tcpClient[currentPlayer]);
         state->serverState = CONFIRMING_PLAYER_ID_RECIVE;
 
         break;
 
     case CONFIRMING_PLAYER_ID_RECIVE:
-        if (readTCPData(state, &packet, state->connectedPlayers.amountOfPlayers))
+        if (readTCPData(state, &packet, state->connectedPlayers.tcpClient[currentPlayer]))
         {
             switch (packet.command)
             {
@@ -155,7 +154,6 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
                     if (state->connectedPlayers.amountOfPlayers >= MAX_PLAYERS)
                     {
                         updateServerPlayerIP(state, packet.PlayerID, state->connectedPlayers.tcpClient[currentPlayer]);
-                        NET_DestroyStreamSocket(state->connectedPlayers.tcpClient[currentPlayer]);
                         SDL_Log("-----------------------------------\n\n");
                         SDL_Log("Players as of now:\n\n");
                         for (int index = 0; index < state->connectedPlayers.amountOfPlayers; index++)

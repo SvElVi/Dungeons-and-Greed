@@ -3,6 +3,7 @@
 
 #include <SDL3_net/SDL_net.h>
 #include "../../lib/inits.h"
+#include "../../lib/NET/networkInterface.h"
 
 #define MAX_PLAYERS 5
 
@@ -12,5 +13,7 @@
 void createTCPServer(int portNumber, AppState state);
 
 void sendTCPData(AppState, void *);
+
+void updateWaitStatusForClients(AppState state);
 
 #endif

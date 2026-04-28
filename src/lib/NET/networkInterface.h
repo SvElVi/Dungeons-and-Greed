@@ -31,6 +31,7 @@ typedef struct
 {
     NetCommands command;
     PlayerID PlayerID;
+    int intData;
 
 } NETPacket;
 
@@ -55,6 +56,8 @@ void checkForDatagram(AppState state, void **);
 // Takes the AppState, a pointer to a RX NET_Address, portnumber and the a pointer to the information
 // casted to the void type. Then sends that information as a UDP packet.
 void sendDatagram(AppState state, NET_Address *ptrRxAdr, int portnumber, void *data);
+
+bool readTCPData(AppState state, NETPacket *packet, int currentPlayer);
 
 // A blocking function that initializes a network address given in the char* argument,
 // and then saves it into the given pointer to pointer space of NET_Address type.

@@ -52,6 +52,7 @@ void checkForDatagram(AppState state, void **data)
         {
             *data = SDL_calloc(1, sizeof((*state->udpPacket)->buf));
             memccpy(*data, (*state->udpPacket)->buf, 1, sizeof((*state->udpPacket)->buf));
+            NET_DestroyDatagram(*state->udpPacket);
             (*state->udpPacket) = NULL;
         }
     }
@@ -60,6 +61,24 @@ void checkForDatagram(AppState state, void **data)
 void sendDatagram(AppState state, NET_Address *ptrRxAdr, int portnumber, void *data)
 {
     NET_SendDatagram(state->udpSocket, ptrRxAdr, portnumber, data, sizeof(data));
+}
+
+bool readTCPData(AppState state, NETPacket *packet, int currentPlayer)
+{
+    static int bufLen = 0;
+    static unsigned char tcpBuf[sizeof(NETPacket)];
+    bufLen += NET_ReadFromStreamSocket(state->connectedPlayers.tcpClient[currentPlayer], &tcpBuf, sizeof(NETPacket));
+
+    if (bufLen == sizeof(NETPacket))
+    {
+        memcpy(packet, &tcpBuf, sizeof(NETPacket));
+        bufLen = 0;
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 // Blocking

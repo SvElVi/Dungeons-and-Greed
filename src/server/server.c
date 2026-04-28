@@ -152,6 +152,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
                 else
                 {
                     state->connectedPlayers.amountOfPlayers++;
+                    updateWaitStatusForClients(state);
                     if (state->connectedPlayers.amountOfPlayers >= MAX_PLAYERS)
                     {
                         updateServerPlayerIP(state, packet.PlayerID, state->connectedPlayers.tcpClient[currentPlayer]);
@@ -176,7 +177,6 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
                             SDL_Log("Player %d, have the IP: %s\n", index, NET_GetAddressString(state->connectedPlayers.players[index].ipAddress));
                         }
                         SDL_Log("\n\n");
-                        NET_DestroyStreamSocket(state->connectedPlayers.tcpClient[currentPlayer]);
                     }
                 }
                 break;

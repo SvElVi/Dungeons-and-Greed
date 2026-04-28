@@ -136,13 +136,9 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
     case GAME_WAITING_FOR_OTHER_PLAYERS:
         if (readTCPData(state, &packet, 0))
         {
-            if (packet.command == APPROVED_PLAYER)
+            if (packet.command == UPDATE_WAITING_STATUS)
             {
-                SDL_Log("Server: You're playerID is: %d\n", packet.PlayerID);
-                packet.command = CONFIRMING_RECIVED_PLAYER_ID;
-                txData = &packet;
-                sendTCPData(state, txData);
-                state->gameState = GAME_WAITING_FOR_OTHER_PLAYERS;
+                state->connectedPlayers.amountOfPlayers = packet.intData;
             }
         }
         break;

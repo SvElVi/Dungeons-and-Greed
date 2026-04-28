@@ -31,6 +31,7 @@ typedef struct
 {
     NetCommands command;
     PlayerID PlayerID;
+    int intData;
 
 } NETPacket;
 

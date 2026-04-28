@@ -17,6 +17,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once 
 
     AppState state = createAppState();
     state->gameState = GAME_INIT;
+    state->connectedPlayers.amountOfPlayers = 0;
     state->mainMenu = (Menu){
         .menuOptions = {"Play", "Join", "Quit"},
         .selected = 0,
@@ -118,6 +119,22 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         break;
 
     case GAME_TCP_VERIFYING_HANDSHAKE:
+        if (NET_ReadFromStreamSocket(state->tcpClient, rxData, sizeof(NETPacket)) > 0)
+        {
+            memcpy(&packet, rxData, sizeof(NETPacket));
+
+            if (packet.command == APPROVED_PLAYER)
+            {
+                SDL_Log("Server: You're playerID is: %d\n", packet.PlayerID);
+                packet.command = CONFIRMING_RECIVED_PLAYER_ID;
+                txData = &packet;
+                sendTCPData(state, txData);
+                state->gameState = GAME_WAITING_FOR_OTHER_PLAYERS;
+            }
+        }
+        break;
+
+    case GAME_WAITING_FOR_OTHER_PLAYERS:
         if (NET_ReadFromStreamSocket(state->tcpClient, rxData, sizeof(NETPacket)) > 0)
         {
             memcpy(&packet, rxData, sizeof(NETPacket));

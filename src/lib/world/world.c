@@ -53,8 +53,6 @@ void tpDungeon(World w, AppState state) {
     chunkPos.y = -((w->firstChunk-w->chunks)/(int)(SDL_sqrt(w->size))*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE - 32*RENDER_SCALE);
     chunkPos.x = -((w->firstChunk-w->chunks)%(int)(SDL_sqrt(w->size))*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE - 15*RENDER_SCALE);
 
-    SDL_Log("Ccord (%d,%d)", (w->firstChunk-w->chunks)%(int)(SDL_sqrt(w->size)), (w->firstChunk-w->chunks)/(int)(SDL_sqrt(w->size)));
-
     for(int y = (int)(CHUNK_SIZE/2); y < CHUNK_SIZE && i; y++) {
         for(int x = (int)(CHUNK_SIZE/2-3); x < CHUNK_SIZE && i; x++) {
             if(w->firstChunk->tileType[y][x] == FLOOR) {
@@ -78,8 +76,6 @@ void spawnDungeonEnemies(World w, AppState state, Chunk* c,Uint8 nrOfEnemies) {
 
     chunkPos.y = -((c-w->chunks)/(int)(SDL_sqrt(w->size))*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE - 32*RENDER_SCALE);
     chunkPos.x = -((c-w->chunks)%(int)(SDL_sqrt(w->size))*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE - 15*RENDER_SCALE);
-
-    SDL_Log("Ccord (%d,%d)", (w->firstChunk-w->chunks)%(int)(SDL_sqrt(w->size)), (w->firstChunk-w->chunks)/(int)(SDL_sqrt(w->size)));
 
     for(int y = 0; y < CHUNK_SIZE && nrOfEnemies; y++) {
         for(int x = 0; x < CHUNK_SIZE && nrOfEnemies; x++) {

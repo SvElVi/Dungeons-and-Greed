@@ -151,8 +151,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
                 }
                 else
                 {
-                    state->connectedPlayers.amountOfPlayers++;
-                    updateWaitStatusForClients(state);
+                    broadcastToClients(state, UPDATE_WAITING_STATUS, -1, ++state->connectedPlayers.amountOfPlayers);
                     if (state->connectedPlayers.amountOfPlayers >= MAX_PLAYERS)
                     {
                         updateServerPlayerIP(state, packet.PlayerID, state->connectedPlayers.tcpClient[currentPlayer]);

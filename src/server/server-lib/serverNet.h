@@ -14,6 +14,6 @@ void createTCPServer(int portNumber, AppState state);
 
 void sendTCPData(AppState, void *);
 
-void updateWaitStatusForClients(AppState state);
+void broadcastToClients(AppState state, NetCommands command, PlayerID playerID, int intData);
 
 #endif

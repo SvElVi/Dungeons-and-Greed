@@ -3,7 +3,7 @@
 #include "events.h"
 
 
-int renderGamePlay(AppState state);
-int render(AppState state);
+int renderGamePlay(AppState state, Player* player); //Perspective from pointed player
+int render(AppState state, Player* player); //Perspective from pointed player
 
 #endif

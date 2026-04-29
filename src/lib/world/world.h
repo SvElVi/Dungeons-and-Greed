@@ -11,6 +11,6 @@ void createDungeon(World w, Uint8 nrOfRooms, AppState state, bool tp); //Add dun
 
 void changeSeed(World w, Uint64 seed); //Change the world seed
 
-bool renderDungeon(AppState state); //Render the vicinity of the local player
+bool renderDungeon(AppState state, Player* player); //Render the vicinity of the local player
 
 #endif

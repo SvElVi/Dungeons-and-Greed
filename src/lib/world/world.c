@@ -528,7 +528,7 @@ void createDungeon(World w, Uint8 nrOfRooms, AppState state, bool tp) {
 
 }
 
-bool renderDungeon(AppState state) {
+bool renderDungeon(AppState state, Player* player) {
     int yLevel = 0;
     Chunk* tempC = state->world->chunks;
     const int rowSize = (int)SDL_sqrt(state->world->size);
@@ -541,8 +541,8 @@ bool renderDungeon(AppState state) {
 
         for(int y = 0; y < CHUNK_SIZE; y++) {
             for(int x = 0; x < CHUNK_SIZE; x++) {
-                dstRect.x = state->camera.x + state->players[0].pos.x + (x+CHUNK_SIZE*((tempC - state->world->chunks) % rowSize))*TILE_SIZE*RENDER_SCALE;
-                dstRect.y = state->camera.y + state->players[0].pos.y + (y+CHUNK_SIZE*((int)(tempC - state->world->chunks) / rowSize))*TILE_SIZE*RENDER_SCALE;
+                dstRect.x = state->camera.x + player->pos.x + (x+CHUNK_SIZE*((tempC - state->world->chunks) % rowSize))*TILE_SIZE*RENDER_SCALE;
+                dstRect.y = state->camera.y + player->pos.y + (y+CHUNK_SIZE*((int)(tempC - state->world->chunks) / rowSize))*TILE_SIZE*RENDER_SCALE;
 
                 if(dstRect.x >= -(TILE_SIZE*RENDER_SCALE) && dstRect.y >= -(TILE_SIZE*RENDER_SCALE) && dstRect.x <= state->displayMode->w && dstRect.y <= state->displayMode->h && tempC->tileType[y][x] != 0) {
                     srcRect.x = TILE_SIZE*((int)((tempC->tileType[y][x]-1)%10));

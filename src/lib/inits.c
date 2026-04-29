@@ -30,7 +30,7 @@ int initDisplay(AppState state)
 
     if (state->displayMode->refresh_rate)
     {
-        state->framerate = SDL_round(state->displayMode->refresh_rate);
+        state->framerate = state->displayMode->refresh_rate;
     }
     else
     {

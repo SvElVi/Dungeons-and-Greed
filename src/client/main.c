@@ -39,6 +39,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once 
     state->running = true; // Custom flag to mark the program as running
     state->players[0].classLock = false;
 
+    state->curPlayerPtr = &(state->players[0]); //In case not in multiplayer
+
     Vector2D tempVec = {0, 0};
     Stats fullHp = {100, 100};
     Stats halfHp = {50, 100};
@@ -124,6 +126,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
             if (packet.command == APPROVED_PLAYER)
             {
                 SDL_Log("Server: You're playerID is: %d\n", packet.PlayerID);
+                state->curPlayerPtr = &(state->players[packet.PlayerID]);
                 packet.command = CONFIRMING_RECIVED_PLAYER_ID;
                 sendTCPData(state, &packet, state->tcpClient);
                 state->gameState = GAME_WAITING_FOR_OTHER_PLAYERS;
@@ -156,7 +159,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         break;
     }
 
-    return render(state);
+    return render(state, state->curPlayerPtr);
 }
 
 void SDL_AppQuit(void *appstate, SDL_AppResult result) // Runs after returning APP_SUCESS or SDL_FAILURE

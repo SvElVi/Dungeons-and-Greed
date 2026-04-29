@@ -7,7 +7,7 @@
 #include "hud.h"
 #include "menu.h"
 
-int renderFrame(AppState state)
+int renderFrame(AppState state, Player* player)
 {
 
     if (state->gameState == GAME_MENY)
@@ -47,7 +47,7 @@ int renderFrame(AppState state)
 
     else if (state->gameState == GAME_PLAYING)
     {
-        renderGamePlay(state);
+        renderGamePlay(state, player);
     }
     SDL_RenderPresent(state->renderer);
     state->computedEvent = false;
@@ -55,7 +55,7 @@ int renderFrame(AppState state)
     return SDL_APP_CONTINUE;
 }
 
-int render(AppState state)
+int render(AppState state, Player* player)
 { // current but should be changed to call back style, also with vsync and variable refreshrate
     Uint64 currentTime = SDL_GetTicks();
     if (currentTime >= state->lastTime + SDL_round(1000 / state->framerate))
@@ -65,7 +65,7 @@ int render(AppState state)
         // if(state->renderFlag) {
         if (state->gameState == GAME_PLAYING)
         {
-            movement(&(state->players[0]), state->players, state->enemies, state->deltaTime);
+            movement(state->curPlayerPtr, state->players, state->enemies, state->deltaTime);
             animatePlayers(state->players, &(state->animationTime), state->framerate, &(state->computedEvent));
 
             for (int i = 0; i < MAX_ENEMIES; i++)
@@ -73,18 +73,18 @@ int render(AppState state)
                 if (state->enemies[i].state != ENEMY_DEAD)
                     enemyMovement(&state->enemies[i], state->players, state->deltaTime);
             }
-            playerEnemyCollision(&(state->players[0]), state->enemies, state->deltaTime);
+            playerEnemyCollision(state->curPlayerPtr, state->enemies, state->deltaTime);
             animateEnemies(state->enemies, &state->enemyAnimationTime, state->framerate, &state->computedEvent);
         }
 
-        if (renderFrame(state))
+        if (renderFrame(state, player))
             return SDL_APP_FAILURE;
         // }
     }
     return SDL_APP_CONTINUE;
 }
 
-int renderGamePlay(AppState state)
+int renderGamePlay(AppState state, Player* player)
 {
     SDL_FRect temp;
     Vector2D tempV, renderOrder[MAX_PLAYERS + MAX_ENEMIES];
@@ -92,7 +92,7 @@ int renderGamePlay(AppState state)
     SDL_SetRenderDrawColor(state->renderer, 37, 19, 26, 1);
     SDL_RenderClear(state->renderer);
 
-    if (!renderDungeon(state))
+    if (!renderDungeon(state, player))
     {
         return SDL_APP_FAILURE;
     }
@@ -136,8 +136,8 @@ int renderGamePlay(AppState state)
 
             temp.h = PLAYER_SIZE * RENDER_SCALE;
             temp.w = PLAYER_SIZE * RENDER_SCALE;
-            temp.x = state->camera.x + (state->players[0].pos.x - state->players[renderOrder[i].x].pos.x);
-            temp.y = state->camera.y + (state->players[0].pos.y - state->players[renderOrder[i].x].pos.y);
+            temp.x = state->camera.x + (player->pos.x - state->players[renderOrder[i].x].pos.x);
+            temp.y = state->camera.y + (player->pos.y - state->players[renderOrder[i].x].pos.y);
 
             if (!(SDL_RenderTextureRotated(state->renderer, state->players[renderOrder[i].x].texture, &(state->players[renderOrder[i].x].aniBox), &(temp), 0, NULL, state->players[renderOrder[i].x].flip)))
             {
@@ -160,8 +160,8 @@ int renderGamePlay(AppState state)
             SDL_FRect dst = {
                 .w = ENEMY_SIZE * RENDER_SCALE,
                 .h = ENEMY_SIZE * RENDER_SCALE,
-                .x = state->camera.x + (state->players[0].pos.x - state->enemies[renderOrder[i].x - MAX_PLAYERS].pos.x),
-                .y = state->camera.y + (state->players[0].pos.y - state->enemies[renderOrder[i].x - MAX_PLAYERS].pos.y)};
+                .x = state->camera.x + (player->pos.x - state->enemies[renderOrder[i].x - MAX_PLAYERS].pos.x),
+                .y = state->camera.y + (player->pos.y - state->enemies[renderOrder[i].x - MAX_PLAYERS].pos.y)};
 
             SDL_RenderTextureRotated(state->renderer, state->enemies[renderOrder[i].x - MAX_PLAYERS].texture,
                                      &state->enemies[renderOrder[i].x - MAX_PLAYERS].aniBox, &dst, 0, NULL, state->enemies[renderOrder[i].x - MAX_PLAYERS].flip);

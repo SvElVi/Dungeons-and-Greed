@@ -195,6 +195,7 @@ struct appState
 
     Player players[MAX_PLAYERS]; // SEE STRUCT
     SDL_FRect camera;            // LOCAL
+    Player* curPlayerPtr;        // LOCAL
 
     Enemy enemies[MAX_ENEMIES];
 

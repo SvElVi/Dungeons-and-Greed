@@ -177,7 +177,7 @@ int checkEvents(AppState state, SDL_Event *event)
     static bool escLast = false;
     if (state->gameState == GAME_PLAYING)
     {
-        moveFlag(&(state->players[0].flags), keylist, &(state->computedEvent));
+        moveFlag(&(state->curPlayerPtr->flags), keylist, &(state->computedEvent));
 
         if (keylist[SDL_SCANCODE_ESCAPE] && !escLast)
         {

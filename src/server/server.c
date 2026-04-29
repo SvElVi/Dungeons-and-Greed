@@ -66,6 +66,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once 
 
     createDungeon(state->world, 20, state, 1);
 
+    SDL_HideWindow(state->window);
+
     return SDL_APP_CONTINUE;
 }
 

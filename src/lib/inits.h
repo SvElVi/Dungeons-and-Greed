@@ -90,6 +90,7 @@ typedef struct
     char name[PLAYER_NAME_MAX]; // player name string
     Uint32 enemyCollisionTimer; // ms counter for character colliding with emeny. SYNC MULTIPLAYER
     
+    int connected;
     bool classLock; //För att låsa klasser LOCAL
     // FOR SERVER
     NET_Address *ipAddress;
@@ -134,10 +135,21 @@ typedef struct
 
 } ConnectedPlayers;
 
+typedef struct
+{
+    int amountOfPlayers;
+    int playerID[MAX_PLAYERS];
+    char name[MAX_PLAYERS][PLAYER_NAME_MAX];
+    bool connected[MAX_PLAYERS];
+    bool ready[MAX_PLAYERS];
+
+    Player_Class class[MAX_PLAYERS];
+} LobbyPacket;
+
 typedef enum GameState
 {
     GAME_MENY,
-    GAME_HOST,
+    GAME_LOBBY,
     GAME_JOIN,
     GAME_INIT,
     GAME_TCP_INIT,
@@ -162,6 +174,7 @@ typedef enum
     SENDING_PLAYER_ID,
     CONFIRMING_PLAYER_ID_RECIVE,
     UPDATE_WAITING_STATUS,
+    LOBBY,
     STARTING_GAME,
     GAME_ONGOING,
     SERVER_CLEANUP

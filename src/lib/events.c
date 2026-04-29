@@ -2,6 +2,8 @@
 #include "inits.h"
 #include "render.h"
 #include "menu.h"
+#include "../lib/net/networkInterface.h"
+#include "../server/server-lib/serverNet.h"
 
 int QuitEvent(AppState state, SDL_Event *event, const bool *keylist)
 {
@@ -142,7 +144,7 @@ int checkEvents(AppState state, SDL_Event *event)
             }
         }
     }
-    if(state->gameState == GAME_HOST)
+    if(state->gameState == GAME_LOBBY)
     {
         Player *p = &state->players[0];
 
@@ -155,7 +157,8 @@ int checkEvents(AppState state, SDL_Event *event)
         {
          
             p->classLock = !p->classLock;
-            //Här ska det hamna kod som fixar ready
+
+
         }
         if(!p->classLock)
         {

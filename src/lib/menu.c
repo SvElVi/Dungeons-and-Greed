@@ -1,5 +1,6 @@
 #include "inits.h"
 #include <stdio.h>
+#include <string.h>
 
 void menu_screen(Menu *menu, AppState state){
     int w, h;
@@ -72,8 +73,8 @@ const char* getClass(Player_Class c)
     }
 }
 
-void host_screen(AppState state){
-        const char *message = "Press space to ready up";
+void lobby_screen(AppState state){
+        const char *message = "Press space to lock class & ready up";
         const char *title = "GREEDY DELVERS";
         int w = 0, h = 0;
         float titleX, titleY;
@@ -105,8 +106,15 @@ void host_screen(AppState state){
             SDL_RenderFillRect(state->renderer, &box);
             const char *className = getClass(state->players[i].class);
             char label[32];
-            sprintf(label, "Player %d", i+1);
-            float classX = box.x + 30;
+            if(state->players[i].connected == false)
+            {
+                strcpy(label, "Not Connected");
+            }
+            else
+            {
+                strcpy(label, state->players[i].name);
+            }
+            float classX = box.x + 20;
             float classY = box.y + 40;
             float textX = box.x + 30;
             float textY = box.y - 20;
@@ -115,7 +123,7 @@ void host_screen(AppState state){
             SDL_RenderDebugText(state->renderer, classX, classY, className);
             if(state->players[i].classLock)
             {
-                SDL_RenderDebugText(state->renderer, box.x +10, box.y+60, "LOCKED");
+                SDL_RenderDebugText(state->renderer, box.x +10, box.y+60, "LOCKED AND READY!");
             }
         }
         SDL_SetRenderScale(state->renderer, scale, scale);

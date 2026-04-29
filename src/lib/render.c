@@ -22,9 +22,9 @@ int renderFrame(AppState state)
     {
         join_screen(state);
     }
-    else if (state->gameState == GAME_HOST)
+    else if (state->gameState == GAME_LOBBY)
     {
-        host_screen(state);
+        lobby_screen(state);
     }
     else if (state->gameState == GAME_TCP_INIT)
     {

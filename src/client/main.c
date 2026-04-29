@@ -81,7 +81,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
     case GAME_MENY:
         break;
 
-    case GAME_HOST:
+    case GAME_LOBBY:
         break;
 
     case GAME_JOIN:

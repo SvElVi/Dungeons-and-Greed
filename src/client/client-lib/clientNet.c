@@ -64,6 +64,7 @@ void clientNetStateLoop(AppState state)
             {
                 SDL_Log("Server: You're playerID is: %d\n", packet.PlayerID);
                 state->curPlayerPtr = &(state->players[packet.PlayerID]);
+                state->curPlayerPtr->playerID = packet.PlayerID;
                 packet.command = CONFIRMING_RECIVED_PLAYER_ID;
                 sendTCPData(state, &packet, state->tcpClient);
                 state->gameState = GAME_WAITING_FOR_OTHER_PLAYERS;
@@ -90,6 +91,15 @@ void clientNetStateLoop(AppState state)
     case GAME_START:
         state->gameState = GAME_PLAYING;
         break;
+
+    case GAME_PLAYING:
+        state->gameState = GAME_UPDATE_MY_LOCATION;
+        break;
+
+    case GAME_UPDATE_MY_LOCATION:
+        updateMyLocation(state);
+        state->gameState = GAME_PLAYING;
+        break;
     }
 }
 
@@ -104,4 +114,13 @@ void clientTCPHandshake(AppState state, NET_StreamSocket *streamSocket)
     NETPacket packet = {REQUESTING_PLAYER_ID, 0};
 
     sendTCPData(state, &packet, streamSocket);
+}
+
+void updateMyLocation(AppState state)
+{
+    int currentPlayer = state->curPlayerPtr->playerID;
+    NETPacket locPacket = {.command = UPDATE_MY_LOCATION, .PlayerID = currentPlayer};
+    locPacket.playerLocations[currentPlayer].location.x = state->curPlayerPtr->pos.x;
+    locPacket.playerLocations[currentPlayer].location.y = state->curPlayerPtr->pos.y;
+    sendDatagram(state, state->serverIP, UDP_PORT, &locPacket);
 }

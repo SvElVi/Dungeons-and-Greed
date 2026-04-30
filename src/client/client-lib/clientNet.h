@@ -15,4 +15,6 @@ void clientTCPHandshake(AppState state, NET_StreamSocket *streamSocket);
 
 void clientNetStateLoop(AppState state);
 
+void updateMyLocation(AppState state);
+
 #endif

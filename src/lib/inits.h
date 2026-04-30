@@ -126,12 +126,18 @@ typedef struct
     int moveY;
 } Enemy;
 
+typedef struct {
+    Vector2D location;
+
+} PlayerLocations;
+
 // Serverside players
 typedef struct
 {
     int amountOfPlayers;
     Player players[MAX_PLAYERS];
     NET_StreamSocket *tcpClient[MAX_PLAYERS];
+    PlayerLocations playerLocations[MAX_PLAYERS];
 
 } ConnectedPlayers;
 
@@ -163,6 +169,7 @@ typedef enum GameState
     GAME_WAITING_FOR_OTHER_PLAYERS,
     GAME_START,
     GAME_PLAYING,
+    GAME_UPDATE_MY_LOCATION,
     GAME_PAUSE,
     GAME_OVER,
     SERVER
@@ -180,6 +187,7 @@ typedef enum
     LOBBY,
     STARTING_GAME,
     GAME_ONGOING,
+    RETRIVE_PLAYER_LOCATIONS,
     SERVER_CLEANUP
 } ServerState;
 

@@ -21,20 +21,13 @@ typedef enum
     PLAYER_EXIT_APPROVED
 } NetCommands;
 
-typedef enum
-{
-    ZERO,
-    ONE,
-    TWO,
-    THREE,
-    FOUR
-} PlayerID;
-
 typedef struct
 {
     NetCommands command;
-    PlayerID PlayerID;
+    int PlayerID;
     int intData;
+
+    PlayerLocations playerLocations[MAX_PLAYERS];
 
 } NETPacket;
 

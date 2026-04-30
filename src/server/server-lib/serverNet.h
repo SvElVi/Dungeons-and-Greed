@@ -10,6 +10,8 @@
 // Note that the NET_Address must be resolved before calling this function!
 void createTCPServer(int portNumber, AppState state);
 
-void broadcastToClients(AppState state, NetCommands command, PlayerID playerID, int intData);
+void broadcastToClients(AppState state, NetCommands command, int playerID, int intData);
+
+void updatePlayerLocation(AppState state, PlayerLocations *loc, int playerID);
 
 #endif

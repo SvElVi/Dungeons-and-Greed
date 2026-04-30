@@ -44,23 +44,22 @@ void destoryUDPSocket(NET_DatagramSocket *udpSocket)
     SDL_Log("Destoryed UDP socket\n");
 }
 
-void checkForDatagram(AppState state, void **data)
+
+void checkForDatagram(AppState state, NETPacket *packet)
 {
     if (NET_ReceiveDatagram(state->udpSocket, state->udpPacket))
     {
         if ((*state->udpPacket) != NULL)
         {
-            *data = SDL_calloc(1, sizeof((*state->udpPacket)->buf));
-            memccpy(*data, (*state->udpPacket)->buf, 1, sizeof((*state->udpPacket)->buf));
+            memcpy(packet, (*state->udpPacket)->buf, sizeof(NETPacket));
             NET_DestroyDatagram(*state->udpPacket);
-            (*state->udpPacket) = NULL;
         }
     }
 }
 
-void sendDatagram(AppState state, NET_Address *ptrRxAdr, int portnumber, void *data)
+void sendDatagram(AppState state, NET_Address *ptrRxAdr, int portnumber, NETPacket *packet)
 {
-    NET_SendDatagram(state->udpSocket, ptrRxAdr, portnumber, data, sizeof(data));
+    NET_SendDatagram(state->udpSocket, ptrRxAdr, portnumber, (void *)packet, sizeof(NETPacket));
 }
 
 bool readTCPData(AppState state, NETPacket *packet, NET_StreamSocket *streamSocket)

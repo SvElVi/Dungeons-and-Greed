@@ -5,8 +5,6 @@
 #include "../../lib/inits.h"
 #include "../../lib/NET/networkInterface.h"
 
-#define MAX_PLAYERS 5
-
 // Takes a NET_Address, portnumber and the AppState, where the address + port is the remote host,
 // and AppState is just used to store the streamsocket.
 // Note that the NET_Address must be resolved before calling this function!

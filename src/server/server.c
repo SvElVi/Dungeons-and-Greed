@@ -96,7 +96,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
     case WAITING_FOR_PLAYERS:
         if (!hasAnnounceAmountOfPlayers)
         {
-            SDL_Log("Waiting for players: %d/5\n", state->connectedPlayers.amountOfPlayers);
+            SDL_Log("Waiting for players: %d/%d\n", state->connectedPlayers.amountOfPlayers, MAX_PLAYERS);
             hasAnnounceAmountOfPlayers = true;
         }
         if (NET_AcceptClient(state->tcpServer, &state->connectedPlayers.tcpClient[currentPlayer]))
@@ -188,18 +188,11 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         break;
 
     case STARTING_GAME:
-        break;
-
-    case GAME_ONGOING:
-
-        break;
-
-    case SERVER_CLEANUP:
-
+        broadcastToClients(state, SERVER_START_GAME, -1, -1);
         break;
     }
 
-    return render(state);
+    return render(state, &state->connectedPlayers.players[0]);
 }
 
 void SDL_AppQuit(void *appstate, SDL_AppResult result) // Runs after returning APP_SUCESS or SDL_FAILURE

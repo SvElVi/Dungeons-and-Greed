@@ -119,7 +119,7 @@ int checkEvents(AppState state, SDL_Event *event)
             {
                 SDL_StopTextInput(state->window);
                 SDL_Log("Connecting/hosting with IP: %s", state->hostIP);
-                state->gameState = GAME_TCP_INIT;
+                state->gameState = GAME_NET_INIT;
             }
             else if (event->key.key == SDLK_ESCAPE)
             {

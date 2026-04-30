@@ -17,7 +17,6 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once 
 
     AppState state = createAppState();
     state->gameState = GAME_INIT;
-    state->connectedPlayers.amountOfPlayers = 0;
     state->mainMenu = (Menu){
         .menuOptions = {"Play", "Join", "Quit"},
         .selected = 0,
@@ -31,8 +30,6 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once 
 
     if (startSDLNet() == NET_FAILURE)
         return SDL_APP_FAILURE;
-
-    createUDPSocket(&state->udpSocket, UDP_PORT);
 
     state->udpPacket = SDL_calloc(1, sizeof(NET_Datagram));
 
@@ -71,93 +68,9 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) // Runs on every ev
 SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
 {
     AppState state = (AppState)appstate;
-    NETPacket packet;
 
-    switch (state->gameState)
-    {
-    case GAME_INIT:
-        SDL_Log("GAME_INIT\n");
-        state->gameState = GAME_MENY;
-        break;
-
-    case GAME_MENY:
-        break;
-
-    case GAME_LOBBY:
-        break;
-
-    case GAME_JOIN:
-        break;
-
-    case GAME_TCP_INIT:
-        switch (initAddress(&state->serverIP, state->hostIP))
-        {
-        case NET_SUCCESS:
-            createTCPClient(state->serverIP, TCP_PORT, state);
-            state->gameState = GAME_TCP_HANDSHAKE;
-            break;
-
-        default:
-            SDL_Log("Pending...");
-        }
-        break;
-
-    case GAME_TCP_HANDSHAKE:
-        switch (checkStreamsocketConnection(state))
-        {
-        case NET_SUCCESS:
-            clientTCPHandshake(state, state->tcpClient);
-            state->gameState = GAME_TCP_VERIFYING_HANDSHAKE;
-            break;
-
-        case NET_FAILURE:
-            break;
-
-        default:
-            break;
-        }
-
-        break;
-
-    case GAME_TCP_VERIFYING_HANDSHAKE:
-        if (readTCPData(state, &packet, state->tcpClient))
-        {
-
-            if (packet.command == APPROVED_PLAYER)
-            {
-                SDL_Log("Server: You're playerID is: %d\n", packet.PlayerID);
-                state->curPlayerPtr = &(state->players[packet.PlayerID]);
-                packet.command = CONFIRMING_RECIVED_PLAYER_ID;
-                sendTCPData(state, &packet, state->tcpClient);
-                state->gameState = GAME_WAITING_FOR_OTHER_PLAYERS;
-            }
-        }
-        break;
-
-    case GAME_WAITING_FOR_OTHER_PLAYERS:
-        if (readTCPData(state, &packet, state->tcpClient))
-        {
-            if (packet.command == UPDATE_WAITING_STATUS)
-            {
-                state->connectedPlayers.amountOfPlayers = packet.intData;
-            }
-        }
-        break;
-
-    case GAME_START:
-        SDL_Log("GAME_START\n");
-        state->gameState = GAME_PLAYING;
-        break;
-
-    case GAME_PLAYING:
-        break;
-
-    case GAME_OVER:
-        break;
-
-    default:
-        break;
-    }
+    //"Superloop" of net is placed in clientNet.c
+    clientNetStateLoop(state);
 
     return render(state, state->curPlayerPtr);
 }

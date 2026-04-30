@@ -11,8 +11,8 @@
 // THIS FUNCTION IS BLOCKING, WITH A TIMEOUT OF 1000 MS!
 void createTCPClient(NET_Address *adr, int portNumber, AppState state);
 
-NET_Status checkStreamsocketConnection(AppState state);
-
 void clientTCPHandshake(AppState state, NET_StreamSocket *streamSocket);
+
+void clientNetStateLoop(AppState state);
 
 #endif

@@ -2,6 +2,8 @@
 #define NETWORKINTERFACE_H
 #define ADDRESS_LEN 15
 #define RESOLVE_ADDRESS_TIMEOUT 5000
+#define TCP_PORT 2000
+#define UDP_PORT 2020
 
 #include <SDL3_Net/SDL_net.h>
 #include "../inits.h"
@@ -12,6 +14,7 @@ typedef enum
     APPROVED_PLAYER,
     DENIED_PLAYER,
     CONFIRMING_RECIVED_PLAYER_ID,
+    SERVER_START_GAME,
     UPDATE_MY_LOCATION,
     UPDATE_PLAYERS_LOCATIONS,
     PLAYER_EXIT,
@@ -61,8 +64,8 @@ bool readTCPData(AppState state, NETPacket *packet, NET_StreamSocket *streamSock
 
 void sendTCPData(AppState state, NETPacket *packet, NET_StreamSocket *streamSocket);
 
-// A blocking function that initializes a network address given in the char* argument,
+// A non-blocking function that initializes a network address given in the char* argument,
 // and then saves it into the given pointer to pointer space of NET_Address type.
-NET_Status initAddress(NET_Address **adress, char *);
+bool initAddress(NET_Address **adress, char *adr);
 
 #endif

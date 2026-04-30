@@ -86,8 +86,7 @@ void sendTCPData(AppState state, NETPacket *packet, NET_StreamSocket *streamSock
     NET_WriteToStreamSocket(streamSocket, (void *)packet, sizeof(NETPacket));
 }
 
-// Blocking
-int initAddress(NET_Address **adress, char *adr)
+bool initAddress(NET_Address **adress, char *adr)
 {
     int addressCheck = 0;
 
@@ -96,26 +95,12 @@ int initAddress(NET_Address **adress, char *adr)
         if (addressCheck > ADDRESS_LEN)
         {
             SDL_Log("Invalid address, failed to resolve!");
-            return NET_FAILURE;
+            return false;
         }
 
         addressCheck++;
     }
 
     *adress = NET_ResolveHostname(adr);
-
-    switch (NET_WaitUntilResolved(*adress, RESOLVE_ADDRESS_TIMEOUT))
-    {
-    case NET_SUCCESS:
-        SDL_Log("Succesfully resolved address of: %s\n", NET_GetAddressString(*adress));
-        return NET_SUCCESS;
-
-    case NET_FAILURE:
-        SDL_Log("Failed to resolve address!\n");
-        return NET_FAILURE;
-
-    default:
-        SDL_Log("Ops... something went terribly wrong when trying to resolve a network address!\n");
-        return NET_FAILURE;
-    }
+    return true;
 }

@@ -3,7 +3,7 @@
 
 #include <SDL3_net/SDL_net.h>
 
-#define MAX_PLAYERS 5
+#define MAX_PLAYERS 2
 #define PLAYER_SIZE 48
 #define RENDER_SCALE 4
 #define ANIMATION_TIME 4
@@ -152,6 +152,9 @@ typedef enum GameState
     GAME_LOBBY,
     GAME_JOIN,
     GAME_INIT,
+    GAME_NET_INIT,
+    GAME_IP_INIT,
+    GAME_IP_INIT_CHECK,
     GAME_TCP_INIT,
     GAME_TCP_HANDSHAKE,
     GAME_TCP_VERIFYING_HANDSHAKE,

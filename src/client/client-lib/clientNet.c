@@ -34,6 +34,7 @@ void clientNetStateLoop(AppState state)
         default:
             break;
         }
+        break;
 
     case GAME_TCP_INIT:
         createTCPClient(state->serverIP, SERVER_TCP_PORT, state);
@@ -152,5 +153,16 @@ void updateClientPlayers(AppState state, NETPacket *packet)
         memcpy(&state->players[i].flip, &packet->players[i].flip, sizeof(SDL_FlipMode)); // update flip
         //memcpy(&state->players[i].enemyCollisionTimer, &packet->players[i].enemyCollisionTimer, sizeof(Uint32));
         memcpy(&state->players[i].connected, &packet->players[i].connected, sizeof(int)); // update connected
+        
+        Uint32 count = 0;
+        count++;
+        
+        if(count >= 100000)
+        {
+            count = 0;
+            SDL_Log("CLIENT UPDATE PLAYER %d: x=%f y=%f", i, packet->players[i].pos.x, packet->players[i].pos.y);
+        }
+        
     }
+    
 }

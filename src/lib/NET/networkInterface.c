@@ -52,6 +52,15 @@ void checkForDatagram(AppState state, NETPacket *packet)
         if ((*state->udpPacket) != NULL)
         {
             memcpy(packet, (*state->udpPacket)->buf, sizeof(NETPacket));
+            
+            Uint32 count = 0;
+            count++;
+            if(count >= 100000)
+            {
+                SDL_Log("UDP RECEIVE: command=%d playerID=%d intData=%d", packet->command, packet->PlayerID, packet->intData);
+            }
+            
+
             NET_DestroyDatagram(*state->udpPacket);
         }
     }
@@ -59,6 +68,13 @@ void checkForDatagram(AppState state, NETPacket *packet)
 
 void sendDatagram(AppState state, NET_Address *ptrRxAdr, int portnumber, NETPacket *packet)
 {
+    Uint32 count = 0;
+    count++;
+    if(count >= 100000)
+    {
+        SDL_Log("UDP SEND: command=%d playerID=%d intData=%d port=%d to=%s", packet->command, packet->PlayerID, packet->intData, portnumber, NET_GetAddressString(ptrRxAdr));
+    }
+    
     NET_SendDatagram(state->udpSocket, ptrRxAdr, portnumber, (void *)packet, sizeof(NETPacket));
 }
 

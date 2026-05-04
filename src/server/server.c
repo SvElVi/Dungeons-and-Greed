@@ -63,7 +63,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once 
     *appstate = state; // Share the appstate to callbacks below
     // state->renderFlag = 1;
 
-    state->world = createWorld(5, (Uint64)SDL_rand(0), state->renderer);
+    state->world = createWorld(5, 12345, state->renderer); //(Uint64)SDL_rand(0)
 
     createDungeon(state->world, 20, state, 1);
 

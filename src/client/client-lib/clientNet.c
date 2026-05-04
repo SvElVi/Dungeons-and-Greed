@@ -85,7 +85,9 @@ void clientNetStateLoop(AppState state)
                 break;
 
             case SERVER_START_GAME:
-                state->gameState = GAME_START;
+                state->seed = packet.intData;
+                SDL_Log("Server designated %d as seed!\n", state->seed);
+                state->gameState = GAME_GENERATE_WORLD;
                 break;
             }
         }
@@ -110,7 +112,6 @@ void clientNetStateLoop(AppState state)
         }
 
         checkForDatagram(state, &packet);
-        SDL_Log("CLIENT UDP AFTER CHECK: intData=%d PlayerID=%d", packet.intData, packet.PlayerID);
         switch (packet.command)
         {
         case UPDATE_CLIENT_PLAYERS:
@@ -171,8 +172,7 @@ void updateClientPlayers(AppState state, NETPacket *packet)
         memcpy(&state->players[i].flip, &packet->players[i].flip, sizeof(SDL_FlipMode));   // update flip
         // memcpy(&state->players[i].enemyCollisionTimer, &packet->players[i].enemyCollisionTimer, sizeof(Uint32));
         memcpy(&state->players[i].connected, &packet->players[i].connected, sizeof(int)); // update connected
-        
+
         SDL_Log("CLIENT UPDATE PLAYER %d: x=%d y=%d", i, packet->players[i].pos.x, packet->players[i].pos.y);
     }
-    
 }

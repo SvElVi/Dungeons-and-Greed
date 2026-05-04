@@ -2,6 +2,7 @@
 
 #define DEBUG 0
 #define NET_DEBUG 1
+#define  WSEED 1337
 
 #include <SDL3/SDL_main.h>
 #include "../lib/NET/networkInterface.h"
@@ -190,7 +191,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         break;
 
     case STARTING_GAME:
-        broadcastTCPToClients(state, SERVER_START_GAME, -1, -1);
+        broadcastTCPToClients(state, SERVER_START_GAME, -1, WSEED);
         state->serverState = GAME_ONGOING;
         break;
 

@@ -166,6 +166,7 @@ typedef enum GameState
     GAME_TCP_HANDSHAKE_SUCCESFULL,
     GAME_TCP_HANDSHAKE_FAILURE,
     GAME_WAITING_FOR_OTHER_PLAYERS,
+    GAME_GENERATE_WORLD,
     GAME_START,
     GAME_PLAYING,
     GAME_UPDATE_MY_LOCATION,
@@ -218,6 +219,7 @@ struct appState
 
     // WORLD
     World world; // LOCAL
+    int seed;
     ConnectedPlayers connectedPlayers; // SERVER ONLY
 
     // Server IP

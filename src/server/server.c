@@ -86,7 +86,8 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
     int currentPlayer = state->connectedPlayers.amountOfPlayers;
     void *rxData, *txData, *udpTX, *udpRX;
     static bool hasAnnounceAmountOfPlayers = false;
-
+    static int counter = 0;
+    
     switch (state->serverState)
     {
     case INIT_OF_SERVER:
@@ -194,7 +195,12 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         break;
 
     case GAME_ONGOING:
-        state->serverState = UPDATE_PLAYERS_SERVERSIDE;
+        counter++;
+        if (counter >= 10000) {
+            counter = 0;
+            state->gameState = UPDATE_PLAYERS_SERVERSIDE;
+
+        }
         break;
 
     case UPDATE_PLAYERS_SERVERSIDE:

@@ -110,6 +110,7 @@ void clientNetStateLoop(AppState state)
         }
 
         checkForDatagram(state, &packet);
+        SDL_Log("CLIENT UDP AFTER CHECK: intData=%d PlayerID=%d", packet.intData, packet.PlayerID);
         switch (packet.command)
         {
         case UPDATE_CLIENT_PLAYERS:
@@ -158,8 +159,10 @@ void updateMyLocation(AppState state)
 
 void updateClientPlayers(AppState state, NETPacket *packet)
 {
+    SDL_Log("CLIENT: updateClientPlayers CALLED command=%d intData=%d PlayerID=%d", packet->command, packet->intData, packet->PlayerID);
     for (int i = 0; i < packet->intData; i++)
     {
+        SDL_Log("CLIENT: before copy player %d packet pos=(%d,%d)", i, packet->players[i].pos.x, packet->players[i].pos.y);
         memcpy(&state->players[i].pos, &packet->players[i].pos, sizeof(Vector2D));         // update position
         memcpy(&state->players[i].flags, &packet->players[i].flags, sizeof(Player_Flags)); // update player flag
         memcpy(&state->players[i].class, &packet->players[i].class, sizeof(Player_Class)); // update player class
@@ -169,7 +172,7 @@ void updateClientPlayers(AppState state, NETPacket *packet)
         // memcpy(&state->players[i].enemyCollisionTimer, &packet->players[i].enemyCollisionTimer, sizeof(Uint32));
         memcpy(&state->players[i].connected, &packet->players[i].connected, sizeof(int)); // update connected
         
-        SDL_Log("CLIENT UPDATE PLAYER %d: x=%f y=%f", i, packet->players[i].pos.x, packet->players[i].pos.y);
+        SDL_Log("CLIENT UPDATE PLAYER %d: x=%d y=%d", i, packet->players[i].pos.x, packet->players[i].pos.y);
     }
     
 }

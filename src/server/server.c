@@ -219,7 +219,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         break;
 
     case BROADCASTING_PLAYERS_TO_CLIENTS:
-        NETPacket broadcastPacket = {.command = UPDATE_CLIENT_PLAYERS, .PlayerID = -1, .intData = state->connectedPlayers.amountOfPlayers};
+        NETPacket broadcastPacket = {.command = UPDATE_CLIENT_PLAYERS, .PlayerID = -1, .intData = 10};
 
         for (int i = 0; i < state->connectedPlayers.amountOfPlayers; i++)
         {

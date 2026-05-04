@@ -3,7 +3,7 @@
 
 #include <SDL3_net/SDL_net.h>
 
-#define MAX_PLAYERS 2
+#define MAX_PLAYERS 5
 #define PLAYER_SIZE 48
 #define RENDER_SCALE 4
 #define ANIMATION_TIME 4

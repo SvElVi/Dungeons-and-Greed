@@ -46,14 +46,17 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once 
     Stats fullHp = {100, 100};
     Stats halfHp = {50, 100};
     Stats smallHp = {10, 100};
-    updatePlayer(&(state->players[0]), tempVec, CLASS_NONE, fullHp, state->renderer);
-    SDL_strlcpy(state->players[0].name, "Player1", sizeof(state->players[0].name));
-    tempVec.x = 120;
-    updatePlayer(&(state->players[1]), tempVec, CLASS_NONE, halfHp, state->renderer);
-    SDL_strlcpy(state->players[1].name, "Player2", sizeof(state->players[1].name));
-    tempVec.x = 240;
-    updatePlayer(&(state->players[2]), tempVec, CLASS_NONE, smallHp, state->renderer);
-    SDL_strlcpy(state->players[2].name, "Player3", sizeof(state->players[2].name));
+
+    Stats defaultHp = {100, 100};
+    for (int i = 0; i < MAX_PLAYERS; i++)
+    {
+        Vector2D tempVec = {0, 0};
+        char name[PLAYER_NAME_MAX];
+        SDL_snprintf(name, sizeof(name), "Player%d", i + 1);
+        updatePlayer(&(state->players[i]), tempVec, CLASS_NONE, defaultHp, state->renderer);
+        SDL_strlcpy(state->players[i].name, name, sizeof(state->players[i].name));
+        state->players[i].connected = false;
+    }
 
     // enemy
     Vector2D enemyPos = {200, 100};

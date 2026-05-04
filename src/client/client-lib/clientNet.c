@@ -15,7 +15,7 @@ void clientNetStateLoop(AppState state)
         break;
 
     case GAME_NET_INIT:
-        createUDPSocket(&state->udpSocket, UDP_PORT);
+        createUDPSocket(&state->udpSocket, CLIENT_UDP_PORT);
         state->gameState = GAME_IP_INIT;
         break;
 
@@ -36,7 +36,7 @@ void clientNetStateLoop(AppState state)
         }
 
     case GAME_TCP_INIT:
-        createTCPClient(state->serverIP, TCP_PORT, state);
+        createTCPClient(state->serverIP, SERVER_TCP_PORT, state);
         state->gameState = GAME_TCP_HANDSHAKE;
         break;
 
@@ -137,7 +137,7 @@ void updateMyLocation(AppState state)
     const int currentPlayer = state->curPlayerPtr->playerID;
     NETPacket locPacket = {.command = UPDATE_SERVER_PLAYER, .PlayerID = currentPlayer};
     sanitizePlayerStruct(state->curPlayerPtr, &locPacket.players[currentPlayer]);
-    sendDatagram(state, state->serverIP, UDP_PORT, &locPacket);
+    sendDatagram(state, state->serverIP, SERVER_UDP_PORT, &locPacket);
 }
 
 void updateClientPlayers(AppState state, NETPacket *packet)

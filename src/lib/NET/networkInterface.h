@@ -2,8 +2,10 @@
 #define NETWORKINTERFACE_H
 #define ADDRESS_LEN 15
 #define RESOLVE_ADDRESS_TIMEOUT 5000
-#define TCP_PORT 2000
-#define UDP_PORT 2020
+#define SERVER_TCP_PORT 2000
+#define CLIENT_TCP_PORT 2001
+#define SERVER_UDP_PORT 2020
+#define CLIENT_UDP_PORT 2021
 
 #include <SDL3_Net/SDL_net.h>
 #include "../inits.h"

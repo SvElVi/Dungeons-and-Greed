@@ -1,6 +1,4 @@
 #define SDL_MAIN_USE_CALLBACKS 1 // Flag to use callbacks
-#define TCP_PORT 2000
-#define UDP_PORT 2020
 
 #define DEBUG 0
 #define NET_DEBUG 1
@@ -36,7 +34,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once 
     if (startSDLNet() == NET_FAILURE)
         return SDL_APP_FAILURE;
 
-    createUDPSocket(&state->udpSocket, UDP_PORT);
+    createUDPSocket(&state->udpSocket, SERVER_UDP_PORT);
 
     state->udpPacket = SDL_calloc(1, sizeof(NET_Datagram));
 
@@ -92,7 +90,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
     switch (state->serverState)
     {
     case INIT_OF_SERVER:
-        createTCPServer(TCP_PORT, state);
+        createTCPServer(SERVER_TCP_PORT, state);
         state->serverState = WAITING_FOR_PLAYERS;
         break;
 
@@ -223,7 +221,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         }
         for (int i = 0; i < state->connectedPlayers.amountOfPlayers; i++)
         {
-            sendDatagram(state, state->connectedPlayers.players[i].ipAddress, UDP_PORT, &broadcastPacket);
+            sendDatagram(state, state->connectedPlayers.players[i].ipAddress, CLIENT_UDP_PORT, &broadcastPacket);
         }
         state->serverState = GAME_ONGOING;
         break;

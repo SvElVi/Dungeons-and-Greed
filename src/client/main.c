@@ -1,6 +1,4 @@
 #define SDL_MAIN_USE_CALLBACKS 1 // Flag to use callbacks
-#define TCP_PORT 2000
-#define UDP_PORT 2020
 #define DEBUG 1
 
 #include <SDL3/SDL_main.h>

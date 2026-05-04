@@ -18,4 +18,6 @@ void updatePlayer(Player* player, Vector2D pos, Player_Class class, Stats stats,
 
 void updateServerPlayerIP(AppState state, int playerID, NET_StreamSocket *serverStreamSocket);
 
+void sanitizePlayerStruct(Player *toSanitizze, Player *sanitized);
+
 #endif

@@ -137,7 +137,6 @@ typedef struct
     int amountOfPlayers;
     Player players[MAX_PLAYERS];
     NET_StreamSocket *tcpClient[MAX_PLAYERS];
-    PlayerLocations playerLocations[MAX_PLAYERS];
 
 } ConnectedPlayers;
 
@@ -187,7 +186,7 @@ typedef enum
     LOBBY,
     STARTING_GAME,
     GAME_ONGOING,
-    RETRIVE_PLAYER_LOCATIONS,
+    UPDATE_PLAYERS_SERVERSIDE,
     SERVER_CLEANUP
 } ServerState;
 

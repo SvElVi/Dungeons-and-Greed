@@ -12,6 +12,6 @@ void createTCPServer(int portNumber, AppState state);
 
 void broadcastToClients(AppState state, NetCommands command, int playerID, int intData);
 
-void updatePlayerLocation(AppState state, PlayerLocations *loc, int playerID);
+void updateServerPlayer(AppState state, NETPacket *packet);
 
 #endif

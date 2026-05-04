@@ -204,3 +204,15 @@ void updateServerPlayerIP(AppState state, int playerID, NET_StreamSocket *server
     NET_WaitUntilResolved(state->connectedPlayers.players[playerID].ipAddress, RESOLVE_ADDRESS_TIMEOUT);
 
 }
+
+void sanitizePlayerStruct(Player *toSanitizze, Player *sanitized) {
+    memcpy(sanitized, toSanitizze, sizeof(Player));
+    sanitized->texture = NULL;
+    sanitized->aniBox.h = -1;
+    sanitized->aniBox.w = -1;
+    sanitized->aniBox.x = -1;
+    sanitized->aniBox.y = -1;
+    sanitized->name[0] = '\0';
+    sanitized->ipAddress = NULL;
+
+}

@@ -3,6 +3,7 @@
 
 #include <SDL3_net/SDL_net.h>
 #include "../../lib/inits.h"
+#include "../../lib/player.h"
 #include "../lib/NET/networkInterface.h"
 
 // Takes a NET_Address, portnumber and the AppState, where the address + port is the remote host,

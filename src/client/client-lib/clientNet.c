@@ -5,6 +5,7 @@
 void clientNetStateLoop(AppState state)
 {
     NETPacket packet;
+    static int counter = 0;
 
     switch (state->gameState)
     {
@@ -93,7 +94,12 @@ void clientNetStateLoop(AppState state)
         break;
 
     case GAME_PLAYING:
-        state->gameState = GAME_UPDATE_MY_LOCATION;
+        counter++;
+        if (counter >= 10000) {
+            counter = 0;
+            state->gameState = GAME_UPDATE_MY_LOCATION;
+
+        }
         break;
 
     case GAME_UPDATE_MY_LOCATION:
@@ -118,9 +124,8 @@ void clientTCPHandshake(AppState state, NET_StreamSocket *streamSocket)
 
 void updateMyLocation(AppState state)
 {
-    int currentPlayer = state->curPlayerPtr->playerID;
-    NETPacket locPacket = {.command = UPDATE_MY_LOCATION, .PlayerID = currentPlayer};
-    locPacket.playerLocations[currentPlayer].location.x = state->curPlayerPtr->pos.x;
-    locPacket.playerLocations[currentPlayer].location.y = state->curPlayerPtr->pos.y;
+    const int currentPlayer = state->curPlayerPtr->playerID;
+    NETPacket locPacket = {.command = UPDATE_SERVER_PLAYER, .PlayerID = currentPlayer};
+    sanitizePlayerStruct(state->curPlayerPtr, &locPacket.players[currentPlayer]);
     sendDatagram(state, state->serverIP, UDP_PORT, &locPacket);
 }

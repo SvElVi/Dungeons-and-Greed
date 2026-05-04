@@ -18,8 +18,8 @@ void broadcastToClients(AppState state, NetCommands command, int playerID, int i
     }
 }
 
-void updatePlayerLocation(AppState state, PlayerLocations *loc, int playerID) {
-    state->connectedPlayers.playerLocations[playerID].location.x = loc->location.x;
-    state->connectedPlayers.playerLocations[playerID].location.y = loc->location.y;
+void updateServerPlayer(AppState state, NETPacket *packet) {
+    const int currentPlayer = packet->PlayerID;
+    memcpy(&state->connectedPlayers.players[currentPlayer], &packet->players[currentPlayer], sizeof(Player));
 
 }

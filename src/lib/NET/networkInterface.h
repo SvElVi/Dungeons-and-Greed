@@ -16,7 +16,7 @@ typedef enum
     CONFIRMING_RECIVED_PLAYER_ID,
     SERVER_START_GAME,
     UPDATE_MY_LOCATION,
-    UPDATE_PLAYERS_LOCATIONS,
+    UPDATE_SERVER_PLAYER,
     PLAYER_EXIT,
     PLAYER_EXIT_APPROVED
 } NetCommands;
@@ -27,7 +27,7 @@ typedef struct
     int PlayerID;
     int intData;
 
-    PlayerLocations playerLocations[MAX_PLAYERS];
+    Player players[MAX_PLAYERS];
 
 } NETPacket;
 

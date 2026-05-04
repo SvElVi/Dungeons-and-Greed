@@ -193,17 +193,17 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         break;
 
     case GAME_ONGOING:
-        state->serverState = RETRIVE_PLAYER_LOCATIONS;
+        state->serverState = UPDATE_PLAYERS_SERVERSIDE;
         break;
 
-    case RETRIVE_PLAYER_LOCATIONS:
+    case UPDATE_PLAYERS_SERVERSIDE:
         for (int index = 0; index < MAX_PLAYERS; index++)
         {
             checkForDatagram(state, &packet);
             switch (packet.command)
             {
-            case UPDATE_MY_LOCATION:
-                updatePlayerLocation(state, &packet.playerLocations[packet.PlayerID], packet.PlayerID);
+            case UPDATE_SERVER_PLAYER:
+                updateServerPlayer(state, &packet);
             default:
                 break;
             }

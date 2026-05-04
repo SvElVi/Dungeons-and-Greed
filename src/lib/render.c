@@ -7,55 +7,64 @@
 #include "hud.h"
 #include "menu.h"
 
-int renderFrame(AppState state, Player* player)
+int renderFrame(AppState state, Player *player)
 {
 
-    if (state->gameState == GAME_MENY)
+    switch (state->gameState)
     {
+    case SERVER:
+        string_screen(state, "SERVER!");
+        break;
+
+    case GAME_MENY:
         menu_screen(&state->mainMenu, state);
-    }
-    else if (state->gameState == GAME_PAUSE)
-    {
+        break;
+
+    case GAME_PAUSE:
         string_screen(state, "Press SPACE to continue or ESC to quit!");
-    }
-    else if (state->gameState == GAME_JOIN)
-    {
+        break;
+
+    case GAME_JOIN:
         join_screen(state);
-    }
-    else if (state->gameState == GAME_LOBBY)
-    {
+        break;
+
+    case GAME_LOBBY:
         lobby_screen(state);
-    }
-    else if (state->gameState == GAME_TCP_INIT)
-    {
+        break;
+
+    case GAME_TCP_INIT:
         string_screen(state, "Connecting...");
-    }
-    else if (state->gameState == GAME_TCP_HANDSHAKE)
-    {
+        break;
+
+    case GAME_TCP_HANDSHAKE:
         string_screen(state, "Handshake...");
-    }
-    else if (state->gameState == GAME_TCP_VERIFYING_HANDSHAKE)
-    {
+        break;
+
+    case GAME_TCP_VERIFYING_HANDSHAKE:
         string_screen(state, "Verifying handshake...");
-    }
-    else if (state->gameState == GAME_WAITING_FOR_OTHER_PLAYERS)
-    {
+        break;
+
+    case GAME_WAITING_FOR_OTHER_PLAYERS:
         char tempStr[64];
         snprintf(tempStr, 64, "Waiting for other players... %d of %d connected!", state->connectedPlayers.amountOfPlayers, MAX_PLAYERS);
         string_screen(state, tempStr);
+        break;
+
+    case GAME_PLAYING:
+        renderGamePlay(state, player);
+        break;
+
+    case GAME_SERVER_SHUTDOWN:
+        string_screen(state, "Server shutdown! Press SPACE to continue!");
     }
 
-    else if (state->gameState == GAME_PLAYING)
-    {
-        renderGamePlay(state, player);
-    }
     SDL_RenderPresent(state->renderer);
     state->computedEvent = false;
 
     return SDL_APP_CONTINUE;
 }
 
-int render(AppState state, Player* player)
+int render(AppState state, Player *player)
 { // current but should be changed to call back style, also with vsync and variable refreshrate
     Uint64 currentTime = SDL_GetTicks();
     if (currentTime >= state->lastTime + SDL_round(1000 / state->framerate))
@@ -84,7 +93,7 @@ int render(AppState state, Player* player)
     return SDL_APP_CONTINUE;
 }
 
-int renderGamePlay(AppState state, Player* player)
+int renderGamePlay(AppState state, Player *player)
 {
     SDL_FRect temp;
     Vector2D tempV, renderOrder[MAX_PLAYERS + MAX_ENEMIES];

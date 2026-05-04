@@ -67,7 +67,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once 
 
     createDungeon(state->world, 20, state, 1);
 
-    SDL_HideWindow(state->window);
+    //SDL_HideWindow(state->window);
 
     return SDL_APP_CONTINUE;
 }
@@ -154,7 +154,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
                 }
                 else
                 {
-                    broadcastToClients(state, UPDATE_WAITING_STATUS, -1, ++state->connectedPlayers.amountOfPlayers);
+                    broadcastTCPToClients(state, UPDATE_WAITING_STATUS, -1, ++state->connectedPlayers.amountOfPlayers);
                     if (state->connectedPlayers.amountOfPlayers >= MAX_PLAYERS)
                     {
                         updateServerPlayerIP(state, packet.PlayerID, state->connectedPlayers.tcpClient[currentPlayer]);
@@ -190,7 +190,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         break;
 
     case STARTING_GAME:
-        broadcastToClients(state, SERVER_START_GAME, -1, -1);
+        broadcastTCPToClients(state, SERVER_START_GAME, -1, -1);
         state->serverState = GAME_ONGOING;
         break;
 
@@ -220,7 +220,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
 
     case BROADCASTING_PLAYERS_TO_CLIENTS:
         NETPacket broadcastPacket = {.command = UPDATE_CLIENT_PLAYERS, .PlayerID = -1, .intData = state->connectedPlayers.amountOfPlayers};
-        
+
         for (int i = 0; i < state->connectedPlayers.amountOfPlayers; i++)
         {
             sanitizePlayerStruct(&state->connectedPlayers.players[i], &broadcastPacket.players[i]);
@@ -240,6 +240,8 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result) // Runs after returning A
     if (appstate != NULL)
     {
         AppState state = (AppState)appstate;
+
+        broadcastTCPToClients(state, SERVER_SHUTDOWN, -1, -1);
 
         destoryUDPSocket(state->udpSocket);
         SDL_free(state->udpPacket);
@@ -263,6 +265,5 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result) // Runs after returning A
         SDL_free(state);
     }
 
-    SDL_Log("Quit done");
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }

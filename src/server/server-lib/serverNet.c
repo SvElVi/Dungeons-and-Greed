@@ -8,9 +8,11 @@ void createTCPServer(int portNumber, AppState state)
     state->tcpServer = NET_CreateServer(NULL, portNumber);
 }
 
-void broadcastToClients(AppState state, NetCommands command, int playerID, int intData)
+void broadcastTCPToClients(AppState state, NetCommands command, int playerID, int intData)
 {
     NETPacket packetToSend = {.command = command, .PlayerID = playerID, .intData = intData};
+    if (command == SERVER_SHUTDOWN)
+        SDL_Log("Broadcasting server shutdown!\n");
     for (int index = 0; index < state->connectedPlayers.amountOfPlayers; index++)
     {
         NET_WriteToStreamSocket(state->connectedPlayers.tcpClient[index], (void *)&packetToSend, sizeof(NETPacket));
@@ -18,7 +20,8 @@ void broadcastToClients(AppState state, NetCommands command, int playerID, int i
     }
 }
 
-void updateServerPlayer(AppState state, NETPacket *packet) {
+void updateServerPlayer(AppState state, NETPacket *packet)
+{
     const int currentPlayer = packet->PlayerID;
     memcpy(&state->connectedPlayers.players[currentPlayer].pos, &packet->players[currentPlayer].pos, sizeof(Vector2D));  // update position
     memcpy(&state->connectedPlayers.players[currentPlayer].flags, &packet->players[currentPlayer].flags, sizeof(Player_Flags)); // update player flag

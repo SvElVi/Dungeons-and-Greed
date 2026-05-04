@@ -195,6 +195,10 @@ int checkEvents(AppState state, SDL_Event *event)
         {
             state->gameState = GAME_PLAYING;
         }
+    } else if (state->gameState == GAME_SERVER_SHUTDOWN) {
+        if (keylist[SDL_SCANCODE_SPACE]) {
+            state->gameState = GAME_INIT;
+        }
     }
     escLast = keylist[SDL_SCANCODE_ESCAPE];
 

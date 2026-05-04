@@ -171,6 +171,7 @@ typedef enum GameState
     GAME_UPDATE_MY_LOCATION,
     GAME_PAUSE,
     GAME_OVER,
+    GAME_SERVER_SHUTDOWN,
     SERVER
 } GameState;
 

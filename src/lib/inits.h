@@ -3,7 +3,7 @@
 
 #include <SDL3_net/SDL_net.h>
 
-#define MAX_PLAYERS 5
+#define MAX_PLAYERS 2
 #define PLAYER_SIZE 48
 #define RENDER_SCALE 4
 #define ANIMATION_TIME 4
@@ -187,6 +187,7 @@ typedef enum
     STARTING_GAME,
     GAME_ONGOING,
     UPDATE_PLAYERS_SERVERSIDE,
+    BROADCASTING_PLAYERS_TO_CLIENTS,
     SERVER_CLEANUP
 } ServerState;
 

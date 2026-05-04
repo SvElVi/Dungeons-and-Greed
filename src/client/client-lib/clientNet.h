@@ -18,4 +18,6 @@ void clientNetStateLoop(AppState state);
 
 void updateMyLocation(AppState state);
 
+void updateClientPlayers(AppState state, NETPacket *packet);
+
 #endif

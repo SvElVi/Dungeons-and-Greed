@@ -94,6 +94,16 @@ void clientNetStateLoop(AppState state)
         break;
 
     case GAME_PLAYING:
+        checkForDatagram(state, &packet);
+        switch(packet.command)
+        {
+            case UPDATE_CLIENT_PLAYERS:
+                updateClientPlayers(state, &packet);
+                break;
+            default:
+                break;
+        }
+
         counter++;
         if (counter >= 10000) {
             counter = 0;
@@ -128,4 +138,19 @@ void updateMyLocation(AppState state)
     NETPacket locPacket = {.command = UPDATE_SERVER_PLAYER, .PlayerID = currentPlayer};
     sanitizePlayerStruct(state->curPlayerPtr, &locPacket.players[currentPlayer]);
     sendDatagram(state, state->serverIP, UDP_PORT, &locPacket);
+}
+
+void updateClientPlayers(AppState state, NETPacket *packet)
+{
+    for (int i = 0; i < packet->intData; i++)
+    {
+        memcpy(&state->players[i].pos, &packet->players[i].pos, sizeof(Vector2D));  // update position
+        memcpy(&state->players[i].flags, &packet->players[i].flags, sizeof(Player_Flags)); // update player flag
+        memcpy(&state->players[i].class, &packet->players[i].class, sizeof(Player_Class)); // update player class
+        memcpy(&state->players[i].stats, &packet->players[i].stats, sizeof(Stats)); // update stats
+        memcpy(&state->players[i].facing, &packet->players[i].facing, sizeof(direction)); // update facing
+        memcpy(&state->players[i].flip, &packet->players[i].flip, sizeof(SDL_FlipMode)); // update flip
+        //memcpy(&state->players[i].enemyCollisionTimer, &packet->players[i].enemyCollisionTimer, sizeof(Uint32));
+        memcpy(&state->players[i].connected, &packet->players[i].connected, sizeof(int)); // update connected
+    }
 }

@@ -211,10 +211,23 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
                 break;
             }
         }
+        state->serverState = BROADCASTING_PLAYERS_TO_CLIENTS;
+        break;
+
+    case BROADCASTING_PLAYERS_TO_CLIENTS:
+        NETPacket broadcastPacket = {.command = UPDATE_CLIENT_PLAYERS, .PlayerID = -1, .intData = state->connectedPlayers.amountOfPlayers};
+        
+        for (int i = 0; i < state->connectedPlayers.amountOfPlayers; i++)
+        {
+            sanitizePlayerStruct(&state->connectedPlayers.players[i], &broadcastPacket.players[i]);
+        }
+        for (int i = 0; i < state->connectedPlayers.amountOfPlayers; i++)
+        {
+            sendDatagram(state, state->connectedPlayers.players[i].ipAddress, UDP_PORT, &broadcastPacket);
+        }
         state->serverState = GAME_ONGOING;
         break;
     }
-
     return render(state, &state->connectedPlayers.players[0]);
 }
 

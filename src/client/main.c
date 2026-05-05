@@ -40,22 +40,17 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once 
     Stats fullHp = {100, 100};
     Stats halfHp = {50, 100};
     Stats smallHp = {10, 100};
-    
+
     Stats defaultHp = {100, 100};
     for (int i = 0; i < MAX_PLAYERS; i++)
     {
-        Vector2D tempVec = {10*i, 0};
         char name[PLAYER_NAME_MAX];
         SDL_snprintf(name, sizeof(name), "Player%d", i + 1);
-        updatePlayer(&(state->players[i]), tempVec, CLASS_NONE, defaultHp, state->renderer);
+        updatePlayer(&(state->players[i]), (Vector2D){0, 0}, CLASS_NONE, defaultHp, state->renderer);
         SDL_strlcpy(state->players[i].name, name, sizeof(state->players[i].name));
     }
 
     *appstate = state; // Share the appstate to callbacks below
-
-    state->world = createWorld(5, 12345, state->renderer); //(Uint64)SDL_rand(0)
-
-    createDungeon(state->world, 20, state, 1);
 
     return SDL_APP_CONTINUE;
 }
@@ -70,6 +65,14 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) // Runs on every ev
 SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
 {
     AppState state = (AppState)appstate;
+
+    if (state->gameState == GAME_GENERATE_WORLD)
+    {
+        state->world = createWorld(5, state->seed, state->renderer); //(Uint64)SDL_rand(0)
+
+        createDungeon(state->world, 20, state, 1);
+        state->gameState = GAME_START;
+    }
 
     //"Superloop" of net is placed in clientNet.c
     clientNetStateLoop(state);

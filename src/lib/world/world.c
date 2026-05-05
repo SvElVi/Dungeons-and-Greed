@@ -26,6 +26,7 @@ World createWorld(int size, Uint64 seed, SDL_Renderer* renderer) {
     World w = SDL_calloc(1, sizeof(struct world));
     w->chunks = SDL_calloc(size*size, sizeof(Chunk));
     w->size = size*size;
+    w->seed = seed;
 
     SDL_Surface* wArt = SDL_LoadPNG("././img/Custom/Dungeon_Tileset.png");
     w->texture = SDL_CreateTextureFromSurface(renderer, wArt);

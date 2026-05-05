@@ -199,12 +199,12 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         break;
 
     case GAME_ONGOING:
-        counter++;
-        if (counter >= 10000) {
-            counter = 0;
+        //counter++;
+        //if (counter >= 10000) {
+        //    counter = 0;
             state->gameState = UPDATE_PLAYERS_SERVERSIDE;
 
-        }
+        //}
         break;
 
     case UPDATE_PLAYERS_SERVERSIDE:
@@ -232,6 +232,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         for (int i = 0; i < state->connectedPlayers.amountOfPlayers; i++)
         {
             sendDatagram(state, state->connectedPlayers.players[i].ipAddress, CLIENT_UDP_PORT, &broadcastPacket);
+            SDL_Log("SERVER SENDS TO IP  %s player %d: x=%d y=%d", state->connectedPlayers.players[i].ipAddress , i , broadcastPacket.players[i].pos.x, broadcastPacket.players[i].pos.y);
         }
         state->serverState = GAME_ONGOING;
         break;

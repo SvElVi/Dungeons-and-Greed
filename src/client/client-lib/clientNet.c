@@ -112,6 +112,7 @@ void clientNetStateLoop(AppState state)
         }
 
         checkForDatagram(state, &packet);
+        SDL_Log("CLIENT UDP AFTER CHECK: intData=%d PlayerID=%d", packet.intData, packet.PlayerID);
         switch (packet.command)
         {
         case UPDATE_CLIENT_PLAYERS:

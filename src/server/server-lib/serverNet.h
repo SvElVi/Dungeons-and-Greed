@@ -11,4 +11,6 @@ void broadcastTCPToClients(AppState state, NETPacket *packet);
 
 void updateServerPlayer(AppState state, NETPacket *packet);
 
+void makeBroadcastPacket(AppState state, NETPacket *packet);
+
 #endif

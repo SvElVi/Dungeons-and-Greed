@@ -110,7 +110,7 @@ void clientNetStateLoop(AppState state)
         switch (packet.command)
         {
         case UPDATE_CLIENT_PLAYERS:
-            //updateClientPlayers(state, &packet);
+            updateClientPlayers(state, &packet);
             SDL_Log("CLIENT UDP CHECK: intData=%d PlayerID=%d", packet.intData, packet.PlayerID);
             break;
         }
@@ -156,7 +156,10 @@ void updateClientPlayers(AppState state, NETPacket *packet)
     SDL_Log("CLIENT: updateClientPlayers CALLED intData=%d PlayerID=%d", packet->intData, packet->PlayerID);
     for (int i = 0; i < packet->intData; i++)
     {
-        SDL_Log("CLIENT: before copy player %d packet pos=(%d,%d)", i, packet->players[i].pos.x, packet->players[i].pos.y);
+        if(state->curPlayerPtr->playerID == i)
+        {
+            continue;
+        }
         memcpy(&state->players[i].pos, &packet->players[i].pos, sizeof(Vector2D));         // update position
         memcpy(&state->players[i].flags, &packet->players[i].flags, sizeof(Player_Flags)); // update player flag
         memcpy(&state->players[i].class, &packet->players[i].class, sizeof(Player_Class)); // update player class

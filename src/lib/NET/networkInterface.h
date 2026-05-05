@@ -30,6 +30,7 @@ typedef struct
     NetCommands command;
     int PlayerID;
     int intData;
+    uint64_t uint64;
 
     Player players[MAX_PLAYERS];
 

@@ -2,7 +2,6 @@
 
 #define DEBUG 0
 #define NET_DEBUG 1
-#define  WSEED 1337
 
 #include <SDL3/SDL_main.h>
 #include "../lib/NET/networkInterface.h"
@@ -155,7 +154,9 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
                 }
                 else
                 {
-                    broadcastTCPToClients(state, UPDATE_WAITING_STATUS, -1, ++state->connectedPlayers.amountOfPlayers);
+                    packet.command = UPDATE_WAITING_STATUS;
+                    packet.intData = ++state->connectedPlayers.amountOfPlayers;
+                    broadcastTCPToClients(state, &packet);
                     if (state->connectedPlayers.amountOfPlayers >= MAX_PLAYERS)
                     {
                         updateServerPlayerIP(state, packet.PlayerID, state->connectedPlayers.tcpClient[currentPlayer]);
@@ -191,7 +192,9 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         break;
 
     case STARTING_GAME:
-        broadcastTCPToClients(state, SERVER_START_GAME, -1, WSEED);
+        packet.command = SERVER_START_GAME;
+        packet.uint64 = SDL_rand(0);
+        broadcastTCPToClients(state, &packet);
         state->serverState = GAME_ONGOING;
         break;
 
@@ -241,8 +244,10 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result) // Runs after returning A
     if (appstate != NULL)
     {
         AppState state = (AppState)appstate;
+        NETPacket packet;
+        packet.command = SERVER_SHUTDOWN;
 
-        broadcastTCPToClients(state, SERVER_SHUTDOWN, -1, -1);
+        broadcastTCPToClients(state, &packet);
 
         destoryUDPSocket(state->udpSocket);
         SDL_free(state->udpPacket);

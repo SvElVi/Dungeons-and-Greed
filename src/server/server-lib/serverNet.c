@@ -8,14 +8,11 @@ void createTCPServer(int portNumber, AppState state)
     state->tcpServer = NET_CreateServer(NULL, portNumber);
 }
 
-void broadcastTCPToClients(AppState state, NetCommands command, int playerID, int intData)
+void broadcastTCPToClients(AppState state, NETPacket *packet)
 {
-    NETPacket packetToSend = {.command = command, .PlayerID = playerID, .intData = intData};
-    if (command == SERVER_SHUTDOWN)
-        SDL_Log("Broadcasting server shutdown!\n");
     for (int index = 0; index < state->connectedPlayers.amountOfPlayers; index++)
     {
-        NET_WriteToStreamSocket(state->connectedPlayers.tcpClient[index], (void *)&packetToSend, sizeof(NETPacket));
+        NET_WriteToStreamSocket(state->connectedPlayers.tcpClient[index], (void *)packet, sizeof(NETPacket));
         NET_WaitUntilStreamSocketDrained(state->connectedPlayers.tcpClient[index], TCP_SOCKET_DRAIN_TIMEOUT);
     }
 }

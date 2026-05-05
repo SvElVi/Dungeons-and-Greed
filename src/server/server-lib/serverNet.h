@@ -7,7 +7,7 @@
 
 void createTCPServer(int portNumber, AppState state);
 
-void broadcastTCPToClients(AppState state, NetCommands command, int playerID, int intData);
+void broadcastTCPToClients(AppState state, NETPacket *packet);
 
 void updateServerPlayer(AppState state, NETPacket *packet);
 

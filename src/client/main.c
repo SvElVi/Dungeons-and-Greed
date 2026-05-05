@@ -44,7 +44,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once 
     Stats defaultHp = {100, 100};
     for (int i = 0; i < MAX_PLAYERS; i++)
     {
-        Vector2D tempVec = {0, 0};
+        Vector2D tempVec = {10*i, 0};
         char name[PLAYER_NAME_MAX];
         SDL_snprintf(name, sizeof(name), "Player%d", i + 1);
         updatePlayer(&(state->players[i]), tempVec, CLASS_NONE, defaultHp, state->renderer);

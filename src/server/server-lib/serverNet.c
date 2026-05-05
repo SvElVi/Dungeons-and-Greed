@@ -22,6 +22,7 @@ void broadcastTCPToClients(AppState state, NetCommands command, int playerID, in
 
 void updateServerPlayer(AppState state, NETPacket *packet)
 {
+    SDL_Log("Server: updateServerPlayer CALLED intData=%d PlayerID=%d", packet->intData, packet->PlayerID);
     const int currentPlayer = packet->PlayerID;
     memcpy(&state->connectedPlayers.players[currentPlayer].pos, &packet->players[currentPlayer].pos, sizeof(Vector2D));  // update position
     memcpy(&state->connectedPlayers.players[currentPlayer].flags, &packet->players[currentPlayer].flags, sizeof(Player_Flags)); // update player flag

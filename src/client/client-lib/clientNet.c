@@ -159,7 +159,7 @@ void updateMyLocation(AppState state)
 
 void updateClientPlayers(AppState state, NETPacket *packet)
 {
-    SDL_Log("CLIENT: updateClientPlayers CALLED command=%d intData=%d PlayerID=%d", packet->command, packet->intData, packet->PlayerID);
+    SDL_Log("CLIENT: updateClientPlayers CALLED intData=%d PlayerID=%d", packet->intData, packet->PlayerID);
     for (int i = 0; i < packet->intData; i++)
     {
         SDL_Log("CLIENT: before copy player %d packet pos=(%d,%d)", i, packet->players[i].pos.x, packet->players[i].pos.y);

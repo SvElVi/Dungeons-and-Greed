@@ -20,4 +20,6 @@ void updateMyLocation(AppState state);
 
 void updateClientPlayers(AppState state, NETPacket *packet);
 
+bool playerSyncCheck(AppState state, NETPacket *packet, int playerID);
+
 #endif

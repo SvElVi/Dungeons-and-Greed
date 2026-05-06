@@ -154,7 +154,7 @@ void updateMyLocation(AppState state)
 void updateClientPlayers(AppState state, NETPacket *packet)
 {
     SDL_Log("CLIENT: updateClientPlayers CALLED intData=%d PlayerID=%d", packet->intData, packet->PlayerID);
-    for (int i = 0; i < packet->intData; i++)
+    for (int i = 0; i < MAX_PLAYERS; i++)
     {
         if(state->curPlayerPtr->playerID == i)
         {

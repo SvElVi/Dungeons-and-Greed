@@ -6,7 +6,7 @@
 
 bool collision(SDL_FRect a, SDL_FRect b);
 
-bool willCollide(Player* player, Player players[MAX_PLAYERS], Enemy enemies[MAX_ENEMIES], float futureX, float futureY);
+bool willCollide(Player* player, Player players[MAX_PLAYERS], Enemy enemies[MAX_ENEMIES], float futureX, float futureY, World world);
 
 void movement(Player* player, Player players[MAX_PLAYERS], Enemy enemies[MAX_ENEMIES], int deltatime, World world);
 

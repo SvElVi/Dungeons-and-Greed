@@ -94,33 +94,36 @@ void clientNetStateLoop(AppState state)
         break;
 
     case GAME_PLAYING:
-        if (readTCPData(state, &inGameTCPPacket, state->tcpClient))
+        if (state->onlineMode)
         {
-            switch (inGameTCPPacket.command)
+            if (readTCPData(state, &inGameTCPPacket, state->tcpClient))
             {
-            case SERVER_SHUTDOWN:
-                state->gameState = GAME_SERVER_SHUTDOWN;
-                ingameTCPFlag = 1;
+                switch (inGameTCPPacket.command)
+                {
+                case SERVER_SHUTDOWN:
+                    state->gameState = GAME_SERVER_SHUTDOWN;
+                    ingameTCPFlag = 1;
+                    break;
+                }
+                if (ingameTCPFlag)
+                    break;
+            }
+
+            checkForDatagram(state, &packet);
+            switch (packet.command)
+            {
+            case UPDATE_CLIENT_PLAYERS:
+                updateClientPlayers(state, &packet);
+                SDL_Log("CLIENT UDP CHECK: intData=%d PlayerID=%d", packet.intData, packet.PlayerID);
                 break;
             }
-            if (ingameTCPFlag)
-                break;
-        }
 
-        checkForDatagram(state, &packet);
-        switch (packet.command)
-        {
-        case UPDATE_CLIENT_PLAYERS:
-            updateClientPlayers(state, &packet);
-            SDL_Log("CLIENT UDP CHECK: intData=%d PlayerID=%d", packet.intData, packet.PlayerID);
-            break;
-        }
-
-        counter++;
-        if (counter >= 10000)
-        {
-            counter = 0;
-            state->gameState = GAME_UPDATE_MY_LOCATION;
+            counter++;
+            if (counter >= 10000)
+            {
+                counter = 0;
+                state->gameState = GAME_UPDATE_MY_LOCATION;
+            }
         }
         break;
 

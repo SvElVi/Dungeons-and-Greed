@@ -204,6 +204,7 @@ struct appState
     Uint64 lastTime;                    // LOCAL
     ServerState serverState;
     GameState gameState;
+    bool onlineMode;
     Menu mainMenu;
 
     Player players[MAX_PLAYERS]; // SEE STRUCT

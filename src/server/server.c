@@ -193,7 +193,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
 
     case STARTING_GAME:
         packet.command = SERVER_START_GAME;
-        packet.uint64 = SDL_rand(0);
+        packet.uint64 = SDL_rand(10000);
         broadcastTCPToClients(state, &packet);
         state->serverState = GAME_ONGOING;
         break;

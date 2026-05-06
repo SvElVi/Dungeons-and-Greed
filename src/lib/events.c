@@ -89,13 +89,16 @@ int checkEvents(AppState state, SDL_Event *event)
             switch (state->mainMenu.selected)
             {
             case 0:
-                state->gameState = GAME_PLAYING;
+                state->gameState = GAME_GENERATE_WORLD;
+                state->seed = SDL_rand(10000);
+                state->onlineMode = false;
                 break;
             case 1:
                 state->gameState = GAME_JOIN;
                 state->hostIPLen = 0;
                 state->hostIP[0] = '\0';
                 SDL_StartTextInput(state->window);
+                state->onlineMode = true;
                 break;
             case 2:
                 state->running = false;

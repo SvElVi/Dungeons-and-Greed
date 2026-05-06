@@ -31,9 +31,6 @@ void clientNetStateLoop(AppState state)
         case NET_SUCCESS:
             state->gameState = GAME_TCP_INIT;
             break;
-
-        default:
-            break;
         }
         break;
 
@@ -51,9 +48,7 @@ void clientNetStateLoop(AppState state)
             break;
 
         case NET_FAILURE:
-            break;
-
-        case NET_WAITING:
+            state->serverState = WAITING_FOR_PLAYERS;
             break;
         }
 
@@ -112,14 +107,11 @@ void clientNetStateLoop(AppState state)
         }
 
         checkForDatagram(state, &packet);
-        SDL_Log("CLIENT UDP AFTER CHECK: intData=%d PlayerID=%d", packet.intData, packet.PlayerID);
         switch (packet.command)
         {
         case UPDATE_CLIENT_PLAYERS:
             updateClientPlayers(state, &packet);
-            break;
-
-        default:
+            SDL_Log("CLIENT UDP CHECK: intData=%d PlayerID=%d", packet.intData, packet.PlayerID);
             break;
         }
 
@@ -164,7 +156,10 @@ void updateClientPlayers(AppState state, NETPacket *packet)
     SDL_Log("CLIENT: updateClientPlayers CALLED intData=%d PlayerID=%d", packet->intData, packet->PlayerID);
     for (int i = 0; i < packet->intData; i++)
     {
-        SDL_Log("CLIENT: before copy player %d packet pos=(%d,%d)", i, packet->players[i].pos.x, packet->players[i].pos.y);
+        if(state->curPlayerPtr->playerID == i)
+        {
+            continue;
+        }
         memcpy(&state->players[i].pos, &packet->players[i].pos, sizeof(Vector2D));         // update position
         memcpy(&state->players[i].flags, &packet->players[i].flags, sizeof(Player_Flags)); // update player flag
         memcpy(&state->players[i].class, &packet->players[i].class, sizeof(Player_Class)); // update player class

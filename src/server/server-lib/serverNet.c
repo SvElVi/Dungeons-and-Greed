@@ -1,4 +1,5 @@
 #include "serverNet.h"
+#include "player.h"
 
 #define TCP_SOCKET_DRAIN_TIMEOUT 2000
 
@@ -31,4 +32,13 @@ void updateServerPlayer(AppState state, NETPacket *packet)
     
     //memcpy(&state->connectedPlayers.players[currentPlayer], &packet->players[currentPlayer], sizeof(Player));
 
+}
+
+void makeBroadcastPacket(AppState state, NETPacket *packet)
+{
+    for (int i = 0; i < state->connectedPlayers.amountOfPlayers; i++)
+    {
+        sanitizePlayerStruct(&state->connectedPlayers.players[i], &packet->players[i]);
+        //memcpy(&packet->players[i], &state->connectedPlayers.players[i], sizeof(Player));
+    }
 }

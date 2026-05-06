@@ -67,7 +67,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once 
 
     createDungeon(state->world, 20, state, 1);
 
-    //SDL_HideWindow(state->window);
+    // SDL_HideWindow(state->window);
 
     return SDL_APP_CONTINUE;
 }
@@ -87,7 +87,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
     void *rxData, *txData, *udpTX, *udpRX;
     static bool hasAnnounceAmountOfPlayers = false;
     static int counter = 0;
-    
+
     switch (state->serverState)
     {
     case INIT_OF_SERVER:
@@ -199,15 +199,6 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         break;
 
     case GAME_ONGOING:
-        //counter++;
-        //if (counter >= 10000) {
-        //    counter = 0;
-            state->gameState = UPDATE_PLAYERS_SERVERSIDE;
-
-        //}
-        break;
-
-    case UPDATE_PLAYERS_SERVERSIDE:
         for (int index = 0; index < MAX_PLAYERS; index++)
         {
             checkForDatagram(state, &packet);
@@ -215,24 +206,20 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
             {
             case UPDATE_SERVER_PLAYER:
                 updateServerPlayer(state, &packet);
-            default:
-                break;
+                state->serverState = BROADCASTING_PLAYERS_TO_CLIENTS;
             }
         }
-        state->serverState = BROADCASTING_PLAYERS_TO_CLIENTS;
         break;
 
     case BROADCASTING_PLAYERS_TO_CLIENTS:
-        NETPacket broadcastPacket = {.command = UPDATE_CLIENT_PLAYERS, .PlayerID = -1, .intData = 10};
+        NETPacket broadcastPacket = {.command = UPDATE_CLIENT_PLAYERS, .intData = 2};
+
+        makeBroadcastPacket(state, &broadcastPacket);
 
         for (int i = 0; i < state->connectedPlayers.amountOfPlayers; i++)
         {
-            sanitizePlayerStruct(&state->connectedPlayers.players[i], &broadcastPacket.players[i]);
-        }
-        for (int i = 0; i < state->connectedPlayers.amountOfPlayers; i++)
-        {
+            broadcastPacket.PlayerID = i;
             sendDatagram(state, state->connectedPlayers.players[i].ipAddress, CLIENT_UDP_PORT, &broadcastPacket);
-            SDL_Log("SERVER SENDS TO IP  %s player %d: x=%d y=%d", state->connectedPlayers.players[i].ipAddress , i , broadcastPacket.players[i].pos.x, broadcastPacket.players[i].pos.y);
         }
         state->serverState = GAME_ONGOING;
         break;

@@ -17,7 +17,7 @@ bool collision(SDL_FRect a, SDL_FRect b)    //beräkna rektangel a med rektangel
     }
 }
 
-bool willCollide(Player* player, Player players[MAX_PLAYERS], Enemy enemies[MAX_ENEMIES], float futureX, float futureY){
+bool willCollide(Player* player, Player players[MAX_PLAYERS], Enemy enemies[MAX_ENEMIES], float futureX, float futureY, World world){
     SDL_FRect futurePos = player->hitBox; //Testar framtida position för att minska buggar
     futurePos.x = futureX;
     futurePos.y = futureY;
@@ -34,20 +34,22 @@ bool willCollide(Player* player, Player players[MAX_PLAYERS], Enemy enemies[MAX_
             return true;
         }     
     }
+    if(tileCollision(world, futurePos)) return true;
+
     return false;
 }
 
-void movement(Player* player, Player players[MAX_PLAYERS], Enemy enemies[MAX_ENEMIES], int deltatime) {
+void movement(Player* player, Player players[MAX_PLAYERS], Enemy enemies[MAX_ENEMIES], int deltatime, World world) {
 
     if(player->flags.moveX != 0){
-        if(!willCollide(player, players, enemies, player->pos.x - player->flags.moveX * deltatime * SPEED, player->pos.y)) //testa ny x-position 
+        if(!willCollide(player, players, enemies, player->pos.x - player->flags.moveX * deltatime * SPEED, player->pos.y, world)) //testa ny x-position 
         {
             player->pos.x -= player->flags.moveX * deltatime * SPEED;
         }
         player->facing = player->flags.moveX + 1;
     }
     if(player->flags.moveY != 0){
-        if(!willCollide(player, players, enemies, player->pos.x , player->pos.y - player->flags.moveY * deltatime * SPEED)) //testa ny y-position
+        if(!willCollide(player, players, enemies, player->pos.x , player->pos.y - player->flags.moveY * deltatime * SPEED, world)) //testa ny y-position
         {
             player->pos.y -= player->flags.moveY * deltatime * SPEED;
         }

@@ -562,3 +562,16 @@ bool renderDungeon(AppState state, Player* player) {
 
     return 1;
 }
+
+bool tileCollision(World w, SDL_FRect futurePos) {
+    if(futurePos.x > (-TILE_SIZE*RENDER_SCALE) && futurePos.x > (-TILE_SIZE*RENDER_SCALE)) { //Check within bounds
+        for(int i; i < COLLISION_RANGE; i++) {
+            for(int j; j < COLLISION_RANGE; j++) {
+                //TILE CHECK HERE
+            }
+        }
+    }
+
+
+    return false;
+}

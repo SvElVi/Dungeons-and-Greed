@@ -55,7 +55,17 @@ int checkEvents(AppState state, SDL_Event *event)
     int quitEvent = QuitEvent(state, event, keylist);
     if (quitEvent)
         return quitEvent;
-
+    if (state->gameState == GAME_WAITING_FOR_OTHER_PLAYERS || state->gameState == GAME_TCP_VERIFYING_HANDSHAKE ||
+    state->gameState == GAME_TCP_HANDSHAKE || state->gameState == GAME_IP_INIT_CHECK || state->gameState == GAME_IP_INIT)
+    {
+        static bool escLast = false;
+        if (keylist[SDL_SCANCODE_ESCAPE] && !escLast)
+        {
+            state->gameState = GAME_JOIN;
+            SDL_APP_CONTINUE;
+        }
+        escLast = keylist[SDL_SCANCODE_ESCAPE];
+    }
     if (state->gameState == GAME_MENY)
     {
         static bool upLast = false;
@@ -173,7 +183,7 @@ int checkEvents(AppState state, SDL_Event *event)
             }
         }
     }
-    // Non quit functions
+
     static bool escLast = false;
     if (state->gameState == GAME_PLAYING)
     {

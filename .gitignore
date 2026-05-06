@@ -55,7 +55,10 @@ dkms.conf
 *.dwo
 
 #Custom filter
+# Lämnar kvar /build utifall någon har kvar den
 /build
+/src/client/build
+/src/server/build
 /vendored
 /.vscode
 /ignore

@@ -1,6 +1,7 @@
 #include "clientNet.h"
 #define TCP_TIMEOUT 5000
 #define NET_DEBUG 1
+#define ALLOWED_SERVER_DISTANCE_OUT_OF_SYNC 25 // SQUARED
 
 void clientNetStateLoop(AppState state)
 {
@@ -153,22 +154,32 @@ void updateMyLocation(AppState state)
 
 void updateClientPlayers(AppState state, NETPacket *packet)
 {
-    SDL_Log("CLIENT: updateClientPlayers CALLED intData=%d PlayerID=%d", packet->intData, packet->PlayerID);
-    for (int i = 0; i < packet->intData; i++)
+    for (int id = 0; id < MAX_PLAYERS; id++)
     {
-        if(state->curPlayerPtr->playerID == i)
+        if (playerSyncCheck(state, packet, id))
         {
             continue;
         }
-        memcpy(&state->players[i].pos, &packet->players[i].pos, sizeof(Vector2D));         // update position
-        memcpy(&state->players[i].flags, &packet->players[i].flags, sizeof(Player_Flags)); // update player flag
-        memcpy(&state->players[i].class, &packet->players[i].class, sizeof(Player_Class)); // update player class
-        memcpy(&state->players[i].stats, &packet->players[i].stats, sizeof(Stats));        // update stats
-        memcpy(&state->players[i].facing, &packet->players[i].facing, sizeof(direction));  // update facing
-        memcpy(&state->players[i].flip, &packet->players[i].flip, sizeof(SDL_FlipMode));   // update flip
-        // memcpy(&state->players[i].enemyCollisionTimer, &packet->players[i].enemyCollisionTimer, sizeof(Uint32));
-        memcpy(&state->players[i].connected, &packet->players[i].connected, sizeof(int)); // update connected
-
-        SDL_Log("CLIENT UPDATE PLAYER %d: x=%d y=%d", i, packet->players[i].pos.x, packet->players[i].pos.y);
+        memcpy(&state->players[id].pos, &packet->players[id].pos, sizeof(Vector2D));         // update position
+        memcpy(&state->players[id].flags, &packet->players[id].flags, sizeof(Player_Flags)); // update player flag
+        memcpy(&state->players[id].class, &packet->players[id].class, sizeof(Player_Class)); // update player class
+        memcpy(&state->players[id].stats, &packet->players[id].stats, sizeof(Stats));        // update stats
+        memcpy(&state->players[id].facing, &packet->players[id].facing, sizeof(direction));  // update facing
+        memcpy(&state->players[id].flip, &packet->players[id].flip, sizeof(SDL_FlipMode));   // update flip
+        // memcpy(&state->players[id].enemyCollisionTimer, &packet->players[id].enemyCollisionTimer, sizeof(Uint32));
+        memcpy(&state->players[id].connected, &packet->players[id].connected, sizeof(int)); // update connected
     }
+}
+
+bool playerSyncCheck(AppState state, NETPacket *packet, int playerID)
+{
+    int deltaX = (state->connectedPlayers.players[playerID].pos.x - packet->players[playerID].pos.x);
+    int deltaY = (state->connectedPlayers.players[playerID].pos.y - packet->players[playerID].pos.y);
+
+    if ((deltaX * deltaX) + (deltaY * deltaY) > ALLOWED_SERVER_DISTANCE_OUT_OF_SYNC)
+    {
+        return true;
+    }
+
+    return false;
 }

@@ -74,7 +74,9 @@ int render(AppState state, Player *player)
         // if(state->renderFlag) {
         if (state->gameState == GAME_PLAYING)
         {
-            movement(state->curPlayerPtr, state->players, state->enemies, state->deltaTime);
+            for(int i = 0; i < MAX_PLAYERS; i++) {
+                movement(&(state->players[i]), state->players, state->enemies, state->deltaTime);
+            }
             animatePlayers(state->players, &(state->animationTime), state->framerate, &(state->computedEvent));
 
             for (int i = 0; i < MAX_ENEMIES; i++)

@@ -78,7 +78,7 @@ typedef struct
 typedef struct
 {
     int playerID;
-    Vector2D pos;         ////SYNC MULTIPLAYER
+    Vector2D pos;         ////SYNC MULTIPLAYER, x & y axis is inverted so these will be values from 0 to below.
     Player_Flags flags;   // SYNC MULTIPLAYER
     Player_Class class;   // SYNC MULTIPLAYER
     Stats stats;          // SYNC MULTIPLAYER

@@ -4,11 +4,11 @@
 #include "../enemy.h"
 
 struct world {
-    Chunk* chunks;
+    Chunk* chunks; //Pointer to Chunklist
     Uint64 seed;
     int size;
     SDL_Texture* texture;
-    Chunk* firstChunk;
+    Chunk* firstChunk; //Pointer to chunk where the first room is generated
 };
 
 void cleanChunks(Chunk* chunks, int size) { //Set all tilevalues in chunks to 0
@@ -564,8 +564,25 @@ bool renderDungeon(AppState state, Player* player) {
 }
 
 bool tileCollision(World w, SDL_FRect futurePos) {
-    if(futurePos.x > (TILE_SIZE*RENDER_SCALE) && futurePos.y > (TILE_SIZE*RENDER_SCALE)) { //Check within bounds
+    int Wsize = (int)SDL_sqrt(w->size);
+    Wsize *= CHUNK_SIZE*TILE_SIZE*RENDER_SCALE;
 
+    Vector2D temp;
+    static Vector2D fChunk = {1};
+    static Chunk* Cptr = NULL;
+
+    if(futurePos.x < (TILE_SIZE*RENDER_SCALE) && futurePos.x > -(Wsize) && futurePos.y < (TILE_SIZE*RENDER_SCALE) && futurePos.y > -(Wsize)) { //Check within bounds
+        temp.x = (int)futurePos.x/(CHUNK_SIZE*TILE_SIZE*RENDER_SCALE);
+        temp.y = (int)futurePos.y/(CHUNK_SIZE*TILE_SIZE*RENDER_SCALE);
+        if(temp.x != fChunk.x || temp.y != fChunk.y) {
+            fChunk = temp;
+            Cptr = (Chunk*)SDL_abs(fChunk.x + fChunk.y*(int)SDL_sqrt(w->size));
+            // SDL_Log("Calc X: %d Y: %d",fChunk.x, fChunk.y);
+            // SDL_Log("Peter: %d", Cptr);
+        }
+
+        
+        
     }
 
     return false;

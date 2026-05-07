@@ -4,6 +4,8 @@
 #define ROOM_TYPES 10
 #define TILE_SIZE 16
 #define TILE_COLISION_POINTS 2
+#define TILE_COLISION_MARGIN_X 2
+#define TILE_COLISION_MARGIN_Y 1
 
 typedef enum {
     ROOM_CIRCLE,

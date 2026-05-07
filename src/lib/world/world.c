@@ -567,41 +567,42 @@ bool tileCollision(World w, SDL_FRect futurePos, Player* player) {
     int Wsize = (int)SDL_sqrt(w->size);
     Wsize *= CHUNK_SIZE*TILE_SIZE*RENDER_SCALE;
 
-    Vector2D temp, points[TILE_COLISION_POINTS];
-    Vector2D fChunk = {1};
+    Vector2D points[TILE_COLISION_POINTS], fChunk = {1};
     static Chunk* Cptr = NULL;
-    SDL_FRect tileBox;
+    SDL_FRect tileBox = {0,0,TILE_SIZE*RENDER_SCALE,TILE_SIZE*RENDER_SCALE};
+
+    points[0].x = futurePos.x - 20*RENDER_SCALE;
+    points[0].y = futurePos.y - 40*RENDER_SCALE;
+    points[1] = points[0];
 
     if(player->pos.x > futurePos.x) {
-        points[0].x = futurePos.x - player->hitBox.w;
-        points[0].y = futurePos.y;
-        points[1].x = futurePos.x - player->hitBox.w;
-        points[1].y = futurePos.y - player->hitBox.h;
+        points[0].x -= player->hitBox.w + TILE_COLISION_MARGIN_X*RENDER_SCALE;
+        points[1].x -= player->hitBox.w + TILE_COLISION_MARGIN_X*RENDER_SCALE;
+        points[1].y -= player->hitBox.h + TILE_COLISION_MARGIN_Y*RENDER_SCALE;
     } else if(player->pos.x < futurePos.x) {
-        points[0].x = futurePos.x;
-        points[0].y = futurePos.y;
-        points[1].x = futurePos.x;
-        points[1].y = futurePos.y - player->hitBox.h;
+        points[0].x += 3*RENDER_SCALE;
+        points[1].x = points[0].x;
+        points[1].y -= player->hitBox.h + (TILE_COLISION_MARGIN_Y)*RENDER_SCALE;
     } else if(player->pos.y > futurePos.y) {
-        points[0].x = futurePos.x;
-        points[0].y = futurePos.y - player->hitBox.h;
-        points[1].x = futurePos.x - player->hitBox.w;
-        points[1].y = futurePos.y - player->hitBox.h;
+        points[0].y -= player->hitBox.h + TILE_COLISION_MARGIN_Y*RENDER_SCALE;
+        points[1].x -= player->hitBox.w + TILE_COLISION_MARGIN_X*RENDER_SCALE;
+        points[1].y -= player->hitBox.h + TILE_COLISION_MARGIN_Y*RENDER_SCALE;
     } else if(player->pos.y < futurePos.y) {
-        points[0].x = futurePos.x;
-        points[0].y = futurePos.y;
-        points[1].x = futurePos.x - player->hitBox.w;
-        points[1].y = futurePos.y;
+        points[1].x -= player->hitBox.w + TILE_COLISION_MARGIN_X*RENDER_SCALE;
     }
 
     for(int i = 0; i < TILE_COLISION_POINTS; i++) {
-        if(points[i].x < (TILE_SIZE*RENDER_SCALE) && points[i].x > -(Wsize) && points[i].y < (TILE_SIZE*RENDER_SCALE) && points[i].y > -(Wsize)) { //Check within bounds
-            fChunk.x = (int)futurePos.x/(CHUNK_SIZE*TILE_SIZE*RENDER_SCALE);
-            fChunk.y = (int)futurePos.y/(CHUNK_SIZE*TILE_SIZE*RENDER_SCALE);
+            fChunk.x = (int)points[i].x/(CHUNK_SIZE*TILE_SIZE*RENDER_SCALE);
+            fChunk.y = (int)points[i].y/(CHUNK_SIZE*TILE_SIZE*RENDER_SCALE);
             Cptr = w->chunks + SDL_abs(fChunk.x + fChunk.y*(int)SDL_sqrt(w->size));
-        }
-    }
 
+            if(Cptr >= w->chunks && Cptr < (w->chunks+w->size-1)) { //Check boundries
+                // SDL_Log("Ccord (%d:%d), Tile (%d:%d)", fChunk.x, fChunk.y, SDL_abs((int)futurePos.y/(TILE_SIZE*RENDER_SCALE)%48), SDL_abs((int)futurePos.x/(TILE_SIZE*RENDER_SCALE)%48));
+                if(Cptr->tileType[SDL_abs((int)points[i].y/(TILE_SIZE*RENDER_SCALE)%48)][SDL_abs((int)points[i].x/(TILE_SIZE*RENDER_SCALE)%48)] > 40) {
+                    return true;
+                }
+            }
+    }
 
     return false;
 }

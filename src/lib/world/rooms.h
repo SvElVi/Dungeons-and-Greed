@@ -3,6 +3,7 @@
 #define CHUNK_SIZE 48
 #define ROOM_TYPES 10
 #define TILE_SIZE 16
+#define TILE_COLISION_POINTS 2
 
 typedef enum {
     ROOM_CIRCLE,

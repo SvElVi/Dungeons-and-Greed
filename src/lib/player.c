@@ -34,7 +34,7 @@ bool willCollide(Player* player, Player players[MAX_PLAYERS], Enemy enemies[MAX_
             return true;
         }     
     }
-    if(tileCollision(world, futurePos)) return true;
+    if(tileCollision(world, futurePos, player)) return true;
 
     return false;
 }

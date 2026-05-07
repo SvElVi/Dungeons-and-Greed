@@ -563,27 +563,45 @@ bool renderDungeon(AppState state, Player* player) {
     return 1;
 }
 
-bool tileCollision(World w, SDL_FRect futurePos) {
+bool tileCollision(World w, SDL_FRect futurePos, Player* player) {
     int Wsize = (int)SDL_sqrt(w->size);
     Wsize *= CHUNK_SIZE*TILE_SIZE*RENDER_SCALE;
 
-    Vector2D temp;
-    static Vector2D fChunk = {1};
+    Vector2D temp, points[TILE_COLISION_POINTS];
+    Vector2D fChunk = {1};
     static Chunk* Cptr = NULL;
+    SDL_FRect tileBox;
 
-    if(futurePos.x < (TILE_SIZE*RENDER_SCALE) && futurePos.x > -(Wsize) && futurePos.y < (TILE_SIZE*RENDER_SCALE) && futurePos.y > -(Wsize)) { //Check within bounds
-        temp.x = (int)futurePos.x/(CHUNK_SIZE*TILE_SIZE*RENDER_SCALE);
-        temp.y = (int)futurePos.y/(CHUNK_SIZE*TILE_SIZE*RENDER_SCALE);
-        if(temp.x != fChunk.x || temp.y != fChunk.y) {
-            fChunk = temp;
-            Cptr = (Chunk*)SDL_abs(fChunk.x + fChunk.y*(int)SDL_sqrt(w->size));
-            // SDL_Log("Calc X: %d Y: %d",fChunk.x, fChunk.y);
-            // SDL_Log("Peter: %d", Cptr);
-        }
-
-        
-        
+    if(player->pos.x > futurePos.x) {
+        points[0].x = futurePos.x - player->hitBox.w;
+        points[0].y = futurePos.y;
+        points[1].x = futurePos.x - player->hitBox.w;
+        points[1].y = futurePos.y - player->hitBox.h;
+    } else if(player->pos.x < futurePos.x) {
+        points[0].x = futurePos.x;
+        points[0].y = futurePos.y;
+        points[1].x = futurePos.x;
+        points[1].y = futurePos.y - player->hitBox.h;
+    } else if(player->pos.y > futurePos.y) {
+        points[0].x = futurePos.x;
+        points[0].y = futurePos.y - player->hitBox.h;
+        points[1].x = futurePos.x - player->hitBox.w;
+        points[1].y = futurePos.y - player->hitBox.h;
+    } else if(player->pos.y < futurePos.y) {
+        points[0].x = futurePos.x;
+        points[0].y = futurePos.y;
+        points[1].x = futurePos.x - player->hitBox.w;
+        points[1].y = futurePos.y;
     }
+
+    for(int i = 0; i < TILE_COLISION_POINTS; i++) {
+        if(points[i].x < (TILE_SIZE*RENDER_SCALE) && points[i].x > -(Wsize) && points[i].y < (TILE_SIZE*RENDER_SCALE) && points[i].y > -(Wsize)) { //Check within bounds
+            fChunk.x = (int)futurePos.x/(CHUNK_SIZE*TILE_SIZE*RENDER_SCALE);
+            fChunk.y = (int)futurePos.y/(CHUNK_SIZE*TILE_SIZE*RENDER_SCALE);
+            Cptr = w->chunks + SDL_abs(fChunk.x + fChunk.y*(int)SDL_sqrt(w->size));
+        }
+    }
+
 
     return false;
 }

@@ -571,16 +571,16 @@ bool tileCollision(World w, SDL_FRect futurePos, Player* player) {
     static Chunk* Cptr = NULL;
     SDL_FRect tileBox = {0,0,TILE_SIZE*RENDER_SCALE,TILE_SIZE*RENDER_SCALE};
 
-    points[0].x = futurePos.x - 20*RENDER_SCALE;
+    points[0].x = futurePos.x - 20*RENDER_SCALE; //With margin for players
     points[0].y = futurePos.y - 40*RENDER_SCALE;
     points[1] = points[0];
 
-    if(player->pos.x > futurePos.x) {
+    if(player->pos.x > futurePos.x) { //Adjust checks depending on direction and only do two
         points[0].x -= player->hitBox.w + TILE_COLISION_MARGIN_X*RENDER_SCALE;
         points[1].x -= player->hitBox.w + TILE_COLISION_MARGIN_X*RENDER_SCALE;
         points[1].y -= player->hitBox.h + TILE_COLISION_MARGIN_Y*RENDER_SCALE;
     } else if(player->pos.x < futurePos.x) {
-        points[0].x += 3*RENDER_SCALE;
+        points[0].x += 3*RENDER_SCALE; //Fix for flipped sprite since it isn't perfectly centered
         points[1].x = points[0].x;
         points[1].y -= player->hitBox.h + (TILE_COLISION_MARGIN_Y)*RENDER_SCALE;
     } else if(player->pos.y > futurePos.y) {
@@ -597,7 +597,6 @@ bool tileCollision(World w, SDL_FRect futurePos, Player* player) {
             Cptr = w->chunks + SDL_abs(fChunk.x + fChunk.y*(int)SDL_sqrt(w->size));
 
             if(Cptr >= w->chunks && Cptr < (w->chunks+w->size-1)) { //Check boundries
-                // SDL_Log("Ccord (%d:%d), Tile (%d:%d)", fChunk.x, fChunk.y, SDL_abs((int)futurePos.y/(TILE_SIZE*RENDER_SCALE)%48), SDL_abs((int)futurePos.x/(TILE_SIZE*RENDER_SCALE)%48));
                 if(Cptr->tileType[SDL_abs((int)points[i].y/(TILE_SIZE*RENDER_SCALE)%48)][SDL_abs((int)points[i].x/(TILE_SIZE*RENDER_SCALE)%48)] > 40) {
                     return true;
                 }

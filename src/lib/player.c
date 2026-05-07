@@ -55,7 +55,7 @@ void movement(Player* player, Player players[MAX_PLAYERS], Enemy enemies[MAX_ENE
         }
         player->facing = player->flags.moveY + 2;
     }
-    player->hitBox.x = player->pos.x;
+    player->hitBox.x = player->pos.x; //Should in the future be adljusted with an offset so it isn't in the corener of the sprite, when done so also change tilecollision since itself has added margins
     player->hitBox.y = player->pos.y;
 
 } 
@@ -94,8 +94,6 @@ bool playerEnemyCollision(Player* player, Enemy enemies[MAX_ENEMIES], Uint32 del
     return playerEnemyCollided;
 }
 
- //&& (player->flags.moveX || player->flags.moveY)
- // || 
 void animatePlayers(Player players[MAX_PLAYERS], Uint8* counter, Uint16 framerate, bool* flag) {
     ++*counter;
     if((*counter) == (framerate / ANIMATION_TIME /2) || (*counter) == (framerate / (ANIMATION_TIME))) {

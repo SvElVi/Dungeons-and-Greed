@@ -55,7 +55,7 @@ void movement(Player* player, Player players[MAX_PLAYERS], Enemy enemies[MAX_ENE
         }
         player->facing = player->flags.moveY + 2;
     }
-    player->hitBox.x = player->pos.x; //Should in the future be adljusted with an offset so it isn't in the corener of the sprite, when done so also change tilecollision since itself has added margins
+    player->hitBox.x = player->pos.x; //Should in the future be adljusted with an offset so it isn't in the corener of the sprite, when done so also change tilecollision since itself has added margins and also dungeontp
     player->hitBox.y = player->pos.y;
 
 } 

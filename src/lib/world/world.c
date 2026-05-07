@@ -596,7 +596,7 @@ bool tileCollision(World w, SDL_FRect futurePos, Player* player) {
             fChunk.y = (int)points[i].y/(CHUNK_SIZE*TILE_SIZE*RENDER_SCALE);
             Cptr = w->chunks + SDL_abs(fChunk.x + fChunk.y*(int)SDL_sqrt(w->size));
 
-            if(Cptr >= w->chunks && Cptr < (w->chunks+w->size-1)) { //Check boundries
+            if(Cptr >= w->chunks && Cptr <= (w->chunks+w->size-1)) { //Check boundries
                 if(Cptr->tileType[SDL_abs((int)points[i].y/(TILE_SIZE*RENDER_SCALE)%48)][SDL_abs((int)points[i].x/(TILE_SIZE*RENDER_SCALE)%48)] > 40) {
                     return true;
                 }

@@ -3,7 +3,7 @@
 
 #include <SDL3_net/SDL_net.h>
 
-#define MAX_PLAYERS 1
+#define MAX_PLAYERS 2
 #define PLAYER_SIZE 48
 #define RENDER_SCALE 4
 #define ANIMATION_TIME 4
@@ -84,14 +84,14 @@ typedef struct
     Stats stats;          // SYNC MULTIPLAYER
     SDL_Texture *texture; // LOCAL
     SDL_FRect hitBox;
-    SDL_FRect aniBox;  // LOCAL
-    direction facing;  // SYNC MULTIPLAYER
-    SDL_FlipMode flip; // SYNC MULTIPLAYER
+    SDL_FRect aniBox;           // LOCAL
+    direction facing;           // SYNC MULTIPLAYER
+    SDL_FlipMode flip;          // SYNC MULTIPLAYER
     char name[PLAYER_NAME_MAX]; // player name string
     Uint32 enemyCollisionTimer; // ms counter for character colliding with emeny. SYNC MULTIPLAYER
-    
+
     int connected;
-    bool classLock; //För att låsa klasser LOCAL
+    bool classLock; // För att låsa klasser LOCAL
     // FOR SERVER
     NET_Address *ipAddress;
 } Player;
@@ -126,7 +126,8 @@ typedef struct
     int moveY;
 } Enemy;
 
-typedef struct {
+typedef struct
+{
     Vector2D location;
 
 } PlayerLocations;
@@ -161,10 +162,8 @@ typedef enum GameState
     GAME_IP_INIT,
     GAME_IP_INIT_CHECK,
     GAME_TCP_INIT,
-    GAME_TCP_HANDSHAKE,
-    GAME_TCP_VERIFYING_HANDSHAKE,
-    GAME_TCP_HANDSHAKE_SUCCESFULL,
-    GAME_TCP_HANDSHAKE_FAILURE,
+    GAME_HANDSHAKE,
+    GAME_VERIFYING_HANDSHAKE,
     GAME_WAITING_FOR_OTHER_PLAYERS,
     GAME_GENERATE_WORLD,
     GAME_START,
@@ -193,6 +192,10 @@ typedef enum
     SERVER_CLEANUP
 } ServerState;
 
+struct networkInterface;
+
+typedef struct networkInterface *NetworkInterface;
+
 struct appState
 {
     SDL_Window *window;                 // LOCAL
@@ -209,7 +212,7 @@ struct appState
 
     Player players[MAX_PLAYERS]; // SEE STRUCT
     SDL_FRect camera;            // LOCAL
-    Player* curPlayerPtr;        // LOCAL
+    Player *curPlayerPtr;        // LOCAL
 
     Enemy enemies[MAX_ENEMIES];
 
@@ -223,17 +226,10 @@ struct appState
     int seed;
     ConnectedPlayers connectedPlayers; // SERVER ONLY
 
-    // Server IP
-    NET_Address *serverIP;
     char hostIP[16];
     int hostIPLen;
-    // UDP
-    NET_DatagramSocket *udpSocket;
-    NET_Datagram **udpPacket;
 
-    // Server TCP
-    NET_Server *tcpServer;
-    NET_StreamSocket *tcpClient;
+    NetworkInterface ptrNetworkInterface;
 };
 
 typedef struct appState *AppState;

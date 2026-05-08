@@ -31,12 +31,15 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once 
         return SDL_APP_FAILURE; // Initiate and display window
     initCam(state);
 
+    // ---------- NET ----------
     if (startSDLNet() == NET_FAILURE)
         return SDL_APP_FAILURE;
 
-    createUDPSocket(&state->udpSocket, SERVER_UDP_PORT);
+    state->ptrNetworkInterface = createNetworkInterface();
+    allocUDPPacket(state->ptrNetworkInterface);
+    state->connectedPlayers.amountOfPlayers = 0;
 
-    state->udpPacket = SDL_calloc(1, sizeof(NET_Datagram));
+    // -------- END NET --------
 
     state->running = true; // Custom flag to mark the program as running
 
@@ -91,6 +94,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
     switch (state->serverState)
     {
     case INIT_OF_SERVER:
+        createUDPSocket(state->ptrNetworkInterface, SERVER_UDP_PORT);
         createTCPServer(SERVER_TCP_PORT, state);
         state->serverState = WAITING_FOR_PLAYERS;
         break;
@@ -101,7 +105,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
             SDL_Log("Waiting for players: %d/%d\n", state->connectedPlayers.amountOfPlayers, MAX_PLAYERS);
             hasAnnounceAmountOfPlayers = true;
         }
-        if (NET_AcceptClient(state->tcpServer, &state->connectedPlayers.tcpClient[currentPlayer]))
+        if (NET_AcceptClient(netGetTCPServer(state->ptrNetworkInterface), &state->connectedPlayers.tcpClient[currentPlayer]))
         {
             if (state->connectedPlayers.tcpClient[currentPlayer] != NULL)
             {
@@ -115,7 +119,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         break;
 
     case ASSIGNING_PLAYER_ID:
-        if (readTCPData(state, &packet, state->connectedPlayers.tcpClient[currentPlayer]))
+        if (readTCPData(&packet, state->connectedPlayers.tcpClient[currentPlayer]))
         {
             switch (packet.command)
             {
@@ -136,13 +140,13 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         packet.PlayerID = currentPlayer;
         SDL_Log("Assigning the client playerID %d, and sending it to: %s\n", packet.PlayerID, NET_GetAddressString(NET_GetStreamSocketAddress(state->connectedPlayers.tcpClient[currentPlayer])));
 
-        sendTCPData(state, &packet, state->connectedPlayers.tcpClient[currentPlayer]);
+        sendTCPData(&packet, state->connectedPlayers.tcpClient[currentPlayer]);
         state->serverState = CONFIRMING_PLAYER_ID_RECIVE;
 
         break;
 
     case CONFIRMING_PLAYER_ID_RECIVE:
-        if (readTCPData(state, &packet, state->connectedPlayers.tcpClient[currentPlayer]))
+        if (readTCPData(&packet, state->connectedPlayers.tcpClient[currentPlayer]))
         {
             switch (packet.command)
             {
@@ -201,7 +205,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
     case GAME_ONGOING:
         for (int index = 0; index < MAX_PLAYERS; index++)
         {
-            checkForDatagram(state, &packet);
+            checkForDatagram(state->ptrNetworkInterface, &packet);
             switch (packet.command)
             {
             case UPDATE_SERVER_PLAYER:
@@ -219,7 +223,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         for (int i = 0; i < state->connectedPlayers.amountOfPlayers; i++)
         {
             broadcastPacket.PlayerID = i;
-            sendDatagram(state, state->connectedPlayers.players[i].ipAddress, CLIENT_UDP_PORT, &broadcastPacket);
+            sendDatagram(state->ptrNetworkInterface, state->connectedPlayers.players[i].ipAddress, CLIENT_UDP_PORT, &broadcastPacket);
         }
         state->serverState = GAME_ONGOING;
         break;
@@ -237,9 +241,9 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result) // Runs after returning A
 
         broadcastTCPToClients(state, &packet);
 
-        destoryUDPSocket(state->udpSocket);
-        SDL_free(state->udpPacket);
-        NET_DestroyServer(state->tcpServer);
+        destoryUDPSocket(state->ptrNetworkInterface);
+        NET_DestroyServer(netGetTCPServer(state->ptrNetworkInterface));
+        destroyNetworkInterface(state->ptrNetworkInterface);
         for (int index = 0; index < state->connectedPlayers.amountOfPlayers; index++)
         {
             NET_DestroyStreamSocket(state->connectedPlayers.tcpClient[index]);

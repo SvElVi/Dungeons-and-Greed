@@ -1,7 +1,7 @@
 #include "clientNet.h"
 #define TCP_TIMEOUT 5000
 #define NET_DEBUG 1
-#define ALLOWED_SERVER_DISTANCE_OUT_OF_SYNC 25 // SQUARED
+#define ALLOWED_SERVER_DISTANCE_OUT_OF_SYNC 600 // SQUARED !-! deltaX 300 !-! deltaY 300
 
 void clientNetStateLoop(AppState state)
 {
@@ -11,23 +11,18 @@ void clientNetStateLoop(AppState state)
 
     switch (state->gameState)
     {
-    case GAME_INIT:
-        state->connectedPlayers.amountOfPlayers = 0;
-        state->gameState = GAME_MENY;
-        break;
-
     case GAME_NET_INIT:
-        createUDPSocket(&state->udpSocket, CLIENT_UDP_PORT);
+        createUDPSocket(state->ptrNetworkInterface, CLIENT_UDP_PORT);
         state->gameState = GAME_IP_INIT;
         break;
 
     case GAME_IP_INIT:
-        if (initAddress(&state->serverIP, state->hostIP))
+        if (initAddress(netGetServerIP(state->ptrNetworkInterface), state->hostIP))
             state->gameState = GAME_IP_INIT_CHECK;
         break;
 
     case GAME_IP_INIT_CHECK:
-        switch (NET_GetAddressStatus(state->serverIP))
+        switch (NET_GetAddressStatus(*(netGetServerIP(state->ptrNetworkInterface))))
         {
         case NET_SUCCESS:
             state->gameState = GAME_TCP_INIT;
@@ -36,16 +31,16 @@ void clientNetStateLoop(AppState state)
         break;
 
     case GAME_TCP_INIT:
-        createTCPClient(state->serverIP, SERVER_TCP_PORT, state);
-        state->gameState = GAME_TCP_HANDSHAKE;
+        createTCPClient(state->ptrNetworkInterface, SERVER_TCP_PORT);
+        state->gameState = GAME_HANDSHAKE;
         break;
 
-    case GAME_TCP_HANDSHAKE:
-        switch (NET_GetConnectionStatus(state->tcpClient))
+    case GAME_HANDSHAKE:
+        switch (NET_GetConnectionStatus(netGetStreamSocket(state->ptrNetworkInterface)))
         {
         case NET_SUCCESS:
-            clientTCPHandshake(state, state->tcpClient);
-            state->gameState = GAME_TCP_VERIFYING_HANDSHAKE;
+            clientGameHandshake(state->ptrNetworkInterface);
+            state->gameState = GAME_VERIFYING_HANDSHAKE;
             break;
 
         case NET_FAILURE:
@@ -55,8 +50,8 @@ void clientNetStateLoop(AppState state)
 
         break;
 
-    case GAME_TCP_VERIFYING_HANDSHAKE:
-        if (readTCPData(state, &packet, state->tcpClient))
+    case GAME_VERIFYING_HANDSHAKE:
+        if (readTCPData(&packet, netGetStreamSocket(state->ptrNetworkInterface)))
         {
 
             if (packet.command == APPROVED_PLAYER)
@@ -65,14 +60,14 @@ void clientNetStateLoop(AppState state)
                 state->curPlayerPtr = &(state->players[packet.PlayerID]);
                 state->curPlayerPtr->playerID = packet.PlayerID;
                 packet.command = CONFIRMING_RECIVED_PLAYER_ID;
-                sendTCPData(state, &packet, state->tcpClient);
+                sendTCPData(&packet, netGetStreamSocket(state->ptrNetworkInterface));
                 state->gameState = GAME_WAITING_FOR_OTHER_PLAYERS;
             }
         }
         break;
 
     case GAME_WAITING_FOR_OTHER_PLAYERS:
-        if (readTCPData(state, &packet, state->tcpClient))
+        if (readTCPData(&packet, netGetStreamSocket(state->ptrNetworkInterface)))
         {
             switch (packet.command)
             {
@@ -82,7 +77,6 @@ void clientNetStateLoop(AppState state)
 
             case SERVER_START_GAME:
                 state->seed = packet.intData;
-                SDL_Log("Server designated %d as seed!\n", state->seed);
                 state->gameState = GAME_GENERATE_WORLD;
                 break;
             }
@@ -96,7 +90,7 @@ void clientNetStateLoop(AppState state)
     case GAME_PLAYING:
         if (state->onlineMode)
         {
-            if (readTCPData(state, &inGameTCPPacket, state->tcpClient))
+            if (readTCPData(&inGameTCPPacket, netGetStreamSocket(state->ptrNetworkInterface)))
             {
                 switch (inGameTCPPacket.command)
                 {
@@ -109,12 +103,11 @@ void clientNetStateLoop(AppState state)
                     break;
             }
 
-            checkForDatagram(state, &packet);
+            checkForDatagram(state->ptrNetworkInterface, &packet);
             switch (packet.command)
             {
             case UPDATE_CLIENT_PLAYERS:
                 updateClientPlayers(state, &packet);
-                SDL_Log("CLIENT UDP CHECK: intData=%d PlayerID=%d", packet.intData, packet.PlayerID);
                 break;
             }
 
@@ -125,6 +118,7 @@ void clientNetStateLoop(AppState state)
                 state->gameState = GAME_UPDATE_MY_LOCATION;
             }
         }
+
         break;
 
     case GAME_UPDATE_MY_LOCATION:
@@ -134,17 +128,17 @@ void clientNetStateLoop(AppState state)
     }
 }
 
-void createTCPClient(NET_Address *adr, int portNumber, AppState state)
+void createTCPClient(NetworkInterface ptrNetworkInterface, int portNumber)
 {
     SDL_Log("Initializing a TCP stream socket...\n");
-    state->tcpClient = NET_CreateClient(adr, portNumber);
+    netSetTCPClient(ptrNetworkInterface, NET_CreateClient(*netGetServerIP(ptrNetworkInterface), portNumber));
 }
 
-void clientTCPHandshake(AppState state, NET_StreamSocket *streamSocket)
+void clientGameHandshake(NetworkInterface ptrNetworkInterface)
 {
     NETPacket packet = {REQUESTING_PLAYER_ID, 0};
 
-    sendTCPData(state, &packet, streamSocket);
+    sendTCPData(&packet, netGetStreamSocket(ptrNetworkInterface));
 }
 
 void updateMyLocation(AppState state)
@@ -152,37 +146,39 @@ void updateMyLocation(AppState state)
     const int currentPlayer = state->curPlayerPtr->playerID;
     NETPacket locPacket = {.command = UPDATE_SERVER_PLAYER, .PlayerID = currentPlayer};
     sanitizePlayerStruct(state->curPlayerPtr, &locPacket.players[currentPlayer]);
-    sendDatagram(state, state->serverIP, SERVER_UDP_PORT, &locPacket);
+    sendDatagram(state->ptrNetworkInterface, netGetServerIPForTX(state->ptrNetworkInterface), SERVER_UDP_PORT, &locPacket);
 }
 
 void updateClientPlayers(AppState state, NETPacket *packet)
 {
     for (int id = 0; id < MAX_PLAYERS; id++)
     {
-        if (playerSyncCheck(state, packet, id))
+        if (playerSyncCheck(state, packet) && id == state->curPlayerPtr->playerID)
         {
             continue;
         }
-        memcpy(&state->players[id].pos, &packet->players[id].pos, sizeof(Vector2D));         // update position
-        memcpy(&state->players[id].flags, &packet->players[id].flags, sizeof(Player_Flags)); // update player flag
-        memcpy(&state->players[id].class, &packet->players[id].class, sizeof(Player_Class)); // update player class
-        memcpy(&state->players[id].stats, &packet->players[id].stats, sizeof(Stats));        // update stats
-        memcpy(&state->players[id].facing, &packet->players[id].facing, sizeof(direction));  // update facing
-        memcpy(&state->players[id].flip, &packet->players[id].flip, sizeof(SDL_FlipMode));   // update flip
-        // memcpy(&state->players[id].enemyCollisionTimer, &packet->players[id].enemyCollisionTimer, sizeof(Uint32));
-        memcpy(&state->players[id].connected, &packet->players[id].connected, sizeof(int)); // update connected
+        else
+        {
+            memcpy(&state->players[id].pos, &packet->players[id].pos, sizeof(Vector2D));         // update position
+            memcpy(&state->players[id].flags, &packet->players[id].flags, sizeof(Player_Flags)); // update player flag
+            memcpy(&state->players[id].class, &packet->players[id].class, sizeof(Player_Class)); // update player class
+            memcpy(&state->players[id].stats, &packet->players[id].stats, sizeof(Stats));        // update stats
+            memcpy(&state->players[id].facing, &packet->players[id].facing, sizeof(direction));  // update facing
+            memcpy(&state->players[id].flip, &packet->players[id].flip, sizeof(SDL_FlipMode));   // update flip
+            // memcpy(&state->players[id].enemyCollisionTimer, &packet->players[id].enemyCollisionTimer, sizeof(Uint32));
+            memcpy(&state->players[id].connected, &packet->players[id].connected, sizeof(int)); // update connected
+        }
     }
 }
 
-bool playerSyncCheck(AppState state, NETPacket *packet, int playerID)
+bool playerSyncCheck(AppState state, NETPacket *packet)
 {
-    int deltaX = (state->connectedPlayers.players[playerID].pos.x - packet->players[playerID].pos.x);
-    int deltaY = (state->connectedPlayers.players[playerID].pos.y - packet->players[playerID].pos.y);
+    int deltaX = (state->curPlayerPtr->pos.x - packet->players[state->curPlayerPtr->playerID].pos.x);
+    int deltaY = (state->curPlayerPtr->pos.y - packet->players[state->curPlayerPtr->playerID].pos.y);
+    /*  if ((deltaX * deltaX) + (deltaY * deltaY) > (ALLOWED_SERVER_DISTANCE_OUT_OF_SYNC * ALLOWED_SERVER_DISTANCE_OUT_OF_SYNC))
+     {
+         SDL_Log("(PlayerSyncCheck) Resync, prepare for rubber-effect!\n");
+     } */
 
-    if ((deltaX * deltaX) + (deltaY * deltaY) > ALLOWED_SERVER_DISTANCE_OUT_OF_SYNC)
-    {
-        return true;
-    }
-
-    return false;
+    return true;
 }

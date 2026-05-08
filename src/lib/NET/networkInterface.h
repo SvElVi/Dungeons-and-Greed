@@ -36,22 +36,63 @@ typedef struct
 
 } NETPacket;
 
+typedef struct networkInterface *networkInterface;
+
+// Public
 int startSDLNet(void);
 
+// Public
 void stopSDLNet(void);
 
-void createUDPSocket(NET_DatagramSocket **, int);
+// Public
+NetworkInterface createNetworkInterface();
 
-void destoryUDPSocket(NET_DatagramSocket *udpSocket);
+// Public
+void destroyNetworkInterface(NetworkInterface networkInterface);
 
-void checkForDatagram(AppState state, NETPacket *packet);
+// Public
+void allocUDPPacket(NetworkInterface networkInterface);
 
-void sendDatagram(AppState state, NET_Address *ptrRxAdr, int portnumber, NETPacket *packet);
+// Private
+void createUDPSocket(NetworkInterface networkInterface, int portNumber);
 
-bool readTCPData(AppState state, NETPacket *packet, NET_StreamSocket *streamSocket);
+// Private
+void destoryUDPSocket(NetworkInterface networkInterface);
 
-void sendTCPData(AppState state, NETPacket *packet, NET_StreamSocket *streamSocket);
+// Private
+void checkForDatagram(NetworkInterface networkInterface, NETPacket *packet);
 
+// Private
+void sendDatagram(NetworkInterface networkInterface, NET_Address *ptrRxAdr, int portnumber, NETPacket *packet);
+
+// Private
+bool readTCPData(NETPacket *packet, NET_StreamSocket *streamSocket);
+
+// Private
+void sendTCPData(NETPacket *packet, NET_StreamSocket *streamSocket);
+
+// Private
 bool initAddress(NET_Address **adress, char *adr);
+
+// Private
+NET_Address **netGetServerIP(NetworkInterface networkInterface);
+
+void netSetTCPClient(NetworkInterface networkInterface, NET_StreamSocket *streamSocket);
+
+NET_StreamSocket *netGetStreamSocket(NetworkInterface networkInterface);
+
+void netSetTCPServer(NetworkInterface networkInterface, NET_Server *server);
+
+NET_Server *netGetTCPServer(NetworkInterface networkInterface);
+
+NET_DatagramSocket *netGetDgramSocket(NetworkInterface networkInterface);
+
+void netSetDgramSocket(NetworkInterface networkInterface, NET_DatagramSocket *dsocket);
+
+NET_Datagram **netGetDgramContainer(NetworkInterface networkInterface);
+
+void netSetDgramContainer(NetworkInterface networkInterface, void *);
+
+NET_Address *netGetServerIPForTX(NetworkInterface networkInterface);
 
 #endif

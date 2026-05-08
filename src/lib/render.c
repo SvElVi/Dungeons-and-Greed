@@ -36,11 +36,11 @@ int renderFrame(AppState state, Player *player)
         string_screen(state, "Connecting...");
         break;
 
-    case GAME_TCP_HANDSHAKE:
+    case GAME_HANDSHAKE:
         string_screen(state, "Handshake...");
         break;
 
-    case GAME_TCP_VERIFYING_HANDSHAKE:
+    case GAME_VERIFYING_HANDSHAKE:
         string_screen(state, "Verifying handshake...");
         break;
 
@@ -74,7 +74,8 @@ int render(AppState state, Player *player)
         // if(state->renderFlag) {
         if (state->gameState == GAME_PLAYING)
         {
-            for(int i = 0; i < MAX_PLAYERS; i++) {
+            for (int i = 0; i < MAX_PLAYERS; i++)
+            {
                 movement(&(state->players[i]), state->players, state->enemies, state->deltaTime, state->world);
             }
             animatePlayers(state->players, &(state->animationTime), state->framerate, &(state->computedEvent));

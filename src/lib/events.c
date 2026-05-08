@@ -55,8 +55,8 @@ int checkEvents(AppState state, SDL_Event *event)
     int quitEvent = QuitEvent(state, event, keylist);
     if (quitEvent)
         return quitEvent;
-    if (state->gameState == GAME_WAITING_FOR_OTHER_PLAYERS || state->gameState == GAME_TCP_VERIFYING_HANDSHAKE ||
-    state->gameState == GAME_TCP_HANDSHAKE || state->gameState == GAME_IP_INIT_CHECK || state->gameState == GAME_IP_INIT)
+    if (state->gameState == GAME_WAITING_FOR_OTHER_PLAYERS || state->gameState == GAME_VERIFYING_HANDSHAKE ||
+        state->gameState == GAME_HANDSHAKE || state->gameState == GAME_IP_INIT_CHECK || state->gameState == GAME_IP_INIT)
     {
         static bool escLast = false;
         if (keylist[SDL_SCANCODE_ESCAPE] && !escLast)
@@ -106,7 +106,7 @@ int checkEvents(AppState state, SDL_Event *event)
                 break;
             }
         }
-        if(keylist[SDL_SCANCODE_ESCAPE])
+        if (keylist[SDL_SCANCODE_ESCAPE])
         {
             state->running = false;
             return SDL_APP_SUCCESS;
@@ -157,32 +157,31 @@ int checkEvents(AppState state, SDL_Event *event)
             }
         }
     }
-    if(state->gameState == GAME_LOBBY)
+    if (state->gameState == GAME_LOBBY)
     {
         Player *p = &state->players[0];
 
-        if(keylist[SDL_SCANCODE_ESCAPE])
+        if (keylist[SDL_SCANCODE_ESCAPE])
         {
-                state->gameState = GAME_MENY;
+            state->gameState = GAME_MENY;
         }
 
-        if(keylist[SDL_SCANCODE_SPACE])
+        if (keylist[SDL_SCANCODE_SPACE])
         {
-         
+
             p->classLock = !p->classLock;
-
-
         }
-        if(!p->classLock)
+        if (!p->classLock)
         {
-            if(keylist[SDL_SCANCODE_RIGHT] || keylist[SDL_SCANCODE_D])
+            if (keylist[SDL_SCANCODE_RIGHT] || keylist[SDL_SCANCODE_D])
             {
                 p->class++;
-                if(p->class > CLASS_KNIGHT) p->class = CLASS_NONE;
+                if (p->class > CLASS_KNIGHT)
+                    p->class = CLASS_NONE;
             }
-            else if(keylist[SDL_SCANCODE_LEFT] || keylist[SDL_SCANCODE_A])
+            else if (keylist[SDL_SCANCODE_LEFT] || keylist[SDL_SCANCODE_A])
             {
-                p->class = (p->class - 1 +(CLASS_KNIGHT +1)) % (CLASS_KNIGHT +1);
+                p->class = (p->class - 1 + (CLASS_KNIGHT + 1)) % (CLASS_KNIGHT + 1);
             }
         }
     }
@@ -208,8 +207,11 @@ int checkEvents(AppState state, SDL_Event *event)
         {
             state->gameState = GAME_PLAYING;
         }
-    } else if (state->gameState == GAME_SERVER_SHUTDOWN) {
-        if (keylist[SDL_SCANCODE_SPACE]) {
+    }
+    else if (state->gameState == GAME_SERVER_SHUTDOWN)
+    {
+        if (keylist[SDL_SCANCODE_SPACE])
+        {
             state->gameState = GAME_INIT;
         }
     }

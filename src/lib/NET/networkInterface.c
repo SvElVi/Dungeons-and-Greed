@@ -1,7 +1,24 @@
 #include "networkInterface.h"
 
 #define RESOLVE_ADDRESS_TIMEOUT 5000
+#define STREAM_SOCKET_DRAIN_TIMEOUT 1000
 #define DEBUG 1
+
+struct networkInterface
+{
+    // Server IP
+    NET_Address *serverIP;
+
+    // UDP
+    NET_DatagramSocket *udpSocket;
+    NET_Datagram **udpPacket;
+
+    // Server TCP
+    NET_Server *tcpServer;
+    NET_StreamSocket *tcpClient;
+
+    unsigned char tcpBuffer[MAX_PLAYERS][sizeof(NETPacket)];
+};
 
 int startSDLNet(void)
 {
@@ -24,11 +41,38 @@ void stopSDLNet(void)
     SDL_Log("SDLNet was deinitialized!\n");
 }
 
-void createUDPSocket(NET_DatagramSocket **dataGramSocket, int portNumber)
+NetworkInterface createNetworkInterface()
 {
-    *dataGramSocket = NET_CreateDatagramSocket(NULL, portNumber);
+    NetworkInterface ptr = SDL_calloc(1, sizeof(struct networkInterface));
+    if (ptr != NULL)
+    {
+        SDL_Log("Created a networkInterface ADT!\n");
+    }
+    return ptr;
+}
 
-    if (*dataGramSocket != NULL)
+// OK
+void destroyNetworkInterface(NetworkInterface networkInterface)
+{
+    SDL_free(networkInterface);
+    if (networkInterface == NULL)
+    {
+        SDL_Log("Destoryed networkInterface ADT!\n");
+    }
+}
+
+// OK
+void allocUDPPacket(NetworkInterface networkInterface)
+{
+    netSetDgramContainer(networkInterface, SDL_calloc(1, sizeof(NET_Datagram)));
+}
+
+// OK
+void createUDPSocket(NetworkInterface networkInterface, int portNumber)
+{
+    netSetDgramSocket(networkInterface, NET_CreateDatagramSocket(NULL, portNumber));
+
+    if (netGetDgramSocket(networkInterface) != NULL)
     {
         SDL_Log("Listening on all network interfaces on port: %d\n", portNumber);
     }
@@ -38,32 +82,32 @@ void createUDPSocket(NET_DatagramSocket **dataGramSocket, int portNumber)
     }
 }
 
-void destoryUDPSocket(NET_DatagramSocket *udpSocket)
+// OK
+void destoryUDPSocket(NetworkInterface networkInterface)
 {
-    NET_DestroyDatagramSocket(udpSocket);
+    NET_DestroyDatagramSocket(netGetDgramSocket(networkInterface));
     SDL_Log("Destoryed UDP socket\n");
 }
 
-
-void checkForDatagram(AppState state, NETPacket *packet)
+void checkForDatagram(NetworkInterface networkInterface, NETPacket *packet)
 {
-    if (NET_ReceiveDatagram(state->udpSocket, state->udpPacket))
+    if (NET_ReceiveDatagram(netGetDgramSocket(networkInterface), netGetDgramContainer(networkInterface)))
     {
-        if ((*state->udpPacket) != NULL)
+        if ((*netGetDgramContainer(networkInterface)) != NULL)
         {
-            memcpy(packet, (*state->udpPacket)->buf, sizeof(NETPacket));   
-            NET_DestroyDatagram(*state->udpPacket);
+            memcpy(packet, (*netGetDgramContainer(networkInterface))->buf, sizeof(NETPacket));
+            NET_DestroyDatagram(*netGetDgramContainer(networkInterface));
         }
     }
 }
 
-void sendDatagram(AppState state, NET_Address *ptrRxAdr, int portnumber, NETPacket *packet)
+void sendDatagram(NetworkInterface networkInterface, NET_Address *ptrRxAdr, int portnumber, NETPacket *packet)
 {
-    
-    NET_SendDatagram(state->udpSocket, ptrRxAdr, portnumber, (void *)packet, sizeof(NETPacket));
+    NET_SendDatagram(netGetDgramSocket(networkInterface), ptrRxAdr, portnumber, (void *)packet, sizeof(NETPacket));
 }
 
-bool readTCPData(AppState state, NETPacket *packet, NET_StreamSocket *streamSocket)
+// Behöver göras om, static var bara en proof of concept, men är RIKTIGT dåligt att använda vidare
+bool readTCPData(NETPacket *packet, NET_StreamSocket *streamSocket)
 {
     static int bufLen = 0;
     static unsigned char tcpBuf[sizeof(NETPacket)];
@@ -75,15 +119,14 @@ bool readTCPData(AppState state, NETPacket *packet, NET_StreamSocket *streamSock
         bufLen = 0;
         return true;
     }
-    else
-    {
-        return false;
-    }
+
+    return false;
 }
 
-void sendTCPData(AppState state, NETPacket *packet, NET_StreamSocket *streamSocket)
+void sendTCPData(NETPacket *packet, NET_StreamSocket *streamSocket)
 {
     NET_WriteToStreamSocket(streamSocket, (void *)packet, sizeof(NETPacket));
+    NET_WaitUntilStreamSocketDrained(streamSocket, STREAM_SOCKET_DRAIN_TIMEOUT);
 }
 
 bool initAddress(NET_Address **adress, char *adr)
@@ -103,4 +146,55 @@ bool initAddress(NET_Address **adress, char *adr)
 
     *adress = NET_ResolveHostname(adr);
     return true;
+}
+
+NET_Address **netGetServerIP(NetworkInterface networkInterface)
+{
+    return &networkInterface->serverIP;
+}
+
+NET_Address *netGetServerIPForTX(NetworkInterface networkInterface)
+{
+    return networkInterface->serverIP;
+}
+
+void netSetTCPClient(NetworkInterface networkInterface, NET_StreamSocket *streamSocket)
+{
+    networkInterface->tcpClient = streamSocket;
+}
+
+NET_StreamSocket *netGetStreamSocket(NetworkInterface networkInterface)
+{
+    return networkInterface->tcpClient;
+}
+
+void netSetTCPServer(NetworkInterface networkInterface, NET_Server *server)
+{
+    networkInterface->tcpServer = server;
+}
+
+NET_Server *netGetTCPServer(NetworkInterface networkInterface)
+{
+    return networkInterface->tcpServer;
+}
+
+NET_DatagramSocket *netGetDgramSocket(NetworkInterface networkInterface)
+{
+    return networkInterface->udpSocket;
+}
+
+void netSetDgramSocket(NetworkInterface networkInterface, NET_DatagramSocket *dsocket)
+{
+    networkInterface->udpSocket = dsocket;
+}
+
+NET_Datagram **netGetDgramContainer(NetworkInterface networkInterface)
+{
+    return networkInterface->udpPacket;
+}
+
+// OK
+void netSetDgramContainer(NetworkInterface networkInterface, void *dgram)
+{
+    networkInterface->udpPacket = dgram;
 }

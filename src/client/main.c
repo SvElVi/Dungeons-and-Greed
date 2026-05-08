@@ -26,11 +26,15 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once 
         return SDL_APP_FAILURE; // Initiate and display window
     initCam(state);
 
+    // ---------- NET ----------
     if (startSDLNet() == NET_FAILURE)
         return SDL_APP_FAILURE;
 
-    state->udpPacket = SDL_calloc(1, sizeof(NET_Datagram));
+    state->ptrNetworkInterface = createNetworkInterface();
+    allocUDPPacket(state->ptrNetworkInterface);
+    state->connectedPlayers.amountOfPlayers = 0;
 
+    // -------- END NET --------
     state->running = true; // Custom flag to mark the program as running
     state->players[0].classLock = false;
 
@@ -50,6 +54,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once 
         SDL_strlcpy(state->players[i].name, name, sizeof(state->players[i].name));
     }
 
+    state->gameState = GAME_MENY;
     *appstate = state; // Share the appstate to callbacks below
 
     return SDL_APP_CONTINUE;
@@ -86,7 +91,8 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result) // Runs after returning A
     {
         AppState state = (AppState)appstate;
 
-        destoryUDPSocket(state->udpSocket);
+        destoryUDPSocket(state->ptrNetworkInterface);
+        destroyNetworkInterface(state->ptrNetworkInterface);
         stopSDLNet();
 
         for (int x = 0; x < MAX_PLAYERS; x++)

@@ -3,18 +3,23 @@
 #include "rooms.h"
 #include "../enemy.h"
 
-struct world {
-    Chunk* chunks; //Pointer to Chunklist
+struct world
+{
+    Chunk *chunks; // Pointer to Chunklist
     Uint64 seed;
     int size;
-    SDL_Texture* texture;
-    Chunk* firstChunk; //Pointer to chunk where the first room is generated
+    SDL_Texture *texture;
+    Chunk *firstChunk; // Pointer to chunk where the first room is generated
 };
 
-void cleanChunks(Chunk* chunks, int size) { //Set all tilevalues in chunks to 0
-    for(int i = 0; i < size; i++) {
-        for(int y = 0; y < CHUNK_SIZE; y++) {
-            for(int x = 0; x < CHUNK_SIZE; x++) {
+void cleanChunks(Chunk *chunks, int size)
+{ // Set all tilevalues in chunks to 0
+    for (int i = 0; i < size; i++)
+    {
+        for (int y = 0; y < CHUNK_SIZE; y++)
+        {
+            for (int x = 0; x < CHUNK_SIZE; x++)
+            {
                 chunks->tileType[y][x] = 0;
             }
         }
@@ -22,13 +27,14 @@ void cleanChunks(Chunk* chunks, int size) { //Set all tilevalues in chunks to 0
     }
 }
 
-World createWorld(int size, Uint64 seed, SDL_Renderer* renderer) {
+World createWorld(int size, Uint64 seed, SDL_Renderer *renderer)
+{
     World w = SDL_calloc(1, sizeof(struct world));
-    w->chunks = SDL_calloc(size*size, sizeof(Chunk));
-    w->size = size*size;
+    w->chunks = SDL_calloc(size * size, sizeof(Chunk));
+    w->size = size * size;
     w->seed = seed;
 
-    SDL_Surface* wArt = SDL_LoadPNG("././img/Custom/Dungeon_Tileset.png");
+    SDL_Surface *wArt = SDL_LoadPNG("././img/Custom/Dungeon_Tileset.png");
     w->texture = SDL_CreateTextureFromSurface(renderer, wArt);
     SDL_DestroySurface(wArt);
 
@@ -37,79 +43,101 @@ World createWorld(int size, Uint64 seed, SDL_Renderer* renderer) {
     return w;
 }
 
-void destroyWorld(World w) {
+void destroyWorld(World w)
+{
     SDL_free(w->chunks);
-    if(w->texture) SDL_DestroyTexture(w->texture);
+    if (w->texture)
+        SDL_DestroyTexture(w->texture);
     SDL_free(w);
 }
 
-void changeSeed(World w, Uint64 seed) {
+void changeSeed(World w, Uint64 seed)
+{
     w->seed = seed;
 }
 
-void tpDungeon(World w, AppState state) {
+void tpDungeon(World w, AppState state)
+{
     int i = MAX_PLAYERS;
     Vector2D chunkPos;
 
-    chunkPos.y = -((w->firstChunk-w->chunks)/(int)(SDL_sqrt(w->size))*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE - 32*RENDER_SCALE);
-    chunkPos.x = -((w->firstChunk-w->chunks)%(int)(SDL_sqrt(w->size))*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE - 15*RENDER_SCALE);
+    chunkPos.y = -((w->firstChunk - w->chunks) / (int)(SDL_sqrt(w->size)) * CHUNK_SIZE * TILE_SIZE * RENDER_SCALE - 32 * RENDER_SCALE);
+    chunkPos.x = -((w->firstChunk - w->chunks) % (int)(SDL_sqrt(w->size)) * CHUNK_SIZE * TILE_SIZE * RENDER_SCALE - 15 * RENDER_SCALE);
 
-    for(int y = (int)(CHUNK_SIZE/2); y < CHUNK_SIZE && i; y++) {
-        for(int x = (int)(CHUNK_SIZE/2-3); x < CHUNK_SIZE && i; x++) {
-            if(w->firstChunk->tileType[y][x] == FLOOR) {
+    for (int y = (int)(CHUNK_SIZE / 2); y < CHUNK_SIZE && i; y++)
+    {
+        for (int x = (int)(CHUNK_SIZE / 2 - 3); x < CHUNK_SIZE && i; x++)
+        {
+            if (w->firstChunk->tileType[y][x] == FLOOR)
+            {
                 i--;
-                state->players[i].pos.y = chunkPos.y - y*TILE_SIZE*RENDER_SCALE;
+                state->players[i].pos.y = chunkPos.y - y * TILE_SIZE * RENDER_SCALE;
                 state->players[i].hitBox.y = state->players[i].pos.y;
-                state->players[i].pos.x = chunkPos.x - x*TILE_SIZE*RENDER_SCALE;
+                state->players[i].pos.x = chunkPos.x - x * TILE_SIZE * RENDER_SCALE;
                 state->players[i].hitBox.x = state->players[i].pos.x;
             }
         }
     }
 }
 
-void spawnDungeonEnemies(World w, AppState state, Chunk* c,Uint8 nrOfEnemies) {
-    if(nrOfEnemies > MAX_ENEMIES) {
+void spawnDungeonEnemies(World w, AppState state, Chunk *c, Uint8 nrOfEnemies)
+{
+    if (nrOfEnemies > MAX_ENEMIES)
+    {
         nrOfEnemies = MAX_ENEMIES;
-    } 
+    }
 
     Vector2D chunkPos, enemyPos;
     Stats enemyStats = {100, 100, 0, 5, 10, 1};
 
-    chunkPos.y = -((c-w->chunks)/(int)(SDL_sqrt(w->size))*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE - 32*RENDER_SCALE);
-    chunkPos.x = -((c-w->chunks)%(int)(SDL_sqrt(w->size))*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE - 15*RENDER_SCALE);
+    chunkPos.y = -((c - w->chunks) / (int)(SDL_sqrt(w->size)) * CHUNK_SIZE * TILE_SIZE * RENDER_SCALE - 32 * RENDER_SCALE);
+    chunkPos.x = -((c - w->chunks) % (int)(SDL_sqrt(w->size)) * CHUNK_SIZE * TILE_SIZE * RENDER_SCALE - 15 * RENDER_SCALE);
 
-    for(int y = 0; y < CHUNK_SIZE && nrOfEnemies; y++) {
-        for(int x = 0; x < CHUNK_SIZE && nrOfEnemies; x++) {
-            if(w->firstChunk->tileType[y][x] == FLOOR) {
+    for (int y = 0; y < CHUNK_SIZE && nrOfEnemies; y++)
+    {
+        for (int x = 0; x < CHUNK_SIZE && nrOfEnemies; x++)
+        {
+            if (w->firstChunk->tileType[y][x] == FLOOR)
+            {
                 nrOfEnemies--;
-                enemyPos.y = chunkPos.y - y*TILE_SIZE*RENDER_SCALE;
-                enemyPos.x = chunkPos.x - x*TILE_SIZE*RENDER_SCALE;
+                enemyPos.y = chunkPos.y - y * TILE_SIZE * RENDER_SCALE;
+                enemyPos.x = chunkPos.x - x * TILE_SIZE * RENDER_SCALE;
 
                 updateEnemy(&state->enemies[nrOfEnemies], enemyPos, ENEMY_SKELETON, enemyStats, state->renderer);
             }
         }
     }
-    
 }
 
-void generateConnections(Chunk* c, bool genDir[4]) {
-    const int startpos = ((int)(CHUNK_SIZE/2) -2 -(int)(CHUNK_SIZE/32));
+void generateConnections(Chunk *c, bool genDir[4])
+{
+    const int startpos = ((int)(CHUNK_SIZE / 2) - 2 - (int)(CHUNK_SIZE / 32));
     bool stop = false;
 
-    if(genDir[WEST]) {
-        for(int y = 0; y < ((int)(CHUNK_SIZE/16)+3); y++) {
-            for(int x = 0; x < CHUNK_SIZE/2; x++) {
-                if(c->tileType[startpos+y][x] == BLANK) {
+    if (genDir[WEST])
+    {
+        for (int y = 0; y < ((int)(CHUNK_SIZE / 16) + 3); y++)
+        {
+            for (int x = 0; x < CHUNK_SIZE / 2; x++)
+            {
+                if (c->tileType[startpos + y][x] == BLANK)
+                {
 
-                    if(y != 0 && y != ((int)(CHUNK_SIZE/16)+2)) {
-                        c->tileType[startpos+y][x] = FLOOR;
-                    } else {
-                        c->tileType[startpos+y][x] = WALL;
+                    if (y != 0 && y != ((int)(CHUNK_SIZE / 16) + 2))
+                    {
+                        c->tileType[startpos + y][x] = FLOOR;
                     }
-                } else if(c->tileType[startpos+y][x] == WALL) {
+                    else
+                    {
+                        c->tileType[startpos + y][x] = WALL;
+                    }
+                }
+                else if (c->tileType[startpos + y][x] == WALL)
+                {
 
-                    if(y != 0 && y != ((int)(CHUNK_SIZE/16)+2)) {
-                        c->tileType[startpos+y][x] = FLOOR;
+                    if (y != 0 && y != ((int)(CHUNK_SIZE / 16) + 2))
+                    {
+                        c->tileType[startpos + y][x] = FLOOR;
                     }
                     break;
                 }
@@ -117,45 +145,66 @@ void generateConnections(Chunk* c, bool genDir[4]) {
         }
     }
 
-    if(genDir[NORTH]) {
-        for(int y = 0; y < CHUNK_SIZE/2; y++) {
-            for(int x = 0; x < ((int)(CHUNK_SIZE/16)+3); x++) {
-                if(c->tileType[y][startpos+x] == BLANK) {
+    if (genDir[NORTH])
+    {
+        for (int y = 0; y < CHUNK_SIZE / 2; y++)
+        {
+            for (int x = 0; x < ((int)(CHUNK_SIZE / 16) + 3); x++)
+            {
+                if (c->tileType[y][startpos + x] == BLANK)
+                {
 
-                    if(x != 0 && x != ((int)(CHUNK_SIZE/16)+2)) {
-                        c->tileType[y][startpos+x] = FLOOR;
-                    } else {
-                        c->tileType[y][startpos+x] = WALL;
+                    if (x != 0 && x != ((int)(CHUNK_SIZE / 16) + 2))
+                    {
+                        c->tileType[y][startpos + x] = FLOOR;
                     }
-                } else if(c->tileType[y][startpos+x] == WALL) {
+                    else
+                    {
+                        c->tileType[y][startpos + x] = WALL;
+                    }
+                }
+                else if (c->tileType[y][startpos + x] == WALL)
+                {
 
-                    if(x != 0 && x != ((int)(CHUNK_SIZE/16)+2)) {
-                        c->tileType[y][startpos+x] = FLOOR;
+                    if (x != 0 && x != ((int)(CHUNK_SIZE / 16) + 2))
+                    {
+                        c->tileType[y][startpos + x] = FLOOR;
                     }
                     stop = true;
                 }
             }
-            if(stop) {
+            if (stop)
+            {
                 break;
             }
         }
         stop = false;
     }
 
-    if(genDir[EAST]) {
-        for(int y = 0; y < ((int)(CHUNK_SIZE/16)+3); y++) {
-            for(int x = 0; x < CHUNK_SIZE/2; x++) {
-                if(c->tileType[startpos+y][(CHUNK_SIZE-1)-x] == BLANK) {
+    if (genDir[EAST])
+    {
+        for (int y = 0; y < ((int)(CHUNK_SIZE / 16) + 3); y++)
+        {
+            for (int x = 0; x < CHUNK_SIZE / 2; x++)
+            {
+                if (c->tileType[startpos + y][(CHUNK_SIZE - 1) - x] == BLANK)
+                {
 
-                    if(y != 0 && y != ((int)(CHUNK_SIZE/16)+2)) {
-                        c->tileType[startpos+y][(CHUNK_SIZE-1)-x] = FLOOR;
-                    } else {
-                        c->tileType[startpos+y][(CHUNK_SIZE-1)-x] = WALL;
+                    if (y != 0 && y != ((int)(CHUNK_SIZE / 16) + 2))
+                    {
+                        c->tileType[startpos + y][(CHUNK_SIZE - 1) - x] = FLOOR;
                     }
-                } else if(c->tileType[startpos+y][(CHUNK_SIZE-1)-x] == WALL) {
+                    else
+                    {
+                        c->tileType[startpos + y][(CHUNK_SIZE - 1) - x] = WALL;
+                    }
+                }
+                else if (c->tileType[startpos + y][(CHUNK_SIZE - 1) - x] == WALL)
+                {
 
-                    if(y != 0 && y != ((int)(CHUNK_SIZE/16)+2)) {
-                        c->tileType[startpos+y][(CHUNK_SIZE-1)-x] = FLOOR;
+                    if (y != 0 && y != ((int)(CHUNK_SIZE / 16) + 2))
+                    {
+                        c->tileType[startpos + y][(CHUNK_SIZE - 1) - x] = FLOOR;
                     }
                     break;
                 }
@@ -163,25 +212,36 @@ void generateConnections(Chunk* c, bool genDir[4]) {
         }
     }
 
-    if(genDir[SOUTH]) {
-        for(int y = 0; y < CHUNK_SIZE/2; y++) {
-            for(int x = 0; x < ((int)(CHUNK_SIZE/16)+3); x++) {
-                if(c->tileType[(CHUNK_SIZE-1)-y][startpos+x] == BLANK) {
+    if (genDir[SOUTH])
+    {
+        for (int y = 0; y < CHUNK_SIZE / 2; y++)
+        {
+            for (int x = 0; x < ((int)(CHUNK_SIZE / 16) + 3); x++)
+            {
+                if (c->tileType[(CHUNK_SIZE - 1) - y][startpos + x] == BLANK)
+                {
 
-                    if(x != 0 && x != ((int)(CHUNK_SIZE/16)+2)) {
-                        c->tileType[(CHUNK_SIZE-1)-y][startpos+x] = FLOOR;
-                    } else {
-                        c->tileType[(CHUNK_SIZE-1)-y][startpos+x] = WALL;
+                    if (x != 0 && x != ((int)(CHUNK_SIZE / 16) + 2))
+                    {
+                        c->tileType[(CHUNK_SIZE - 1) - y][startpos + x] = FLOOR;
                     }
-                } else if(c->tileType[(CHUNK_SIZE-1)-y][startpos+x] == WALL) {
+                    else
+                    {
+                        c->tileType[(CHUNK_SIZE - 1) - y][startpos + x] = WALL;
+                    }
+                }
+                else if (c->tileType[(CHUNK_SIZE - 1) - y][startpos + x] == WALL)
+                {
 
-                    if(x != 0 && x != ((int)(CHUNK_SIZE/16)+2)) {
-                        c->tileType[(CHUNK_SIZE-1)-y][startpos+x] = FLOOR;
+                    if (x != 0 && x != ((int)(CHUNK_SIZE / 16) + 2))
+                    {
+                        c->tileType[(CHUNK_SIZE - 1) - y][startpos + x] = FLOOR;
                     }
                     stop = true;
                 }
             }
-            if(stop) {
+            if (stop)
+            {
                 break;
             }
         }
@@ -189,180 +249,200 @@ void generateConnections(Chunk* c, bool genDir[4]) {
     }
 }
 
-void generateMirroredRoom(Chunk *c, const Uint64* room, bool genDir[4], bool horizontal, bool vertical) {
+void generateMirroredRoom(Chunk *c, const Uint64 *room, bool genDir[4], bool horizontal, bool vertical)
+{
     int back, tilestep = 0, n;
-    Uint64 rowData = 1; //Information of a whole data row (+1 row keeping in mind the data is mirrored across 4 pieces)
-    Uint8 currentData; //Two hex value, left value for tile id and right for number of tiles.
-    Uint8 size = 24; //The size described by the data
+    Uint64 rowData = 1; // Information of a whole data row (+1 row keeping in mind the data is mirrored across 4 pieces)
+    Uint8 currentData;  // Two hex value, left value for tile id and right for number of tiles.
+    Uint8 size = 24;    // The size described by the data
 
-    if(!horizontal) {
-        size*2;
+    if (!horizontal)
+    {
+        size * 2;
     }
 
-    if(!vertical) {
-        size*2;
+    if (!vertical)
+    {
+        size * 2;
     }
 
-
-    for(int i = 0; i < size && rowData; i++) { //Stop if a row is fully empty (use 0x10 to mark empty but still continue)
+    for (int i = 0; i < size && rowData; i++)
+    { // Stop if a row is fully empty (use 0x10 to mark empty but still continue)
         currentData = 1;
 
         back = 0;
-        do { //Assign last valid data row from index
-            rowData = room[i-back];
+        do
+        { // Assign last valid data row from index
+            rowData = room[i - back];
             back++;
 
-        } while(rowData == 0xF0 && back <= i);
+        } while (rowData == 0xF0 && back <= i);
 
         currentData = rowData & 0xFF;
-        for(int j = 1; j < 9 && currentData > 0; j++) { //Limit 8 because that is how many steps can be taken through Uint64
+        for (int j = 1; j < 9 && currentData > 0; j++)
+        { // Limit 8 because that is how many steps can be taken through Uint64
 
-            for(n = 0; n < (currentData & 0xF); n++) {
+            for (n = 0; n < (currentData & 0xF); n++)
+            {
 
-                //Mirroring below
-                c->tileType[(int)((tilestep+n)/size)][(int)((tilestep+n)%size)] = currentData >> 0x4; //Left upper quarter
+                // Mirroring below
+                c->tileType[(int)((tilestep + n) / size)][(int)((tilestep + n) % size)] = currentData >> 0x4; // Left upper quarter
 
-                if(horizontal) {
-                    c->tileType[(int)((tilestep+n)/size)][(CHUNK_SIZE-1)-(int)((tilestep+n)%size)] = currentData >> 0x4; //Right upper quarter
+                if (horizontal)
+                {
+                    c->tileType[(int)((tilestep + n) / size)][(CHUNK_SIZE - 1) - (int)((tilestep + n) % size)] = currentData >> 0x4; // Right upper quarter
                 }
 
-                if(vertical) {
-                    c->tileType[(CHUNK_SIZE-1)-(int)((tilestep+n)/size)][(int)((tilestep+n)%size)] = currentData >> 0x4; //Left lower quarter
-                    if(horizontal) {
-                        c->tileType[(CHUNK_SIZE-1)-(int)((tilestep+n)/size)][(CHUNK_SIZE-1)-(int)((tilestep+n)%size)] = currentData >> 0x4; //Right lower quarter
+                if (vertical)
+                {
+                    c->tileType[(CHUNK_SIZE - 1) - (int)((tilestep + n) / size)][(int)((tilestep + n) % size)] = currentData >> 0x4; // Left lower quarter
+                    if (horizontal)
+                    {
+                        c->tileType[(CHUNK_SIZE - 1) - (int)((tilestep + n) / size)][(CHUNK_SIZE - 1) - (int)((tilestep + n) % size)] = currentData >> 0x4; // Right lower quarter
                     }
                 }
             }
             tilestep += n;
 
-            currentData = rowData >> (0x8*j) & 0xFF; //Move to steps to the right for every step j
+            currentData = rowData >> (0x8 * j) & 0xFF; // Move to steps to the right for every step j
         }
     }
 
-    if(c->tileType[0][0] == 0) {
+    if (c->tileType[0][0] == 0)
+    {
         c->tileType[0][0] = 99;
     }
 
     generateConnections(c, genDir);
-
 }
 
-bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms, Uint8 fDir) { //org for origin pointer, c for relative, wSize for boundries, nrOfRooms for room limit, fDir for the direction from previus generation
-    Chunk* tempC = c;
-    float hop = SDL_rand(4); //To make splits in same line more common
+bool generateRoom(Chunk *org, Chunk *c, int *wSize, Uint8 *nrOfRooms, Uint8 fDir)
+{ // org for origin pointer, c for relative, wSize for boundries, nrOfRooms for room limit, fDir for the direction from previus generation
+    Chunk *tempC = c;
+    float hop = SDL_rand(4); // To make splits in same line more common
     int dir = (int)hop, pDif;
     const int rowSize = (int)SDL_sqrt(*wSize);
-    bool genDir[4] = {0}; //For generating exits, default all false
+    bool genDir[4] = {0}; // For generating exits, default all false
 
     c->tileType[0][0] = 99;
 
-    if(fDir < 4) {
+    if (fDir < 4)
+    {
         fDir = (fDir + 2) % 4;
         genDir[fDir] = true;
     }
 
-    for(int i = 0; i < (SDL_rand(3)+2) && (*nrOfRooms) > 0; i++) {
-        switch(dir) {
-            case WEST:
-                tempC = c - 1;
-                pDif = tempC - org;
-                if(pDif >= 0 && pDif < *wSize && tempC->tileType[0][0] == 0 && !((pDif % rowSize) == rowSize-1)) { //Check extra for end of row
-                    genDir[WEST] = true;
-                    (*nrOfRooms)--;
-                    generateRoom(org, tempC, wSize, nrOfRooms, dir);
-                }
-                break;
-            case NORTH:
-                tempC = c - rowSize;
-                pDif = tempC - org;
-                if(pDif >= 0 && pDif < *wSize && tempC->tileType[0][0] == 0) { //Check for if withing boundries and available space
-                    genDir[NORTH] = true;
-                    (*nrOfRooms)--;
-                    generateRoom(org, tempC, wSize, nrOfRooms, dir);
-                }
-                break;
-            case EAST:
-                tempC = c + 1;
-                pDif = tempC - org;
-                if(pDif >= 0 && pDif < *wSize && tempC->tileType[0][0] == 0 && !((pDif % rowSize) == 0)) { //Check extra for end of row
-                    genDir[EAST] = true;
-                    (*nrOfRooms)--;
-                    generateRoom(org, tempC, wSize, nrOfRooms, dir);
-                }
-                break;
-            case SOUTH:
-                tempC = c + rowSize;
-                pDif = tempC - org;
-                if(pDif >= 0 && pDif < *wSize && tempC->tileType[0][0] == 0) { //Check for if withing boundries and available space
-                    genDir[SOUTH] = true;
-                    (*nrOfRooms)--;
-                    generateRoom(org, tempC, wSize, nrOfRooms, dir);
-                }
-                break;
+    for (int i = 0; i < (SDL_rand(3) + 2) && (*nrOfRooms) > 0; i++)
+    {
+        switch (dir)
+        {
+        case WEST:
+            tempC = c - 1;
+            pDif = tempC - org;
+            if (pDif >= 0 && pDif < *wSize && tempC->tileType[0][0] == 0 && !((pDif % rowSize) == rowSize - 1))
+            { // Check extra for end of row
+                genDir[WEST] = true;
+                (*nrOfRooms)--;
+                generateRoom(org, tempC, wSize, nrOfRooms, dir);
+            }
+            break;
+        case NORTH:
+            tempC = c - rowSize;
+            pDif = tempC - org;
+            if (pDif >= 0 && pDif < *wSize && tempC->tileType[0][0] == 0)
+            { // Check for if withing boundries and available space
+                genDir[NORTH] = true;
+                (*nrOfRooms)--;
+                generateRoom(org, tempC, wSize, nrOfRooms, dir);
+            }
+            break;
+        case EAST:
+            tempC = c + 1;
+            pDif = tempC - org;
+            if (pDif >= 0 && pDif < *wSize && tempC->tileType[0][0] == 0 && !((pDif % rowSize) == 0))
+            { // Check extra for end of row
+                genDir[EAST] = true;
+                (*nrOfRooms)--;
+                generateRoom(org, tempC, wSize, nrOfRooms, dir);
+            }
+            break;
+        case SOUTH:
+            tempC = c + rowSize;
+            pDif = tempC - org;
+            if (pDif >= 0 && pDif < *wSize && tempC->tileType[0][0] == 0)
+            { // Check for if withing boundries and available space
+                genDir[SOUTH] = true;
+                (*nrOfRooms)--;
+                generateRoom(org, tempC, wSize, nrOfRooms, dir);
+            }
+            break;
         }
 
         hop += 2.5;
         dir = (int)hop % 4;
     }
 
-    switch(SDL_rand(ROOM_TYPES)) {
-        case ROOM_CIRCLE: //Double mirrored room
-            generateMirroredRoom(c, circleRoom, genDir, 1, 1);
-            break;
-        case ROOM_SIX_HALL:
-            generateMirroredRoom(c, sixHallRoom, genDir, 1, 1);
-            break;
-        case ROOM_OCTAGONAL:
-            generateMirroredRoom(c, octagonalRoom, genDir, 1, 1);
-            break;
-        case ROOM_NINE_CIRCLE:
-            generateMirroredRoom(c, nineCircleRoom, genDir, 1, 1);
-            break;
-        case ROOM_CUBE:
-            generateMirroredRoom(c, cubeRoom, genDir, 1, 1);
-            break;
-        case ROOM_RAGGED_CUBE: 
-            generateMirroredRoom(c, raggedCubeRoom, genDir, 1, 1);
-            break;
-        case ROOM_SHURIKEN:
-            generateMirroredRoom(c, shurikenRoom, genDir, 1, 1);
-            break;
-        case ROOM_SQUARE_SYMBOL:
-            generateMirroredRoom(c, squareSymbolRoom, genDir, 1, 1);
-            break;
-        case ROOM_SMALL_CUBE:
-            generateMirroredRoom(c, smallCubeRoom, genDir, 1, 1);
-            break;
-        case ROOM_CIRCLE_CUBE:
-            generateMirroredRoom(c, circleCubeRoom, genDir, 1, 1);
-            break;
+    switch (SDL_rand(ROOM_TYPES))
+    {
+    case ROOM_CIRCLE: // Double mirrored room
+        generateMirroredRoom(c, circleRoom, genDir, 1, 1);
+        break;
+    case ROOM_SIX_HALL:
+        generateMirroredRoom(c, sixHallRoom, genDir, 1, 1);
+        break;
+    case ROOM_OCTAGONAL:
+        generateMirroredRoom(c, octagonalRoom, genDir, 1, 1);
+        break;
+    case ROOM_NINE_CIRCLE:
+        generateMirroredRoom(c, nineCircleRoom, genDir, 1, 1);
+        break;
+    case ROOM_CUBE:
+        generateMirroredRoom(c, cubeRoom, genDir, 1, 1);
+        break;
+    case ROOM_RAGGED_CUBE:
+        generateMirroredRoom(c, raggedCubeRoom, genDir, 1, 1);
+        break;
+    case ROOM_SHURIKEN:
+        generateMirroredRoom(c, shurikenRoom, genDir, 1, 1);
+        break;
+    case ROOM_SQUARE_SYMBOL:
+        generateMirroredRoom(c, squareSymbolRoom, genDir, 1, 1);
+        break;
+    case ROOM_SMALL_CUBE:
+        generateMirroredRoom(c, smallCubeRoom, genDir, 1, 1);
+        break;
+    case ROOM_CIRCLE_CUBE:
+        generateMirroredRoom(c, circleCubeRoom, genDir, 1, 1);
+        break;
     }
 }
 
-void generateDungeon(World w, Uint8* nrOfRooms) { //Room placements
-    Chunk* temp;
+void generateDungeon(World w, Uint8 *nrOfRooms)
+{ // Room placements
+    Chunk *temp;
     SDL_srand(w->seed);
     SDL_rand(4);
 
     SDL_Log("\n---DUNGEON TESTING---");
 
-    switch(SDL_rand(4)) { //Starting room
-        case WEST:
-            SDL_Log("West");
-            temp = w->chunks + (int)(SDL_sqrt(w->size)/2) * (int)SDL_sqrt(w->size); //Points to first chunk in middle row
-            break;
-        case NORTH:
-            SDL_Log("North");
-            temp = w->chunks + (int)(SDL_sqrt(w->size)/2); //Points to middle chunk in first row
-            break;
-        case EAST:
-            SDL_Log("East");
-            temp = w->chunks + (int)(SDL_sqrt(w->size)/2 + 1) * (int)SDL_sqrt(w->size)  -1; //Points to last chunk in middle row
-            break;
-        case SOUTH:
-            SDL_Log("South");
-            temp = w->chunks + w->size - (int)SDL_ceil(SDL_sqrt(w->size)/2); //Points to middle chunk in last row
-            break;
+    switch (SDL_rand(4))
+    { // Starting room
+    case WEST:
+        SDL_Log("West");
+        temp = w->chunks + (int)(SDL_sqrt(w->size) / 2) * (int)SDL_sqrt(w->size); // Points to first chunk in middle row
+        break;
+    case NORTH:
+        SDL_Log("North");
+        temp = w->chunks + (int)(SDL_sqrt(w->size) / 2); // Points to middle chunk in first row
+        break;
+    case EAST:
+        SDL_Log("East");
+        temp = w->chunks + (int)(SDL_sqrt(w->size) / 2 + 1) * (int)SDL_sqrt(w->size) - 1; // Points to last chunk in middle row
+        break;
+    case SOUTH:
+        SDL_Log("South");
+        temp = w->chunks + w->size - (int)SDL_ceil(SDL_sqrt(w->size) / 2); // Points to middle chunk in last row
+        break;
     }
 
     SDL_Log("Dungeon start (1+): %d, TEST RANDOM: %d", temp - w->chunks + 1, SDL_rand(4));
@@ -372,140 +452,225 @@ void generateDungeon(World w, Uint8* nrOfRooms) { //Room placements
     SDL_Log("---------------------");
 }
 
-void polishDungeon(World w) { //Fix tileset in dungeon
+void polishDungeon(World w)
+{ // Fix tileset in dungeon
     const int rowSize = (int)SDL_sqrt(w->size);
-    Chunk* chunks = w->chunks;
-    Chunk* tempC;
+    Chunk *chunks = w->chunks;
+    Chunk *tempC;
     bool dir[4] = {0};
 
-    Chunk* saveChunks = SDL_calloc(w->size, sizeof(Chunk));
-    Chunk* tempS = saveChunks;
+    Chunk *saveChunks = SDL_calloc(w->size, sizeof(Chunk));
+    Chunk *tempS = saveChunks;
     cleanChunks(saveChunks, w->size);
 
+    for (int i = 0; i < w->size; i++)
+    {
+        for (int y = 0; y < CHUNK_SIZE; y++)
+        {
+            for (int x = 0; x < CHUNK_SIZE; x++)
+            {
+                if (chunks->tileType[y][x] != 0)
+                {
+                    for (int j = 0; j < 4; j++)
+                    {
+                        switch (j)
+                        {
+                        case WEST:
+                            tempC = chunks - 1;
 
-    for(int i = 0; i < w->size; i++) {
-        for(int y = 0; y < CHUNK_SIZE; y++) {
-            for(int x = 0; x < CHUNK_SIZE; x++) {
-                if(chunks->tileType[y][x] != 0) {
-                    for(int j = 0; j < 4; j++) {
-                        switch(j) {
-                            case WEST:
-                                tempC = chunks - 1; 
+                            if ((x > 0 && chunks->tileType[y][x] == chunks->tileType[y][x - 1]) || (x == 0 && tempC >= w->chunks && chunks->tileType[y][x] == tempC->tileType[y][CHUNK_SIZE - 1]))
+                            {
+                                dir[WEST] = true;
+                            }
+                            else
+                            {
+                                dir[WEST] = false;
+                            }
+                            break;
+                        case NORTH:
+                            tempC = chunks - rowSize;
 
-                                if((x > 0 && chunks->tileType[y][x] == chunks->tileType[y][x-1]) || (x == 0 && tempC >= w->chunks && chunks->tileType[y][x] == tempC->tileType[y][CHUNK_SIZE-1])) {
-                                    dir[WEST] = true;
-                                } else {
-                                    dir[WEST] = false;
-                                }
-                                break;
-                            case NORTH:
-                                tempC = chunks - rowSize;
+                            if ((y > 0 && chunks->tileType[y][x] == chunks->tileType[y - 1][x]) || (y == 0 && tempC >= w->chunks && chunks->tileType[y][x] == tempC->tileType[CHUNK_SIZE - 1][x]))
+                            {
+                                dir[NORTH] = true;
+                            }
+                            else
+                            {
+                                dir[NORTH] = false;
+                            }
+                            break;
+                        case EAST:
+                            tempC = chunks + 1;
 
-                                if((y > 0 && chunks->tileType[y][x] == chunks->tileType[y-1][x]) || (y == 0 && tempC >= w->chunks && chunks->tileType[y][x] == tempC->tileType[CHUNK_SIZE-1][x])) {
-                                    dir[NORTH] = true;
-                                } else {
-                                    dir[NORTH] = false;
-                                }
-                                break;
-                            case EAST:
-                                tempC = chunks + 1;
+                            if ((x < (CHUNK_SIZE - 1) && chunks->tileType[y][x] == chunks->tileType[y][x + 1]) || (x == (CHUNK_SIZE - 1) && tempC >= w->chunks && chunks->tileType[y][x] == tempC->tileType[y][0]))
+                            {
+                                dir[EAST] = true;
+                            }
+                            else
+                            {
+                                dir[EAST] = false;
+                            }
+                            break;
+                        case SOUTH:
+                            tempC = chunks + rowSize;
 
-                                if((x < (CHUNK_SIZE-1) && chunks->tileType[y][x] == chunks->tileType[y][x+1]) || (x == (CHUNK_SIZE-1) && tempC >= w->chunks && chunks->tileType[y][x] == tempC->tileType[y][0])) {
-                                    dir[EAST] = true;
-                                } else {
-                                    dir[EAST] = false;
-                                }
-                                break;
-                            case SOUTH:
-                                tempC = chunks + rowSize;
-
-                                if((y < (CHUNK_SIZE-1) && chunks->tileType[y][x] == chunks->tileType[y+1][x]) || (y == (CHUNK_SIZE-1) && tempC >= w->chunks && chunks->tileType[y][x] == tempC->tileType[0][x])) {
-                                    dir[SOUTH] = true;
-                                } else {
-                                    dir[SOUTH] = false;
-                                }
-                                break;
+                            if ((y < (CHUNK_SIZE - 1) && chunks->tileType[y][x] == chunks->tileType[y + 1][x]) || (y == (CHUNK_SIZE - 1) && tempC >= w->chunks && chunks->tileType[y][x] == tempC->tileType[0][x]))
+                            {
+                                dir[SOUTH] = true;
+                            }
+                            else
+                            {
+                                dir[SOUTH] = false;
+                            }
+                            break;
                         }
                     }
 
-                    if(chunks->tileType[y][x] == FLOOR) {
-                        if(!dir[WEST] && !dir[NORTH] && dir[EAST] && dir[SOUTH]) { //Left upper corner
+                    if (chunks->tileType[y][x] == FLOOR)
+                    {
+                        if (!dir[WEST] && !dir[NORTH] && dir[EAST] && dir[SOUTH])
+                        { // Left upper corner
                             tempS->tileType[y][x] = 1;
-                        } else if(dir[WEST] && !dir[NORTH] && dir[EAST] && dir[SOUTH]) { //Upper side
+                        }
+                        else if (dir[WEST] && !dir[NORTH] && dir[EAST] && dir[SOUTH])
+                        { // Upper side
                             tempS->tileType[y][x] = 2 + SDL_rand(6);
-                        } else if(dir[WEST] && !dir[NORTH] && !dir[EAST] && dir[SOUTH]) { //Right upper corner
+                        }
+                        else if (dir[WEST] && !dir[NORTH] && !dir[EAST] && dir[SOUTH])
+                        { // Right upper corner
                             tempS->tileType[y][x] = 8;
-                        } else if(!dir[WEST] && dir[NORTH] && dir[EAST] && dir[SOUTH]) { //Left side
+                        }
+                        else if (!dir[WEST] && dir[NORTH] && dir[EAST] && dir[SOUTH])
+                        { // Left side
                             tempS->tileType[y][x] = 9;
-                        } else if(dir[WEST] && dir[NORTH] && dir[EAST] && dir[SOUTH]) { //Middle
+                        }
+                        else if (dir[WEST] && dir[NORTH] && dir[EAST] && dir[SOUTH])
+                        { // Middle
                             tempS->tileType[y][x] = 10 + SDL_rand(18);
-                        } else if(dir[WEST] && dir[NORTH] && !dir[EAST] && dir[SOUTH]) { //Right side
+                        }
+                        else if (dir[WEST] && dir[NORTH] && !dir[EAST] && dir[SOUTH])
+                        { // Right side
                             tempS->tileType[y][x] = 28;
-                        } else if(!dir[WEST] && dir[NORTH] && dir[EAST] && !dir[SOUTH]) { //Left bottom corner
+                        }
+                        else if (!dir[WEST] && dir[NORTH] && dir[EAST] && !dir[SOUTH])
+                        { // Left bottom corner
                             tempS->tileType[y][x] = 29;
-                        } else if(dir[WEST] && dir[NORTH] && dir[EAST] && !dir[SOUTH]) { //Bottom side
+                        }
+                        else if (dir[WEST] && dir[NORTH] && dir[EAST] && !dir[SOUTH])
+                        { // Bottom side
                             tempS->tileType[y][x] = 30 + SDL_rand(2);
-                        } else if(dir[WEST] && dir[NORTH] && !dir[EAST] && !dir[SOUTH]) { //Right bottom corner
+                        }
+                        else if (dir[WEST] && dir[NORTH] && !dir[EAST] && !dir[SOUTH])
+                        { // Right bottom corner
                             tempS->tileType[y][x] = 32;
-                        } else {
+                        }
+                        else
+                        {
                             tempS->tileType[y][x] = 40;
                         }
 
                         // SDL_Log("Failed: W: %d, N: %d, E: %d, S: %d", dir[WEST], dir[NORTH], dir[EAST], dir[SOUTH]);
-
-                    } else if(chunks->tileType[y][x] == WALL) {
-                         if (dir[WEST] && dir[EAST]) { //North wall
-                            if((y < (CHUNK_SIZE-1) && chunks->tileType[y+1][x] == FLOOR) || (y == 0 && tempC >= w->chunks && tempC->tileType[y][x] == FLOOR)) { //Point down wall
+                    }
+                    else if (chunks->tileType[y][x] == WALL)
+                    {
+                        if (dir[WEST] && dir[EAST])
+                        { // North wall
+                            if ((y < (CHUNK_SIZE - 1) && chunks->tileType[y + 1][x] == FLOOR) || (y == 0 && tempC >= w->chunks && tempC->tileType[y][x] == FLOOR))
+                            { // Point down wall
                                 tempS->tileType[y][x] = 56 + SDL_rand(3);
-                            } else if((y > 0 && chunks->tileType[y-1][x] == FLOOR) || (y == (CHUNK_SIZE-1) && tempC >= w->chunks && tempC->tileType[y][x] == FLOOR)) { //Point up wall
+                            }
+                            else if ((y > 0 && chunks->tileType[y - 1][x] == FLOOR) || (y == (CHUNK_SIZE - 1) && tempC >= w->chunks && tempC->tileType[y][x] == FLOOR))
+                            { // Point up wall
                                 tempS->tileType[y][x] = 42 + SDL_rand(6);
-                            } else if(y > 0 && x < (CHUNK_SIZE-1) && chunks->tileType[y-1][x+1] == FLOOR) { //Bottom left corner
+                            }
+                            else if (y > 0 && x < (CHUNK_SIZE - 1) && chunks->tileType[y - 1][x + 1] == FLOOR)
+                            { // Bottom left corner
                                 tempS->tileType[y][x] = 48;
-                            } else if(y > 0 && x > 0 && chunks->tileType[y-1][x-1] == FLOOR) { //Bottom right corner
+                            }
+                            else if (y > 0 && x > 0 && chunks->tileType[y - 1][x - 1] == FLOOR)
+                            { // Bottom right corner
                                 tempS->tileType[y][x] = 41;
-                            } else if(y < (CHUNK_SIZE-1) && x < (CHUNK_SIZE-1) && chunks->tileType[y+1][x+1] == FLOOR) { //Right wall
+                            }
+                            else if (y < (CHUNK_SIZE - 1) && x < (CHUNK_SIZE - 1) && chunks->tileType[y + 1][x + 1] == FLOOR)
+                            { // Right wall
                                 tempS->tileType[y][x] = 53 + SDL_rand(3);
-                            } else if(y < (CHUNK_SIZE-1) && x > 0 && chunks->tileType[y+1][x-1] == FLOOR) { //Left wall
+                            }
+                            else if (y < (CHUNK_SIZE - 1) && x > 0 && chunks->tileType[y + 1][x - 1] == FLOOR)
+                            { // Left wall
                                 tempS->tileType[y][x] = 49 + SDL_rand(3);
-                            } else { //Debug
+                            }
+                            else
+                            { // Debug
                                 tempS->tileType[y][x] = 40;
                             }
-                            
-                            
-                        } else if(dir[NORTH] && dir[SOUTH]) {
-                            if((x < (CHUNK_SIZE-1) && chunks->tileType[y][x+1] == FLOOR) || (x == 0 && tempC >= w->chunks && tempC->tileType[y][x] == FLOOR)) {
+                        }
+                        else if (dir[NORTH] && dir[SOUTH])
+                        {
+                            if ((x < (CHUNK_SIZE - 1) && chunks->tileType[y][x + 1] == FLOOR) || (x == 0 && tempC >= w->chunks && tempC->tileType[y][x] == FLOOR))
+                            {
                                 tempS->tileType[y][x] = 53 + SDL_rand(3);
-                            } else if((y > 0 && chunks->tileType[y][x-1] == FLOOR) || (x == (CHUNK_SIZE-1) && tempC >= w->chunks && tempC->tileType[y][x] == FLOOR)) {
+                            }
+                            else if ((y > 0 && chunks->tileType[y][x - 1] == FLOOR) || (x == (CHUNK_SIZE - 1) && tempC >= w->chunks && tempC->tileType[y][x] == FLOOR))
+                            {
                                 tempS->tileType[y][x] = 49 + SDL_rand(3);
-                            } else if(y > 0 && x < (CHUNK_SIZE-1) && chunks->tileType[y-1][x+1] == FLOOR) {
+                            }
+                            else if (y > 0 && x < (CHUNK_SIZE - 1) && chunks->tileType[y - 1][x + 1] == FLOOR)
+                            {
                                 tempS->tileType[y][x] = 48;
-                            } else if(y > 0 && x > 0 && chunks->tileType[y-1][x-1] == FLOOR) {
+                            }
+                            else if (y > 0 && x > 0 && chunks->tileType[y - 1][x - 1] == FLOOR)
+                            {
                                 tempS->tileType[y][x] = 41;
-                            } else if(y < (CHUNK_SIZE-1) && x < (CHUNK_SIZE-1) && chunks->tileType[y+1][x+1] == FLOOR) {
+                            }
+                            else if (y < (CHUNK_SIZE - 1) && x < (CHUNK_SIZE - 1) && chunks->tileType[y + 1][x + 1] == FLOOR)
+                            {
                                 tempS->tileType[y][x] = 53 + SDL_rand(3);
-                            } else if(y < (CHUNK_SIZE-1) && x > 0 && chunks->tileType[y+1][x-1] == FLOOR) {
+                            }
+                            else if (y < (CHUNK_SIZE - 1) && x > 0 && chunks->tileType[y + 1][x - 1] == FLOOR)
+                            {
                                 tempS->tileType[y][x] = 49 + SDL_rand(3);
-                            } else {
+                            }
+                            else
+                            {
                                 tempS->tileType[y][x] = 40;
                             }
-                        } else {
-                            if((!dir[WEST] && !dir[NORTH] && dir[SOUTH] && dir[EAST]) && (y > 0 && x > 0 && chunks->tileType[y-1][x-1] == FLOOR)){ //Upper left corner
-                                tempS->tileType[y][x] = 60 + SDL_rand(2);  
-                            } else if((dir[WEST] && !dir[NORTH] && dir[SOUTH] && !dir[EAST]) && (y > 0 && x < (CHUNK_SIZE-1) && chunks->tileType[y-1][x+1] == FLOOR)){ //Upper right corner
-                                tempS->tileType[y][x] = 62 + SDL_rand(2);  
-                            } else if((!dir[WEST] && dir[NORTH] && !dir[SOUTH] && dir[EAST]) && (y < (CHUNK_SIZE-1) && x > 0 && chunks->tileType[y+1][x-1] == FLOOR)) {
+                        }
+                        else
+                        {
+                            if ((!dir[WEST] && !dir[NORTH] && dir[SOUTH] && dir[EAST]) && (y > 0 && x > 0 && chunks->tileType[y - 1][x - 1] == FLOOR))
+                            { // Upper left corner
+                                tempS->tileType[y][x] = 60 + SDL_rand(2);
+                            }
+                            else if ((dir[WEST] && !dir[NORTH] && dir[SOUTH] && !dir[EAST]) && (y > 0 && x < (CHUNK_SIZE - 1) && chunks->tileType[y - 1][x + 1] == FLOOR))
+                            { // Upper right corner
+                                tempS->tileType[y][x] = 62 + SDL_rand(2);
+                            }
+                            else if ((!dir[WEST] && dir[NORTH] && !dir[SOUTH] && dir[EAST]) && (y < (CHUNK_SIZE - 1) && x > 0 && chunks->tileType[y + 1][x - 1] == FLOOR))
+                            {
                                 tempS->tileType[y][x] = 56 + SDL_rand(3);
-                            } else if((dir[WEST] && dir[NORTH] && !dir[SOUTH] && !dir[EAST]) && (y < (CHUNK_SIZE-1) && x < (CHUNK_SIZE-1) && chunks->tileType[y+1][x+1] == FLOOR)) {
+                            }
+                            else if ((dir[WEST] && dir[NORTH] && !dir[SOUTH] && !dir[EAST]) && (y < (CHUNK_SIZE - 1) && x < (CHUNK_SIZE - 1) && chunks->tileType[y + 1][x + 1] == FLOOR))
+                            {
                                 tempS->tileType[y][x] = 56 + SDL_rand(3);
-                            } else if(y > 0 && x < (CHUNK_SIZE-1) && chunks->tileType[y-1][x+1] == FLOOR) {
+                            }
+                            else if (y > 0 && x < (CHUNK_SIZE - 1) && chunks->tileType[y - 1][x + 1] == FLOOR)
+                            {
                                 tempS->tileType[y][x] = 48;
-                            } else if(y > 0 && x > 0 && chunks->tileType[y-1][x-1] == FLOOR) {
+                            }
+                            else if (y > 0 && x > 0 && chunks->tileType[y - 1][x - 1] == FLOOR)
+                            {
                                 tempS->tileType[y][x] = 41;
-                            } else if(y < (CHUNK_SIZE-1) && x < (CHUNK_SIZE-1) && chunks->tileType[y+1][x+1] == FLOOR) {
+                            }
+                            else if (y < (CHUNK_SIZE - 1) && x < (CHUNK_SIZE - 1) && chunks->tileType[y + 1][x + 1] == FLOOR)
+                            {
                                 tempS->tileType[y][x] = 53 + SDL_rand(3);
-                            } else if(y < (CHUNK_SIZE-1) && x > 0 && chunks->tileType[y+1][x-1] == FLOOR) {
+                            }
+                            else if (y < (CHUNK_SIZE - 1) && x > 0 && chunks->tileType[y + 1][x - 1] == FLOOR)
+                            {
                                 tempS->tileType[y][x] = 49 + SDL_rand(3);
-                            }  else {
+                            }
+                            else
+                            {
                                 tempS->tileType[y][x] = 40;
                             }
                         }
@@ -521,35 +686,43 @@ void polishDungeon(World w) { //Fix tileset in dungeon
     w->chunks = saveChunks;
 }
 
-void createDungeon(World w, Uint8 nrOfRooms, AppState state, bool tp) {
+void createDungeon(World w, Uint8 nrOfRooms, AppState state, bool tp)
+{
     generateDungeon(w, &nrOfRooms);
-    if(tp) tpDungeon(w, state); //Should only be used Server side
+    if (tp)
+        tpDungeon(w, state); // Should only be used Server side
     spawnDungeonEnemies(w, state, w->firstChunk, 1);
     polishDungeon(w);
-
 }
 
-bool renderDungeon(AppState state, Player* player) {
+bool renderDungeon(AppState state, Player *player)
+{
     int yLevel = 0;
-    Chunk* tempC = state->world->chunks;
+    Chunk *tempC = state->world->chunks;
     const int rowSize = (int)SDL_sqrt(state->world->size);
-    SDL_FRect srcRect = {0,0,TILE_SIZE,TILE_SIZE}, dstRect = {0,0,TILE_SIZE*RENDER_SCALE,TILE_SIZE*RENDER_SCALE};
-    
-    for(int i = 0; i < state->world->size; i++) {
-        if(i % rowSize == 0 && i) { //Calc to change to next row, only counts when i is not 0
+    SDL_FRect srcRect = {0, 0, TILE_SIZE, TILE_SIZE}, dstRect = {0, 0, TILE_SIZE * RENDER_SCALE, TILE_SIZE * RENDER_SCALE};
+
+    for (int i = 0; i < state->world->size; i++)
+    {
+        if (i % rowSize == 0 && i)
+        { // Calc to change to next row, only counts when i is not 0
             yLevel++;
         }
 
-        for(int y = 0; y < CHUNK_SIZE; y++) {
-            for(int x = 0; x < CHUNK_SIZE; x++) {
-                dstRect.x = state->camera.x + player->pos.x + (x+CHUNK_SIZE*((tempC - state->world->chunks) % rowSize))*TILE_SIZE*RENDER_SCALE;
-                dstRect.y = state->camera.y + player->pos.y + (y+CHUNK_SIZE*((int)(tempC - state->world->chunks) / rowSize))*TILE_SIZE*RENDER_SCALE;
+        for (int y = 0; y < CHUNK_SIZE; y++)
+        {
+            for (int x = 0; x < CHUNK_SIZE; x++)
+            {
+                dstRect.x = state->camera.x + player->pos.x + (x + CHUNK_SIZE * ((tempC - state->world->chunks) % rowSize)) * TILE_SIZE * RENDER_SCALE;
+                dstRect.y = state->camera.y + player->pos.y + (y + CHUNK_SIZE * ((int)(tempC - state->world->chunks) / rowSize)) * TILE_SIZE * RENDER_SCALE;
 
-                if(dstRect.x >= -(TILE_SIZE*RENDER_SCALE) && dstRect.y >= -(TILE_SIZE*RENDER_SCALE) && dstRect.x <= state->displayMode->w && dstRect.y <= state->displayMode->h && tempC->tileType[y][x] != 0) {
-                    srcRect.x = TILE_SIZE*((int)((tempC->tileType[y][x]-1)%10));
-                    srcRect.y = TILE_SIZE*((int)((tempC->tileType[y][x]-1)/10));
+                if (dstRect.x >= -(TILE_SIZE * RENDER_SCALE) && dstRect.y >= -(TILE_SIZE * RENDER_SCALE) && dstRect.x <= state->displayMode->w && dstRect.y <= state->displayMode->h && tempC->tileType[y][x] != 0)
+                {
+                    srcRect.x = TILE_SIZE * ((int)((tempC->tileType[y][x] - 1) % 10));
+                    srcRect.y = TILE_SIZE * ((int)((tempC->tileType[y][x] - 1) / 10));
 
-                    if(!SDL_RenderTexture(state->renderer, state->world->texture, &srcRect, &dstRect)) {
+                    if (!SDL_RenderTexture(state->renderer, state->world->texture, &srcRect, &dstRect))
+                    {
                         SDL_Log("TILE RENDER ERROR: %d : %s", tempC->tileType[y][x], SDL_GetError());
                         return 0;
                     }
@@ -563,44 +736,63 @@ bool renderDungeon(AppState state, Player* player) {
     return 1;
 }
 
-bool tileCollision(World w, SDL_FRect futurePos, Player* player) {
-    int Wsize = (int)SDL_sqrt(w->size);
-    Wsize *= CHUNK_SIZE*TILE_SIZE*RENDER_SCALE;
-
-    Vector2D points[TILE_COLISION_POINTS], fChunk = {1};
-    static Chunk* Cptr = NULL;
-    SDL_FRect tileBox = {0,0,TILE_SIZE*RENDER_SCALE,TILE_SIZE*RENDER_SCALE};
-
-    points[0].x = futurePos.x - 20*RENDER_SCALE; //With margin for players
-    points[0].y = futurePos.y - 40*RENDER_SCALE;
-    points[1] = points[0];
-
-    if(player->pos.x > futurePos.x) { //Adjust checks depending on direction and only do two
-        points[0].x -= player->hitBox.w + TILE_COLISION_MARGIN_X*RENDER_SCALE;
-        points[1].x -= player->hitBox.w + TILE_COLISION_MARGIN_X*RENDER_SCALE;
-        points[1].y -= player->hitBox.h + TILE_COLISION_MARGIN_Y*RENDER_SCALE;
-    } else if(player->pos.x < futurePos.x) {
-        points[0].x += 3*RENDER_SCALE; //Fix for flipped sprite since it isn't perfectly centered
-        points[1].x = points[0].x;
-        points[1].y -= player->hitBox.h + (TILE_COLISION_MARGIN_Y)*RENDER_SCALE;
-    } else if(player->pos.y > futurePos.y) {
-        points[0].y -= player->hitBox.h + TILE_COLISION_MARGIN_Y*RENDER_SCALE;
-        points[1].x -= player->hitBox.w + TILE_COLISION_MARGIN_X*RENDER_SCALE;
-        points[1].y -= player->hitBox.h + TILE_COLISION_MARGIN_Y*RENDER_SCALE;
-    } else if(player->pos.y < futurePos.y) {
-        points[1].x -= player->hitBox.w + TILE_COLISION_MARGIN_X*RENDER_SCALE;
+bool tileCollision(World w, SDL_FRect futurePos, Player* player, Enemy* enemy) {
+    
+    if (player == NULL && enemy == NULL) {
+        return false;
     }
 
-    for(int i = 0; i < TILE_COLISION_POINTS; i++) {
-            fChunk.x = (int)points[i].x/(CHUNK_SIZE*TILE_SIZE*RENDER_SCALE);
-            fChunk.y = (int)points[i].y/(CHUNK_SIZE*TILE_SIZE*RENDER_SCALE);
-            Cptr = w->chunks + SDL_abs(fChunk.x + fChunk.y*(int)SDL_sqrt(w->size));
+    float currentPosX, currentPosY;
+    float hitBoxW, hitBoxH;
 
-            if(Cptr >= w->chunks && Cptr <= (w->chunks+w->size-1)) { //Check boundries
-                if(Cptr->tileType[SDL_abs((int)points[i].y/(TILE_SIZE*RENDER_SCALE)%48)][SDL_abs((int)points[i].x/(TILE_SIZE*RENDER_SCALE)%48)] > 40) {
-                    return true;
-                }
+    if (player != NULL) {
+        currentPosX = player->pos.x;
+        currentPosY = player->pos.y;
+        hitBoxW = player->hitBox.w;
+        hitBoxH = player->hitBox.h;
+    } else {
+        currentPosX = enemy->pos.x;
+        currentPosY = enemy->pos.y;
+        hitBoxW = enemy->hitBox.w;
+        hitBoxH = enemy->hitBox.h;
+    }
+
+    Vector2D points[TILE_COLISION_POINTS];
+    Vector2D fChunk = {1};
+    static Chunk* Cptr = NULL;
+
+    points[0].x = futurePos.x - 20 * RENDER_SCALE; 
+    points[0].y = futurePos.y - 40 * RENDER_SCALE;
+    points[1] = points[0];
+
+    if (currentPosX > futurePos.x) { 
+        points[0].x -= hitBoxW + TILE_COLISION_MARGIN_X * RENDER_SCALE;
+        points[1].x -= hitBoxW + TILE_COLISION_MARGIN_X * RENDER_SCALE;
+        points[1].y -= hitBoxH + TILE_COLISION_MARGIN_Y * RENDER_SCALE;
+    } else if (currentPosX < futurePos.x) {
+        points[0].x += 3 * RENDER_SCALE; 
+        points[1].x = points[0].x;
+        points[1].y -= hitBoxH + TILE_COLISION_MARGIN_Y * RENDER_SCALE;
+    } else if (currentPosY > futurePos.y) {
+        points[0].y -= hitBoxH + TILE_COLISION_MARGIN_Y * RENDER_SCALE;
+        points[1].x -= hitBoxW + TILE_COLISION_MARGIN_X * RENDER_SCALE;
+        points[1].y -= hitBoxH + TILE_COLISION_MARGIN_Y * RENDER_SCALE;
+    } else if (currentPosY < futurePos.y) {
+        points[1].x -= hitBoxW + TILE_COLISION_MARGIN_X * RENDER_SCALE;
+    }
+
+    for (int i = 0; i < TILE_COLISION_POINTS; i++) {
+        fChunk.x = (int)points[i].x / (CHUNK_SIZE * TILE_SIZE * RENDER_SCALE);
+        fChunk.y = (int)points[i].y / (CHUNK_SIZE * TILE_SIZE * RENDER_SCALE);
+        Cptr = w->chunks + SDL_abs(fChunk.x + fChunk.y * (int)SDL_sqrt(w->size));
+
+        if (Cptr >= w->chunks && Cptr <= (w->chunks + w->size - 1)) {
+            int tileY = SDL_abs((int)points[i].y / (TILE_SIZE * RENDER_SCALE) % 48);
+            int tileX = SDL_abs((int)points[i].x / (TILE_SIZE * RENDER_SCALE) % 48);
+            if (Cptr->tileType[tileY][tileX] > 40) {
+                return true;
             }
+        }
     }
 
     return false;

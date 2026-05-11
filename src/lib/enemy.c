@@ -4,120 +4,224 @@
 #define ENEMY_SPEED 0.15f * RENDER_SCALE
 #define ENEMY_FRAMES 4
 
+#define SKELETON_IDLE_FRAMES 6
+#define SKELETON_MOVE_FRAMES 10
+#define SKELETON_ATTACK_FRAMES 9
+#define SKELETON_DAMAGE_FRAMES 5
+#define SKELETON_DEATH_FRAMES 17
+
 int nearestPlayer(Enemy *enemy, Player players[MAX_PLAYERS])
 {
+    int nearest = -1;
+    float nearestDist = ENEMY_AGGRO_RANGE * ENEMY_AGGRO_RANGE;
+
+    for (int i = 0; i < MAX_PLAYERS; i++)
+    {
+        float dx = enemy->pos.x - players[i].pos.x;
+        float dy = enemy->pos.y - players[i].pos.y;
+        float distSq = dx * dx + dy * dy;
+
+        if (distSq < nearestDist)
+        {
+            nearestDist = distSq;
+            nearest = i;
+        }
+    }
+
+    return nearest;
 }
 
-void enemyMovement(Enemy *enemy, Player players[MAX_PLAYERS], int deltatime)
+static void syncEnemyHitbox(Enemy *enemy)
 {
-    enemy->hitBox.x = enemy->pos.x;
-    enemy->hitBox.y = enemy->pos.y;
+    float hbW = enemy->hitBox.w;
+    float hbH = enemy->hitBox.h;
+
+    float offsetX = (ENEMY_SPRITE_SIZE * RENDER_SCALE * 1.5f - hbW) / 2.7f;
+    float offsetY = (ENEMY_SPRITE_SIZE * RENDER_SCALE *1.5f- hbH) / 1.1f;
+
+    enemy->hitBox.x = enemy->pos.x + offsetX;
+    enemy->hitBox.y = enemy->pos.y + offsetY;
+}
+
+void enemyMovement(Enemy *enemy, Player players[MAX_PLAYERS], int deltatime, World world)
+{
+    int target = nearestPlayer(enemy, players);
+
+    if (target == -1)
+    {
+        enemy->state = ENEMY_IDLE;
+        syncEnemyHitbox(enemy);
+        return;
+    }
+
+    float dx = players[target].pos.x - enemy->pos.x;
+    float dy = players[target].pos.y - enemy->pos.y;
+    float distSq = dx * dx + dy * dy;
+
+    if (distSq < (float)(ENEMY_ATTACK_RANGE * ENEMY_ATTACK_RANGE))
+    {
+        enemy->state = ENEMY_ATTACK;
+        syncEnemyHitbox(enemy);
+        return;
+    }
+
+    enemy->state = ENEMY_CHASE;
+
+    float dist = SDL_sqrtf(distSq);
+    float normX = dx / dist;
+    float normY = dy / dist;
+
+    float speed = ENEMY_SPEED;
+    float nextX = enemy->pos.x + normX * deltatime * speed;
+    float nextY = enemy->pos.y + normY * deltatime * speed;
+
+    SDL_FRect futureHitBox = enemy->hitBox;
+    futureHitBox.x = nextX;
+    futureHitBox.y = enemy->pos.y;
+
+
+    if (!tileCollision(world, futureHitBox, NULL, enemy))
+    {
+        enemy->pos.x = nextX;
+    }
+
+    futureHitBox.x = enemy->pos.x;
+    futureHitBox.y = nextY;
+    
+
+    if (!tileCollision(world, futureHitBox, NULL, enemy))
+    {
+        enemy->pos.y = nextY;
+    }
+
+    syncEnemyHitbox(enemy);
 }
 
 void animateEnemies(Enemy enemies[MAX_ENEMIES], Uint8 *counter, Uint16 framerate, bool *flag)
 {
     ++*counter;
+    if ((*counter) < (framerate / ANIMATION_TIME / 2))
+        return;
+    *counter = 0;
 
-    if ((*counter) == (framerate / ANIMATION_TIME / 2) || (*counter) == (framerate / (ANIMATION_TIME)))
+    for (int i = 0; i < MAX_ENEMIES; i++)
     {
-        for (int i = 0; i < MAX_ENEMIES; i++)
+        Enemy *e = &enemies[i];
+        if (e->texture == NULL)
+            continue;
+
+        SDL_Texture *newTex = e->texIdle;
+        int maxFrames = SKELETON_IDLE_FRAMES;
+
+        switch (e->state)
         {
-            if (enemies[i].state == ENEMY_DEAD)
-                continue;
-
-            bool moving = (enemies[i].state == ENEMY_CHASE);
-            int row = 0;
-
-            if (moving)
-            {
-                switch (enemies[i].facing)
-                {
-                case WEST:
-                    enemies[i].flip = SDL_FLIP_HORIZONTAL;
-                    break;
-                case EAST:
-                    row = 2;
-                    enemies[i].flip = SDL_FLIP_NONE;
-                    break;
-                case NORTH:
-                    row = 1;
-                    enemies[i].flip = SDL_FLIP_NONE;
-                    break;
-                case SOUTH:
-                    row = 0;
-                    enemies[i].flip = SDL_FLIP_NONE;
-                    break;
-                }
-            }
-            else
-            {
-                if ((*counter) != (framerate / ANIMATION_TIME))
-                    continue;
-
-                switch (enemies[i].facing)
-                {
-                case WEST:
-                    row = 2;
-                    enemies[i].flip = SDL_FLIP_HORIZONTAL;
-                    break;
-                case EAST:
-                    row = 2;
-                    enemies[i].flip = SDL_FLIP_NONE;
-                    break;
-                case NORTH:
-                    row = 1;
-                    enemies[i].flip = SDL_FLIP_NONE;
-                    break;
-                case SOUTH:
-                    row = 0;
-                    enemies[i].flip = SDL_FLIP_NONE;
-                    break;
-                }
-            }
-
-            enemies[i].aniBox.y = row * ENEMY_SIZE;
-            enemies[i].aniBox.x += ENEMY_SIZE;
-
-            enemies[i].aniBox.x = (float)((int)enemies[i].aniBox.x % (ENEMY_SIZE * 6));
+        case ENEMY_CHASE:
+            newTex = e->texMove;
+            maxFrames = SKELETON_MOVE_FRAMES;
+            break;
+        case ENEMY_ATTACK:
+            newTex = e->texAttack;
+            maxFrames = SKELETON_ATTACK_FRAMES;
+            break;
+        case ENEMY_DEAD:
+            newTex = e->texDeath;
+            maxFrames = SKELETON_DEATH_FRAMES;
+            break;
+        case ENEMY_IDLE:
+        default:
+            newTex = e->texIdle;
+            maxFrames = SKELETON_IDLE_FRAMES;
+            break;
         }
-    }
 
-    if ((*counter) == (framerate / ANIMATION_TIME))
-    {
-        (*counter) = 0;
+        if (e->texture != newTex)
+        {
+            e->texture = newTex;
+            e->aniBox.x = 0;
+        }
+
+
+        int currentFrame = (int)e->aniBox.x / ENEMY_SPRITE_SIZE;
+
+        if (e->state == ENEMY_DEAD)
+        {
+            if (currentFrame < maxFrames - 1)
+            {
+                e->aniBox.x += ENEMY_SPRITE_SIZE;
+            }
+        }
+        else
+        {
+            e->aniBox.x += ENEMY_SPRITE_SIZE;
+            if ((int)e->aniBox.x >= ENEMY_SPRITE_SIZE * maxFrames)
+            {
+                e->aniBox.x = 0;
+            }
+        }
     }
 }
 
 static void updateEnemyClass(Enemy *enemy, SDL_Renderer *renderer)
 {
-    SDL_Surface *eArt;
-    switch (enemy->type)
-    {
-    case ENEMY_SKELETON:
-        eArt = SDL_LoadPNG("img/Custom/Skeleton.png");
-        break;
+    SDL_Surface *s;
+
+#define LOAD_AND_CHECK(tex, path)                                          \
+    s = SDL_LoadPNG(path);                                                 \
+    if (!s)                                                                \
+    {                                                                      \
+        SDL_Log("MISSING TEXTURE: %s - %s", path, SDL_GetError());         \
+        return;                                                            \
+    }                                                                      \
+    tex = SDL_CreateTextureFromSurface(renderer, s);                       \
+    SDL_DestroySurface(s);                                                 \
+    if (!tex)                                                              \
+    {                                                                      \
+        SDL_Log("TEXTURE CREATION FAILED: %s - %s", path, SDL_GetError()); \
+        return;                                                            \
     }
 
-    enemy->texture = SDL_CreateTextureFromSurface(renderer, eArt);
-    SDL_DestroySurface(eArt);
+    switch (enemy->type)
+    {
+
+    case ENEMY_SKELETON:
+        s = SDL_LoadPNG("img/Custom/enemies-skeleton1_idle.png");
+        enemy->texIdle = SDL_CreateTextureFromSurface(renderer, s);
+        SDL_DestroySurface(s);
+
+        s = SDL_LoadPNG("img/Custom/enemies-skeleton1_movement.png");
+        enemy->texMove = SDL_CreateTextureFromSurface(renderer, s);
+        SDL_DestroySurface(s);
+
+        s = SDL_LoadPNG("img/Custom/enemies-skeleton1_attack.png");
+        enemy->texAttack = SDL_CreateTextureFromSurface(renderer, s);
+        SDL_DestroySurface(s);
+
+        s = SDL_LoadPNG("img/Custom/enemies-skeleton1_take_damage.png");
+        enemy->texTakeDamage = SDL_CreateTextureFromSurface(renderer, s);
+        SDL_DestroySurface(s);
+
+        s = SDL_LoadPNG("img/Custom/enemies-skeleton1_death.png");
+        enemy->texDeath = SDL_CreateTextureFromSurface(renderer, s);
+        SDL_DestroySurface(s);
+        break;
+    }
+    enemy->texture = enemy->texIdle;
 }
 
 void updateEnemy(Enemy *enemy, Vector2D pos, Enemy_Type type, Stats stats, SDL_Renderer *renderer)
 {
-    enemy->aniBox.w = ENEMY_SIZE;
-    enemy->aniBox.h = ENEMY_SIZE;
-    enemy->hitBox.w = 9 * RENDER_SCALE;
-    enemy->hitBox.h = 2 * RENDER_SCALE;
+    enemy->aniBox.w = ENEMY_SPRITE_SIZE;
+    enemy->aniBox.h = ENEMY_SPRITE_SIZE;
     enemy->aniBox.x = 0;
     enemy->aniBox.y = 0;
+
+    enemy->hitBox.w = 12 * RENDER_SCALE;
+    enemy->hitBox.h = 5 * RENDER_SCALE;
+
     enemy->pos = pos;
-    enemy->hitBox.x = enemy->pos.x;
-    enemy->hitBox.y = enemy->pos.y;
-    enemy->type = type;
+    syncEnemyHitbox(enemy);
+
     enemy->state = ENEMY_IDLE;
     enemy->facing = SOUTH;
-    enemy->stats = stats;
-    enemy->moveX = pos.x;
-    enemy->moveY = pos.y;
     updateEnemyClass(enemy, renderer);
 }

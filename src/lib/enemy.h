@@ -5,7 +5,7 @@
 
 int nearestPlayer(Enemy* enemy, Player players[MAX_PLAYERS]);
 
-void enemyMovement(Enemy* enemy, Player players[MAX_PLAYERS], int deltatime);
+void enemyMovement(Enemy *enemy, Player players[MAX_PLAYERS], int deltatime, World world);
 
 void animateEnemies(Enemy enemies[MAX_ENEMIES], Uint8* counter, Uint16 framerate, bool* flag);
 

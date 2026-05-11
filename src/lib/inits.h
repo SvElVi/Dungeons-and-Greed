@@ -3,7 +3,11 @@
 
 #include <SDL3_net/SDL_net.h>
 
-#define MAX_PLAYERS 2
+#ifndef DEBUG
+#define DEBUG 1
+#endif
+
+#define MAX_PLAYERS 1
 #define PLAYER_SIZE 48
 #define RENDER_SCALE 4
 #define ANIMATION_TIME 4
@@ -11,8 +15,9 @@
 
 #define MAX_ENEMIES 1
 #define ENEMY_SIZE 48
-#define ENEMY_AGGRO_RANGE 150
-#define ENEMY_ATTACK_RANGE 20
+#define ENEMY_SPRITE_SIZE 32
+#define ENEMY_AGGRO_RANGE 400
+#define ENEMY_ATTACK_RANGE 50
 
 typedef struct
 {
@@ -115,6 +120,11 @@ typedef struct
     SDL_FRect hitBox;
     SDL_FRect aniBox;
     SDL_Texture *texture;
+    SDL_Texture *texIdle;
+    SDL_Texture *texMove;
+    SDL_Texture *texAttack;
+    SDL_Texture *texTakeDamage;
+    SDL_Texture *texDeath;
     SDL_FlipMode flip;
     direction facing;
 

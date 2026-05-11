@@ -100,6 +100,21 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result) // Runs after returning A
             if (state->players[x].texture)
                 SDL_DestroyTexture(state->players[x].texture);
         }
+
+        for (int i = 0; i < MAX_ENEMIES; i++)
+        {
+            if (state->enemies[i].texIdle)
+                SDL_DestroyTexture(state->enemies[i].texIdle);
+            if (state->enemies[i].texMove)
+                SDL_DestroyTexture(state->enemies[i].texMove);
+            if (state->enemies[i].texAttack)
+                SDL_DestroyTexture(state->enemies[i].texAttack);
+            if (state->enemies[i].texTakeDamage)
+                SDL_DestroyTexture(state->enemies[i].texTakeDamage);
+            if (state->enemies[i].texDeath)
+                SDL_DestroyTexture(state->enemies[i].texDeath);
+        }
+
         if (state->renderer)
             SDL_DestroyRenderer(state->renderer);
         if (state->window)

@@ -17,7 +17,7 @@
 #define ENEMY_SIZE 48
 #define ENEMY_SPRITE_SIZE 32
 #define ENEMY_AGGRO_RANGE 400
-#define ENEMY_ATTACK_RANGE 50
+#define ENEMY_ATTACK_RANGE 40
 
 typedef struct
 {

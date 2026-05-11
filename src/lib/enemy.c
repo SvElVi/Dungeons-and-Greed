@@ -37,7 +37,7 @@ static void syncEnemyHitbox(Enemy *enemy)
     float hbH = enemy->hitBox.h;
 
     float offsetX = (ENEMY_SPRITE_SIZE * RENDER_SCALE * 1.5f - hbW) / 2.7f;
-    float offsetY = (ENEMY_SPRITE_SIZE * RENDER_SCALE *1.5f- hbH) / 1.1f;
+    float offsetY = (ENEMY_SPRITE_SIZE * RENDER_SCALE * 1.5f - hbH) / 1.1f;
 
     enemy->hitBox.x = enemy->pos.x + offsetX;
     enemy->hitBox.y = enemy->pos.y + offsetY;
@@ -79,7 +79,6 @@ void enemyMovement(Enemy *enemy, Player players[MAX_PLAYERS], int deltatime, Wor
     futureHitBox.x = nextX;
     futureHitBox.y = enemy->pos.y;
 
-
     if (!tileCollision(world, futureHitBox, NULL, enemy))
     {
         enemy->pos.x = nextX;
@@ -87,7 +86,6 @@ void enemyMovement(Enemy *enemy, Player players[MAX_PLAYERS], int deltatime, Wor
 
     futureHitBox.x = enemy->pos.x;
     futureHitBox.y = nextY;
-    
 
     if (!tileCollision(world, futureHitBox, NULL, enemy))
     {
@@ -139,7 +137,6 @@ void animateEnemies(Enemy enemies[MAX_ENEMIES], Uint8 *counter, Uint16 framerate
             e->texture = newTex;
             e->aniBox.x = 0;
         }
-
 
         int currentFrame = (int)e->aniBox.x / ENEMY_SPRITE_SIZE;
 
@@ -210,6 +207,7 @@ static void updateEnemyClass(Enemy *enemy, SDL_Renderer *renderer)
 
 void updateEnemy(Enemy *enemy, Vector2D pos, Enemy_Type type, Stats stats, SDL_Renderer *renderer)
 {
+
     enemy->aniBox.w = ENEMY_SPRITE_SIZE;
     enemy->aniBox.h = ENEMY_SPRITE_SIZE;
     enemy->aniBox.x = 0;
@@ -220,6 +218,12 @@ void updateEnemy(Enemy *enemy, Vector2D pos, Enemy_Type type, Stats stats, SDL_R
 
     enemy->pos = pos;
     syncEnemyHitbox(enemy);
+    enemy->stats = stats;
+    
+    if (enemy->stats.maxHealth <= 0)
+        enemy->stats.maxHealth = 100;
+    if (enemy->stats.health <= 0)
+        enemy->stats.health = enemy->stats.maxHealth;
 
     enemy->state = ENEMY_IDLE;
     enemy->facing = SOUTH;

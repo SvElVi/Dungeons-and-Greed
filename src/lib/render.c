@@ -83,7 +83,7 @@ int render(AppState state, Player *player)
             for (int i = 0; i < MAX_ENEMIES; i++)
             {
                 if (state->enemies[i].state != ENEMY_DEAD)
-                    enemyMovement(&state->enemies[i], state->players, state->deltaTime);
+                    enemyMovement(&state->enemies[i], state->players, state->deltaTime, state->world);
             }
             playerEnemyCollision(state->curPlayerPtr, state->enemies, state->deltaTime);
             animateEnemies(state->enemies, &state->enemyAnimationTime, state->framerate, &state->computedEvent);
@@ -170,8 +170,8 @@ int renderGamePlay(AppState state, Player *player)
         else
         {
             SDL_FRect dst = {
-                .w = ENEMY_SIZE * RENDER_SCALE,
-                .h = ENEMY_SIZE * RENDER_SCALE,
+                .w = ENEMY_SPRITE_SIZE * RENDER_SCALE*1.5,
+                .h = ENEMY_SPRITE_SIZE * RENDER_SCALE*1.5,
                 .x = state->camera.x + (player->pos.x - state->enemies[renderOrder[i].x - MAX_PLAYERS].pos.x),
                 .y = state->camera.y + (player->pos.y - state->enemies[renderOrder[i].x - MAX_PLAYERS].pos.y)};
 

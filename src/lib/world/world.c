@@ -563,7 +563,7 @@ bool renderDungeon(AppState state, Player* player) {
     return 1;
 }
 
-bool tileCollision(World w, SDL_FRect futurePos, Player* player) {
+bool tileCollision(World w, SDL_FRect futurePos, SDL_FRect hitbox, SpriteMargins marginType) {
     int Wsize = (int)SDL_sqrt(w->size);
     Wsize *= CHUNK_SIZE*TILE_SIZE*RENDER_SCALE;
 
@@ -571,24 +571,32 @@ bool tileCollision(World w, SDL_FRect futurePos, Player* player) {
     static Chunk* Cptr = NULL;
     SDL_FRect tileBox = {0,0,TILE_SIZE*RENDER_SCALE,TILE_SIZE*RENDER_SCALE};
 
-    points[0].x = futurePos.x - 20*RENDER_SCALE; //With margin for players
-    points[0].y = futurePos.y - 40*RENDER_SCALE;
+    if(marginType == ENUM_MARGIN_PLAYER) {
+        points[0].x = futurePos.x - 20*RENDER_SCALE;
+        points[0].y = futurePos.y - 40*RENDER_SCALE;
+    } else {
+        points[0].x = futurePos.x;
+        points[0].y = futurePos.y;
+    }
+
     points[1] = points[0];
 
-    if(player->pos.x > futurePos.x) { //Adjust checks depending on direction and only do two
-        points[0].x -= player->hitBox.w + TILE_COLISION_MARGIN_X*RENDER_SCALE;
-        points[1].x -= player->hitBox.w + TILE_COLISION_MARGIN_X*RENDER_SCALE;
-        points[1].y -= player->hitBox.h + TILE_COLISION_MARGIN_Y*RENDER_SCALE;
-    } else if(player->pos.x < futurePos.x) {
-        points[0].x += 3*RENDER_SCALE; //Fix for flipped sprite since it isn't perfectly centered
-        points[1].x = points[0].x;
-        points[1].y -= player->hitBox.h + (TILE_COLISION_MARGIN_Y)*RENDER_SCALE;
-    } else if(player->pos.y > futurePos.y) {
-        points[0].y -= player->hitBox.h + TILE_COLISION_MARGIN_Y*RENDER_SCALE;
-        points[1].x -= player->hitBox.w + TILE_COLISION_MARGIN_X*RENDER_SCALE;
-        points[1].y -= player->hitBox.h + TILE_COLISION_MARGIN_Y*RENDER_SCALE;
-    } else if(player->pos.y < futurePos.y) {
-        points[1].x -= player->hitBox.w + TILE_COLISION_MARGIN_X*RENDER_SCALE;
+    if(hitbox.x > futurePos.x) { //Adjust checks depending on direction and only do two
+        points[0].x -= hitbox.w + TILE_COLISION_MARGIN_X*RENDER_SCALE;
+        points[1].x -= hitbox.w + TILE_COLISION_MARGIN_X*RENDER_SCALE;
+        points[1].y -= hitbox.h + TILE_COLISION_MARGIN_Y*RENDER_SCALE;
+    } else if(hitbox.x < futurePos.x) {
+        if(marginType == ENUM_MARGIN_PLAYER) {
+            points[0].x += 3*RENDER_SCALE; //Fix for flipped sprite since it isn't perfectly centered
+            points[1].x = points[0].x;
+        }
+        points[1].y -= hitbox.h + (TILE_COLISION_MARGIN_Y)*RENDER_SCALE;
+    } else if(hitbox.y > futurePos.y) {
+        points[0].y -= hitbox.h + TILE_COLISION_MARGIN_Y*RENDER_SCALE;
+        points[1].x -= hitbox.w + TILE_COLISION_MARGIN_X*RENDER_SCALE;
+        points[1].y -= hitbox.h + TILE_COLISION_MARGIN_Y*RENDER_SCALE;
+    } else if(hitbox.y < futurePos.y) {
+        points[1].x -= hitbox.w + TILE_COLISION_MARGIN_X*RENDER_SCALE;
     }
 
     for(int i = 0; i < TILE_COLISION_POINTS; i++) {

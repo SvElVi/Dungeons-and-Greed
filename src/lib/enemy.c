@@ -51,14 +51,8 @@ int nearestPlayer(Enemy *enemy, Player players[MAX_PLAYERS])
 
 static void syncEnemyHitbox(Enemy *enemy)
 {
-    float hbW = enemy->hitBox.w;
-    float hbH = enemy->hitBox.h;
-
-    float offsetX = (ENEMY_SPRITE_SIZE * RENDER_SCALE * 1.5f - hbW) / 2.7f;
-    float offsetY = (ENEMY_SPRITE_SIZE * RENDER_SCALE * 1.5f - hbH) / 1.1f;
-
-    enemy->hitBox.x = enemy->pos.x + offsetX;
-    enemy->hitBox.y = enemy->pos.y + offsetY;
+    enemy->hitBox.x = enemy->pos.x;
+    enemy->hitBox.y = enemy->pos.y;
 }
 
 void enemyMovement(Enemy *enemy, Player players[MAX_PLAYERS], int deltatime, World world)
@@ -97,7 +91,7 @@ void enemyMovement(Enemy *enemy, Player players[MAX_PLAYERS], int deltatime, Wor
     futureHitBox.x = nextX;
     futureHitBox.y = enemy->pos.y;
 
-    if (!tileCollision(world, futureHitBox, NULL, enemy))
+    if (!tileCollision(world, futureHitBox, enemy->hitBox, ENUM_MARGIN_SKELETON))
     {
         enemy->pos.x = nextX;
     }
@@ -105,7 +99,7 @@ void enemyMovement(Enemy *enemy, Player players[MAX_PLAYERS], int deltatime, Wor
     futureHitBox.x = enemy->pos.x;
     futureHitBox.y = nextY;
 
-    if (!tileCollision(world, futureHitBox, NULL, enemy))
+    if (!tileCollision(world, futureHitBox, enemy->hitBox, ENUM_MARGIN_SKELETON))
     {
         enemy->pos.y = nextY;
     }

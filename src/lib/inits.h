@@ -45,6 +45,11 @@ typedef enum
     ATTACK_NORTH
 } AniState;
 
+typedef enum {
+    ENUM_MARGIN_PLAYER,
+    ENUM_MARGIN_SKELETON
+} SpriteMargins;
+
 typedef enum
 {
     CLASS_NONE, // 0

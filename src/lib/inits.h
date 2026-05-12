@@ -14,10 +14,9 @@
 #define PLAYER_NAME_MAX 30
 
 #define MAX_ENEMIES 1
-#define ENEMY_SIZE 48
-#define ENEMY_SPRITE_SIZE 32
+#define SKELETON_SIZE 32
 #define ENEMY_AGGRO_RANGE 400
-#define ENEMY_ATTACK_RANGE 40
+#define ENEMY_ATTACK_RANGE 28
 
 typedef struct
 {
@@ -139,6 +138,7 @@ typedef struct
 
     int moveX;
     int moveY;
+    char sizeModifier;
 } Enemy;
 
 typedef struct

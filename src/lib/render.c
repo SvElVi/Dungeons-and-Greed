@@ -173,8 +173,8 @@ int renderGamePlay(AppState state, Player *player)
         else
         {
             SDL_FRect dst = {
-                .w = ENEMY_SPRITE_SIZE * RENDER_SCALE,
-                .h = ENEMY_SPRITE_SIZE * RENDER_SCALE,
+                .w = SKELETON_SIZE * RENDER_SCALE,
+                .h = SKELETON_SIZE * RENDER_SCALE,
                 .x = state->camera.x + (player->pos.x - state->enemies[renderOrder[i].x - MAX_PLAYERS].pos.x),
                 .y = state->camera.y + (player->pos.y - state->enemies[renderOrder[i].x - MAX_PLAYERS].pos.y)};
 

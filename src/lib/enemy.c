@@ -150,19 +150,19 @@ void animateEnemies(Enemy enemies[MAX_ENEMIES], Uint8 *counter, Uint16 framerate
             e->aniBox.x = 0;
         }
 
-        int currentFrame = (int)e->aniBox.x / ENEMY_SPRITE_SIZE;
+        int currentFrame = (int)e->aniBox.x / SKELETON_SIZE;
 
         if (e->state == ENEMY_DEAD)
         {
             if (currentFrame < maxFrames - 1)
             {
-                e->aniBox.x += ENEMY_SPRITE_SIZE;
+                e->aniBox.x += SKELETON_SIZE;
             }
         }
         else
         {
-            e->aniBox.x += ENEMY_SPRITE_SIZE;
-            if ((int)e->aniBox.x >= ENEMY_SPRITE_SIZE * maxFrames)
+            e->aniBox.x += SKELETON_SIZE;
+            if ((int)e->aniBox.x >= SKELETON_SIZE * maxFrames)
             {
                 e->aniBox.x = 0;
             }
@@ -217,16 +217,22 @@ static void updateEnemyClass(Enemy *enemy, SDL_Renderer *renderer)
     enemy->texture = enemy->texIdle;
 }
 
-void updateEnemy(Enemy *enemy, Vector2D pos, Enemy_Type type, Stats stats, SDL_Renderer *renderer)
+void updateEnemy(Enemy *enemy, Vector2D pos, Enemy_Type type, Stats stats, SDL_Renderer *renderer, char sizeModifier)
 {
 
-    enemy->aniBox.w = ENEMY_SPRITE_SIZE;
-    enemy->aniBox.h = ENEMY_SPRITE_SIZE;
+    enemy->aniBox.w = SKELETON_SIZE;
+    enemy->aniBox.h = SKELETON_SIZE;
     enemy->aniBox.x = 0;
     enemy->aniBox.y = 0;
 
     enemy->hitBox.w = 12 * RENDER_SCALE;
     enemy->hitBox.h = 5 * RENDER_SCALE;
+
+    if(sizeModifier) { //Set modifier if input value
+        enemy->sizeModifier = sizeModifier;
+    } else {
+        enemy->sizeModifier = 1;
+    }
 
     enemy->pos = pos;
     syncEnemyHitbox(enemy);

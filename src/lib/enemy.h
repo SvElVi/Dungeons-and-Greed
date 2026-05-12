@@ -17,6 +17,6 @@ void animateEnemies(Enemy enemies[MAX_ENEMIES], Uint8* counter, Uint16 framerate
 
 static void updateEnemyClass(Enemy* enemy, SDL_Renderer* renderer);
 
-void updateEnemy(Enemy* enemy, Vector2D pos, Enemy_Type type, Stats stats, SDL_Renderer* renderer);
+void updateEnemy(Enemy *enemy, Vector2D pos, Enemy_Type type, Stats stats, SDL_Renderer *renderer, char sizeModifier);
 
 #endif

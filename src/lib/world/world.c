@@ -85,7 +85,7 @@ void spawnDungeonEnemies(World w, AppState state, Chunk* c,Uint8 nrOfEnemies) {
                 enemyPos.y = chunkPos.y - y*TILE_SIZE*RENDER_SCALE;
                 enemyPos.x = chunkPos.x - x*TILE_SIZE*RENDER_SCALE;
 
-                updateEnemy(&state->enemies[nrOfEnemies], enemyPos, ENEMY_SKELETON, enemyStats, state->renderer);
+                updateEnemy(&state->enemies[nrOfEnemies], enemyPos, ENEMY_SKELETON, enemyStats, state->renderer, 0);
             }
         }
     }

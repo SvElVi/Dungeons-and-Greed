@@ -70,13 +70,12 @@ int renderFrame(AppState state, Player *player)
 }
 
 int render(AppState state, Player *player)
-{ // current but should be changed to call back style, also with vsync and variable refreshrate
+{
     Uint64 currentTime = SDL_GetTicks();
     if (currentTime >= state->lastTime + SDL_round(1000 / state->framerate))
-    { // renderflag unused
+    {
         state->deltaTime = currentTime - state->lastTime;
         state->lastTime = currentTime;
-        // if(state->renderFlag) {
         if (state->gameState == GAME_PLAYING)
         {
             for (int i = 0; i < MAX_PLAYERS; i++)
@@ -96,7 +95,6 @@ int render(AppState state, Player *player)
 
         if (renderFrame(state, player))
             return SDL_APP_FAILURE;
-        // }
     }
     return SDL_APP_CONTINUE;
 }
@@ -175,8 +173,8 @@ int renderGamePlay(AppState state, Player *player)
         else
         {
             SDL_FRect dst = {
-                .w = ENEMY_SPRITE_SIZE * RENDER_SCALE*1.5,
-                .h = ENEMY_SPRITE_SIZE * RENDER_SCALE*1.5,
+                .w = ENEMY_SPRITE_SIZE * RENDER_SCALE,
+                .h = ENEMY_SPRITE_SIZE * RENDER_SCALE,
                 .x = state->camera.x + (player->pos.x - state->enemies[renderOrder[i].x - MAX_PLAYERS].pos.x),
                 .y = state->camera.y + (player->pos.y - state->enemies[renderOrder[i].x - MAX_PLAYERS].pos.y)};
 

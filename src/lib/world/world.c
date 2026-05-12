@@ -75,8 +75,8 @@ void spawnDungeonEnemies(World w, AppState state, Chunk* c,Uint8 nrOfEnemies) {
     Vector2D chunkPos, enemyPos;
     Stats enemyStats = {100, 100, 0, 5, 10, 1};
 
-    chunkPos.y = -((c-w->chunks)/(int)(SDL_sqrt(w->size))*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE - 32*RENDER_SCALE);
-    chunkPos.x = -((c-w->chunks)%(int)(SDL_sqrt(w->size))*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE - 15*RENDER_SCALE);
+    chunkPos.y = -((c-w->chunks)/(int)(SDL_sqrt(w->size))*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE - 23*RENDER_SCALE);
+    chunkPos.x = -((c-w->chunks)%(int)(SDL_sqrt(w->size))*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE - 7*RENDER_SCALE);
 
     for(int y = 0; y < CHUNK_SIZE && nrOfEnemies; y++) {
         for(int x = 0; x < CHUNK_SIZE && nrOfEnemies; x++) {
@@ -574,7 +574,10 @@ bool tileCollision(World w, SDL_FRect futurePos, SDL_FRect hitbox, SpriteMargins
     if(marginType == ENUM_MARGIN_PLAYER) {
         points[0].x = futurePos.x - 20*RENDER_SCALE;
         points[0].y = futurePos.y - 40*RENDER_SCALE;
-    } else {
+    } else if(marginType == ENUM_MARGIN_SKELETON) {
+        points[0].x = futurePos.x - 9*RENDER_SCALE;
+        points[0].y = futurePos.y - 26*RENDER_SCALE;
+    }else {
         points[0].x = futurePos.x;
         points[0].y = futurePos.y;
     }

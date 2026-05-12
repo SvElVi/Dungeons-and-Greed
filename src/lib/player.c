@@ -28,12 +28,12 @@ bool willCollide(Player* player, Player players[MAX_PLAYERS], Enemy enemies[MAX_
         if(collision(futurePos, players[i].hitBox)) //Kolla din framtida position med hitbox av andra spelare
             return true;
     }
-    for(int i = 0; i < MAX_ENEMIES;i++)
-    {
-        if(collision(futurePos, enemies[i].hitBox)){
-            return true;
-        }     
-    }
+    // for(int i = 0; i < MAX_ENEMIES;i++)
+    // {
+    //     if(collision(futurePos, enemies[i].hitBox)){
+    //         return true;
+    //     }     
+    // }
     if(tileCollision(world, futurePos, player->hitBox, ENUM_MARGIN_PLAYER)) return true;
 
     return false;

@@ -13,6 +13,6 @@ void changeSeed(World w, Uint64 seed); //Change the world seed
 
 bool renderDungeon(AppState state, Player* player); //Render the vicinity of the local player
 
-bool tileCollision(World w, SDL_FRect futurePos, Player* player, Enemy *enemy); //Collision with the world
+bool tileCollision(World w, SDL_FRect futurePos, Player* player); //Collision with the world
 
 #endif

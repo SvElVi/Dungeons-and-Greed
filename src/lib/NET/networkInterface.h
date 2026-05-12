@@ -38,43 +38,30 @@ typedef struct
 
 typedef struct networkInterface *networkInterface;
 
-// Public
 int startSDLNet(void);
 
-// Public
 void stopSDLNet(void);
 
-// Public
 NetworkInterface createNetworkInterface();
 
-// Public
 void destroyNetworkInterface(NetworkInterface networkInterface);
 
-// Public
 void allocUDPPacket(NetworkInterface networkInterface);
 
-// Private
 void createUDPSocket(NetworkInterface networkInterface, int portNumber);
 
-// Private
 void destoryUDPSocket(NetworkInterface networkInterface);
 
-// Private
 void checkForDatagram(NetworkInterface networkInterface, NETPacket *packet);
 
-// Private
 void sendDatagram(NetworkInterface networkInterface, NET_Address *ptrRxAdr, int portnumber, NETPacket *packet);
 
-// Private
 bool readTCPData(NETPacket *packet, NET_StreamSocket *streamSocket);
 
-// Private
 void sendTCPData(NETPacket *packet, NET_StreamSocket *streamSocket);
 
-// Private
 bool initAddress(NET_Address **adress, char *adr);
 
-// Private
 NET_Address **netGetServerIP(NetworkInterface networkInterface);
 
 void netSetTCPClient(NetworkInterface networkInterface, NET_StreamSocket *streamSocket);

@@ -5,6 +5,10 @@
 
 typedef struct enemies *enemies;
 
+Enemies createEnemies();
+
+void destoryEnemies(Enemies ptrEnemies);
+
 int nearestPlayer(Enemy* enemy, Player players[MAX_PLAYERS]);
 
 void enemyMovement(Enemy *enemy, Player players[MAX_PLAYERS], int deltatime, World world);

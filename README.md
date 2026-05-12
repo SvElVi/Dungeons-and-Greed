@@ -54,3 +54,5 @@ Extra steps if you want syntax handling in Visual Studio Code.
 "${workspaceFolder}/vendored/SDL/include"
 ```
 For all the other major SDL libraries do the same, e.g. *SDL_image*.
+
+**4.** It is possible you still have error squiggles. To fix these you can go to *Show and Run Commands*, then *C/C++: Select intelliSence Configuration* and select *gcc.exe*.

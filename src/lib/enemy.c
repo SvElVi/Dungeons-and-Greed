@@ -10,6 +10,24 @@
 #define SKELETON_DAMAGE_FRAMES 5
 #define SKELETON_DEATH_FRAMES 17
 
+struct enemies {
+    int amountOfEnemies;
+    Enemy enemies[MAX_ENEMIES];
+};
+
+Enemies createEnemies() {
+    Enemies ptr = SDL_calloc(1, sizeof(struct enemies));
+    if (ptr != NULL) {
+        SDL_Log("Created Enemies ADT!\n");
+    }
+    return ptr;
+}
+
+void destoryEnemies(Enemies ptrEnemies) {
+    SDL_free(ptrEnemies);
+}
+
+
 int nearestPlayer(Enemy *enemy, Player players[MAX_PLAYERS])
 {
     int nearest = -1;

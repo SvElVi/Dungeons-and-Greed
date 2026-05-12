@@ -56,6 +56,11 @@ int renderFrame(AppState state, Player *player)
 
     case GAME_SERVER_SHUTDOWN:
         string_screen(state, "Server shutdown! Press SPACE to continue!");
+        break;
+
+    case GAME_DEAD:
+        string_screen(state, "DEAD!");
+        break;
     }
 
     SDL_RenderPresent(state->renderer);

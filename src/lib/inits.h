@@ -182,6 +182,7 @@ typedef enum GameState
     GAME_PAUSE,
     GAME_OVER,
     GAME_SERVER_SHUTDOWN,
+    GAME_DEAD,
     SERVER
 } GameState;
 
@@ -206,6 +207,10 @@ struct networkInterface;
 
 typedef struct networkInterface *NetworkInterface;
 
+struct enemies;
+
+typedef struct enemies *Enemies;
+
 struct appState
 {
     SDL_Window *window;                 // LOCAL
@@ -225,6 +230,7 @@ struct appState
     Player *curPlayerPtr;        // LOCAL
 
     Enemy enemies[MAX_ENEMIES];
+    Enemies enemiesADT;
 
     Uint8 animationTime;      // LOCAL
     Uint8 enemyAnimationTime; // LOCAL

@@ -3,6 +3,8 @@
 
 #include "render.h"
 
+typedef struct enemies *enemies;
+
 int nearestPlayer(Enemy* enemy, Player players[MAX_PLAYERS]);
 
 void enemyMovement(Enemy *enemy, Player players[MAX_PLAYERS], int deltatime, World world);

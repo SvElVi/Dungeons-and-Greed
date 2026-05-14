@@ -22,7 +22,8 @@ typedef enum
     UPDATE_CLIENT_PLAYERS,
     PLAYER_EXIT,
     PLAYER_EXIT_APPROVED,
-    SERVER_SHUTDOWN
+    SERVER_SHUTDOWN,
+    PLAYER_DEAD
 } NetCommands;
 
 typedef struct

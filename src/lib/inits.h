@@ -7,7 +7,7 @@
 #define DEBUG 1
 #endif
 
-#define MAX_PLAYERS 1
+#define MAX_PLAYERS 2
 #define PLAYER_SIZE 48
 #define RENDER_SCALE 4
 #define ANIMATION_TIME 4

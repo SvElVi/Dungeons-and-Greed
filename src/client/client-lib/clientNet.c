@@ -94,6 +94,13 @@ void clientNetStateLoop(AppState state)
             {
                 switch (inGameTCPPacket.command)
                 {
+                case PLAYER_DEAD:
+                    if(inGameTCPPacket.PlayerID == state->curPlayerPtr->playerID)
+                    {
+                    state->gameState = GAME_DEAD;                        
+                    }
+                    ingameTCPFlag = 1;
+                    break;
                 case SERVER_SHUTDOWN:
                     state->gameState = GAME_SERVER_SHUTDOWN;
                     ingameTCPFlag = 1;

@@ -13,6 +13,4 @@ void updateServerPlayer(AppState state, NETPacket *packet);
 
 void makeBroadcastPacket(AppState state, NETPacket *packet);
 
-void broadcastTCPDeath(AppState state, int playerID);
-
 #endif

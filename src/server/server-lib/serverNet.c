@@ -40,12 +40,3 @@ void makeBroadcastPacket(AppState state, NETPacket *packet)
         // memcpy(&packet->players[i], &state->connectedPlayers.players[i], sizeof(Player));
     }
 }
-
-void broadcastTCPDeath(AppState state, int playerID)
-{
-    NETPacket packet = {0};
-    packet.command = PLAYER_DEAD;
-    packet.PlayerID = playerID;
-
-    broadcastTCPToClients(state, &packet);
-}

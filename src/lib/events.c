@@ -55,21 +55,17 @@ int checkEvents(AppState state, SDL_Event *event)
     int quitEvent = QuitEvent(state, event, keylist);
     if (quitEvent)
         return quitEvent;
-
-    static bool escLast = false;
-    if (state->gameState == GAME_WAITING_FOR_OTHER_PLAYERS ||
-        state->gameState == GAME_VERIFYING_HANDSHAKE ||
-        state->gameState == GAME_HANDSHAKE ||
-        state->gameState == GAME_IP_INIT_CHECK ||
-        state->gameState == GAME_IP_INIT)
+    if (state->gameState == GAME_WAITING_FOR_OTHER_PLAYERS || state->gameState == GAME_VERIFYING_HANDSHAKE ||
+        state->gameState == GAME_HANDSHAKE || state->gameState == GAME_IP_INIT_CHECK || state->gameState == GAME_IP_INIT)
     {
+        static bool escLast = false;
         if (keylist[SDL_SCANCODE_ESCAPE] && !escLast)
         {
             state->gameState = GAME_JOIN;
             SDL_APP_CONTINUE;
         }
+        escLast = keylist[SDL_SCANCODE_ESCAPE];
     }
-
     if (state->gameState == GAME_MENY)
     {
         static bool upLast = false;
@@ -119,9 +115,9 @@ int checkEvents(AppState state, SDL_Event *event)
         downLast = keylist[SDL_SCANCODE_DOWN];
         enterLast = keylist[SDL_SCANCODE_RETURN];
     }
-
     if (state->gameState == GAME_JOIN)
     {
+
         if (event->type == SDL_EVENT_KEY_DOWN)
         {
             if (event->key.key == SDLK_BACKSPACE)
@@ -161,7 +157,7 @@ int checkEvents(AppState state, SDL_Event *event)
             }
         }
     }
-    /*if (state->gameState == GAME_LOBBY)           //hann ej implementeras
+    if (state->gameState == GAME_LOBBY)
     {
         Player *p = &state->players[0];
 
@@ -188,8 +184,9 @@ int checkEvents(AppState state, SDL_Event *event)
                 p->class = (p->class - 1 + (CLASS_KNIGHT + 1)) % (CLASS_KNIGHT + 1);
             }
         }
-    }*/
+    }
 
+    static bool escLast = false;
     if (state->gameState == GAME_PLAYING)
     {
         moveFlag(&(state->curPlayerPtr->flags), keylist, &(state->computedEvent));
@@ -215,14 +212,7 @@ int checkEvents(AppState state, SDL_Event *event)
     {
         if (keylist[SDL_SCANCODE_SPACE])
         {
-            state->gameState = GAME_MENY;
-        }
-    }
-    else if (state->gameState == GAME_DEAD)
-    {
-        if (keylist[SDL_SCANCODE_ESCAPE])
-        {
-            state->gameState = GAME_MENY;
+            state->gameState = GAME_INIT;
         }
     }
     escLast = keylist[SDL_SCANCODE_ESCAPE];

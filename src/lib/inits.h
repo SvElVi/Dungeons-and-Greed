@@ -7,13 +7,13 @@
 #define DEBUG 1
 #endif
 
-#define MAX_PLAYERS 1
+#define MAX_PLAYERS 2
 #define PLAYER_SIZE 48
 #define RENDER_SCALE 4
 #define ANIMATION_TIME 4
 #define PLAYER_NAME_MAX 30
 
-#define MAX_ENEMIES 1
+#define MAX_ENEMIES 2
 #define SKELETON_SIZE 32
 #define ENEMY_AGGRO_RANGE 400
 #define ENEMY_ATTACK_RANGE 28

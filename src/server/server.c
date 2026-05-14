@@ -54,7 +54,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once 
         Vector2D tempVec = {0, 0};
         char name[PLAYER_NAME_MAX];
         SDL_snprintf(name, sizeof(name), "Player%d", i + 1);
-        updatePlayer(&(state->players[i]), tempVec, CLASS_NONE, defaultHp, state->renderer);
+        updatePlayer(&(state->connectedPlayers.players[i]), tempVec, CLASS_NONE, defaultHp, state->renderer);
         SDL_strlcpy(state->players[i].name, name, sizeof(state->players[i].name));
         state->players[i].connected = false;
     }
@@ -62,7 +62,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once 
     // enemy
     Vector2D enemyPos = {200, 100};
     Stats enemyStats = {100, 100, 0, 5, 10, 1};
-    updateEnemy(&state->enemies[0], enemyPos, ENEMY_SKELETON, enemyStats, state->renderer);
+    updateEnemy(&state->enemies[0], enemyPos, ENEMY_SKELETON, enemyStats, state->renderer, 1);
     *appstate = state; // Share the appstate to callbacks below
     // state->renderFlag = 1;
 
@@ -223,6 +223,10 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         for (int i = 0; i < state->connectedPlayers.amountOfPlayers; i++)
         {
             broadcastPacket.PlayerID = i;
+            if(state->connectedPlayers.players[i].stats.health <= 0)
+            {
+                broadcastTCPDeath(state, i);
+            }
             sendDatagram(state->ptrNetworkInterface, state->connectedPlayers.players[i].ipAddress, CLIENT_UDP_PORT, &broadcastPacket);
         }
         state->serverState = GAME_ONGOING;

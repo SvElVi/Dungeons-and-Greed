@@ -196,8 +196,8 @@ void updatePlayer(Player* player, Vector2D pos, Player_Class class, Stats stats,
 }
 
 void updateServerPlayerIP(AppState state, int playerID, NET_StreamSocket *serverStreamSocket) {
-    state->connectedPlayers.players[playerID].ipAddress = NET_ResolveHostname(NET_GetAddressString(NET_GetStreamSocketAddress(serverStreamSocket)));
-    NET_WaitUntilResolved(state->connectedPlayers.players[playerID].ipAddress, RESOLVE_ADDRESS_TIMEOUT);
+    state->players[playerID].ipAddress = NET_ResolveHostname(NET_GetAddressString(NET_GetStreamSocketAddress(serverStreamSocket)));
+    NET_WaitUntilResolved(state->players[playerID].ipAddress, RESOLVE_ADDRESS_TIMEOUT);
 
 }
 

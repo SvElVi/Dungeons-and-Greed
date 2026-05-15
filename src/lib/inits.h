@@ -147,15 +147,6 @@ typedef struct
 
 } PlayerLocations;
 
-// Serverside players
-typedef struct
-{
-    int amountOfPlayers;
-    Player players[MAX_PLAYERS];
-    NET_StreamSocket *tcpClient[MAX_PLAYERS];
-
-} ConnectedPlayers;
-
 typedef struct
 {
     int amountOfPlayers;
@@ -228,6 +219,7 @@ struct appState
     ServerState serverState;
     GameState gameState;
     bool onlineMode;
+    int amountOfPlayers;
     Menu mainMenu;
 
     Player players[MAX_PLAYERS]; // SEE STRUCT
@@ -245,7 +237,6 @@ struct appState
     // WORLD
     World world; // LOCAL
     int seed;
-    ConnectedPlayers connectedPlayers; // SERVER ONLY
 
     char hostIP[16];
     int hostIPLen;

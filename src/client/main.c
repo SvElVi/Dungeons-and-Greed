@@ -15,6 +15,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once 
 
     AppState state = createAppState();
     state->gameState = GAME_INIT;
+    state->amountOfPlayers = 0;
     state->mainMenu = (Menu){
         .menuOptions = {"Play", "Join", "Quit"},
         .selected = 0,
@@ -32,7 +33,6 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once 
 
     state->ptrNetworkInterface = createNetworkInterface();
     allocUDPPacket(state->ptrNetworkInterface);
-    state->connectedPlayers.amountOfPlayers = 0;
 
     // -------- END NET --------
     state->running = true; // Custom flag to mark the program as running

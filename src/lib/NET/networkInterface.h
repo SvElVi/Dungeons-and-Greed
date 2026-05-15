@@ -65,9 +65,11 @@ bool initAddress(NET_Address **adress, char *adr);
 
 NET_Address **netGetServerIP(NetworkInterface networkInterface);
 
-void netSetTCPClient(NetworkInterface networkInterface, NET_StreamSocket *streamSocket);
+void netSetTCPClient(NetworkInterface networkInterface, NET_StreamSocket *streamSocket, int playerID);
 
-NET_StreamSocket *netGetStreamSocket(NetworkInterface networkInterface);
+NET_StreamSocket *netGetStreamSocket(NetworkInterface networkInterface, int playerID);
+
+NET_StreamSocket **netGetStreamSocketPtP(NetworkInterface networkInterface, int playerID);
 
 void netSetTCPServer(NetworkInterface networkInterface, NET_Server *server);
 

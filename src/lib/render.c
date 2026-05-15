@@ -46,7 +46,7 @@ int renderFrame(AppState state, Player *player)
 
     case GAME_WAITING_FOR_OTHER_PLAYERS:
         char tempStr[64];
-        snprintf(tempStr, 64, "Waiting for other players... %d of %d connected!", state->connectedPlayers.amountOfPlayers, MAX_PLAYERS);
+        snprintf(tempStr, 64, "Waiting for other players... %d of %d connected!", state->amountOfPlayers, MAX_PLAYERS);
         string_screen(state, tempStr);
         break;
 

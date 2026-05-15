@@ -15,7 +15,7 @@ struct networkInterface
 
     // Server TCP
     NET_Server *tcpServer;
-    NET_StreamSocket *tcpClient;
+    NET_StreamSocket *tcpClient[MAX_PLAYERS];
 
     unsigned char tcpBuffer[MAX_PLAYERS][sizeof(NETPacket)];
 };
@@ -158,14 +158,20 @@ NET_Address *netGetServerIPForTX(NetworkInterface networkInterface)
     return networkInterface->serverIP;
 }
 
-void netSetTCPClient(NetworkInterface networkInterface, NET_StreamSocket *streamSocket)
+void netSetTCPClient(NetworkInterface networkInterface, NET_StreamSocket *streamSocket, int playerID)
 {
-    networkInterface->tcpClient = streamSocket;
+    networkInterface->tcpClient[playerID] = streamSocket;
 }
 
-NET_StreamSocket *netGetStreamSocket(NetworkInterface networkInterface)
+NET_StreamSocket *netGetStreamSocket(NetworkInterface networkInterface, int playerID)
 {
-    return networkInterface->tcpClient;
+    return networkInterface->tcpClient[playerID];
+}
+
+// Pointe-to-pointer
+NET_StreamSocket **netGetStreamSocketPtP(NetworkInterface networkInterface, int playerID)
+{
+    return &networkInterface->tcpClient[playerID];
 }
 
 void netSetTCPServer(NetworkInterface networkInterface, NET_Server *server)

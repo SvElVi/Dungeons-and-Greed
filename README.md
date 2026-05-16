@@ -22,7 +22,7 @@ pacman -S mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-ninja mingw-w64-ucrt-x
 git clone https://github.com/libsdl-org/SDL.git vendored/SDL
 git clone https://github.com/libsdl-org/SDL_net.git vendored/SDL_net
 ```
-Keep in mind that image,ttf and mixer also exists and can be used with the command down below but has issues with adding vendored repos.
+Keep in mind that image, ttf and mixer also exist and can be used with the command down below but has issues with adding vendored repos. These libraries are used in compilation but not always needed if unused in the code.
 ```
 git clone https://github.com/libsdl-org/SDL_image.git vendored/SDL_image
 git clone https://github.com/libsdl-org/SDL_ttf.git vendored/SDL_ttf

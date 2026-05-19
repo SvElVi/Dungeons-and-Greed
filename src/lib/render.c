@@ -87,7 +87,7 @@ int render(AppState state, Player *player)
             for (int i = 0; i < MAX_ENEMIES; i++)
             {
                 if (state->enemies[i].state != ENEMY_DEAD)
-                    enemyMovement(&state->enemies[i], state->players, state->deltaTime, state->world);
+                    enemyMovement(state->enemies, i, state->players, state->deltaTime, state->world);
             }
             playerEnemyCollision(state->curPlayerPtr, state->enemies, state->deltaTime);
             animateEnemies(state->enemies, &state->enemyAnimationTime, state->framerate, &state->computedEvent);

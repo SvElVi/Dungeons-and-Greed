@@ -1,4 +1,5 @@
 #include "enemy.h"
+#include "player.h"
 #include <math.h>
 
 #define ENEMY_SPEED 0.15f * RENDER_SCALE
@@ -27,13 +28,13 @@ void destoryEnemies(Enemies ptrEnemies) {
     SDL_free(ptrEnemies);
 }
 
-bool enemyCollision(SDL_FRect futurePos, Enemy enemies[MAX_ENEMIES]) {
-    // for(int i = 0; i < MAX_ENEMIES;i++)
-    // {
-    //     if(collision(futurePos, enemies[i].hitBox)){
-    //         return true;
-    //     }     
-    // }
+bool enemyCollision(SDL_FRect futurePos, Enemy enemies[MAX_ENEMIES], int local) {
+    for(int i = 0; i < MAX_ENEMIES;i++)
+    {
+        if(collision(futurePos, enemies[i].hitBox) && i != local){
+            return true;
+        }     
+    }
     return false;
 }
 
@@ -100,7 +101,7 @@ void enemyMovement(Enemy enemies[MAX_ENEMIES], int currentEnemy, Player players[
     futureHitBox.x = nextX;
     futureHitBox.y = enemies[currentEnemy].pos.y;
 
-    if (!tileCollision(world, futureHitBox, enemies[currentEnemy].hitBox, ENUM_MARGIN_SKELETON) && !enemyCollision(futureHitBox, enemies))
+    if (!tileCollision(world, futureHitBox, enemies[currentEnemy].hitBox, ENUM_MARGIN_SKELETON) && !enemyCollision(futureHitBox, enemies, currentEnemy))
     {
         enemies[currentEnemy].pos.x = nextX;
     }
@@ -108,7 +109,7 @@ void enemyMovement(Enemy enemies[MAX_ENEMIES], int currentEnemy, Player players[
     futureHitBox.x = enemies[currentEnemy].pos.x;
     futureHitBox.y = nextY;
 
-    if (!tileCollision(world, futureHitBox, enemies[currentEnemy].hitBox, ENUM_MARGIN_SKELETON) && !enemyCollision(futureHitBox, enemies))
+    if (!tileCollision(world, futureHitBox, enemies[currentEnemy].hitBox, ENUM_MARGIN_SKELETON) && !enemyCollision(futureHitBox, enemies, currentEnemy))
     {
         enemies[currentEnemy].pos.y = nextY;
     }

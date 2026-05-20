@@ -93,12 +93,16 @@ void spawnDungeonEnemies(World w, AppState state, Chunk* c, Uint8 nrOfEnemies, U
 }
 
 void populateEnemies(World w, AppState state) {
-    int enemyCount = 0;
+    int enemyCount = 0, temp;
 
     for(int i = 0; i < w->size; i++) {
         if((w->chunks+i)->tileType[0][0] != BLANK && enemyCount != MAX_ENEMIES && !SDL_rand(2) && (w->chunks+i) != w->firstChunk) {
-            spawnDungeonEnemies(w, state, (w->chunks+i), 5, enemyCount);
-            enemyCount += 5;
+            temp = SDL_rand(4)+4;
+            if((temp+enemyCount) >= MAX_ENEMIES) {
+                temp = MAX_ENEMIES - enemyCount;
+            }
+            spawnDungeonEnemies(w, state, (w->chunks+i), temp, enemyCount);
+            enemyCount += temp;
         }
     }
 

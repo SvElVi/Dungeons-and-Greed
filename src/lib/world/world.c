@@ -67,29 +67,42 @@ void tpDungeon(World w, AppState state) {
     }
 }
 
-void spawnDungeonEnemies(World w, AppState state, Chunk* c,Uint8 nrOfEnemies) {
-    if(nrOfEnemies > MAX_ENEMIES) {
-        nrOfEnemies = MAX_ENEMIES;
+void spawnDungeonEnemies(World w, AppState state, Chunk* c, Uint8 nrOfEnemies, Uint8 offset) {
+    if((nrOfEnemies+offset) > MAX_ENEMIES) {
+        nrOfEnemies = MAX_ENEMIES-offset;
     } 
 
     Vector2D chunkPos, enemyPos;
     Stats enemyStats = {100, 100, 0, 5, 10, 1};
 
-    chunkPos.y = -((c-w->chunks)/(int)(SDL_sqrt(w->size))*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE - 23*RENDER_SCALE);
-    chunkPos.x = -((c-w->chunks)%(int)(SDL_sqrt(w->size))*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE - 7*RENDER_SCALE);
+    chunkPos.y = -((c-w->chunks)/(int)(SDL_sqrt(w->size))*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE - 12*RENDER_SCALE);
+    chunkPos.x = -((c-w->chunks)%(int)(SDL_sqrt(w->size))*CHUNK_SIZE*TILE_SIZE*RENDER_SCALE - 5*RENDER_SCALE);
 
     for(int y = 0; y < CHUNK_SIZE && nrOfEnemies; y++) {
         for(int x = 0; x < CHUNK_SIZE && nrOfEnemies; x++) {
-            if(w->firstChunk->tileType[y][x] == FLOOR) {
+            if(c->tileType[y][x] == FLOOR) {
                 nrOfEnemies--;
                 enemyPos.y = chunkPos.y - y*TILE_SIZE*RENDER_SCALE;
                 enemyPos.x = chunkPos.x - x*TILE_SIZE*RENDER_SCALE;
 
-                updateEnemy(&state->enemies[nrOfEnemies], enemyPos, ENEMY_SKELETON, enemyStats, state->renderer, 0);
+                updateEnemy(&state->enemies[nrOfEnemies+offset], enemyPos, ENEMY_SKELETON, enemyStats, state->renderer, 0);
             }
         }
     }
     
+}
+
+void populateEnemies(World w, AppState state) {
+    int enemyCount = 0;
+
+    for(int i = 0; i < w->size; i++) {
+        if((w->chunks+i)->tileType[0][0] != BLANK && enemyCount != MAX_ENEMIES && !SDL_rand(2) && (w->chunks+i) != w->firstChunk) {
+            spawnDungeonEnemies(w, state, (w->chunks+i), 5, enemyCount);
+            enemyCount += 5;
+        }
+    }
+
+    SDL_Log("%d Enemies spawned", enemyCount);
 }
 
 void generateConnections(Chunk* c, bool genDir[4]) {
@@ -523,8 +536,8 @@ void polishDungeon(World w) { //Fix tileset in dungeon
 
 void createDungeon(World w, Uint8 nrOfRooms, AppState state, bool tp) {
     generateDungeon(w, &nrOfRooms);
+    populateEnemies(w, state); //Should be Serverside
     if(tp) tpDungeon(w, state); //Should only be used Server side
-    spawnDungeonEnemies(w, state, w->firstChunk, 2);
     polishDungeon(w);
 
 }

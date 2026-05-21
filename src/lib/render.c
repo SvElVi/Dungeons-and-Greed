@@ -61,6 +61,9 @@ int renderFrame(AppState state, Player *player)
     case GAME_DEAD:
         string_screen(state, "DEAD!");
         break;
+    case GAME_NEXT_FLOOR:
+        string_screen(state, "You win");
+        break;
     }
 
     SDL_RenderPresent(state->renderer);

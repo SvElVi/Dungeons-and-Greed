@@ -101,7 +101,7 @@ void enemyMovement(Enemy enemies[MAX_ENEMIES], int currentEnemy, Player players[
     futureHitBox.x = nextX;
     futureHitBox.y = enemies[currentEnemy].pos.y;
 
-    if (!tileCollision(world, futureHitBox, enemies[currentEnemy].hitBox, ENUM_MARGIN_SKELETON) && !enemyCollision(futureHitBox, enemies, currentEnemy))
+    if (!tileCollision(world, futureHitBox, enemies[currentEnemy].hitBox, ENUM_MARGIN_SKELETON, 0, 0) && !enemyCollision(futureHitBox, enemies, currentEnemy))
     {
         enemies[currentEnemy].pos.x = nextX;
     }
@@ -109,7 +109,7 @@ void enemyMovement(Enemy enemies[MAX_ENEMIES], int currentEnemy, Player players[
     futureHitBox.x = enemies[currentEnemy].pos.x;
     futureHitBox.y = nextY;
 
-    if (!tileCollision(world, futureHitBox, enemies[currentEnemy].hitBox, ENUM_MARGIN_SKELETON) && !enemyCollision(futureHitBox, enemies, currentEnemy))
+    if (!tileCollision(world, futureHitBox, enemies[currentEnemy].hitBox, ENUM_MARGIN_SKELETON, 0, 0) && !enemyCollision(futureHitBox, enemies, currentEnemy))
     {
         enemies[currentEnemy].pos.y = nextY;
     }

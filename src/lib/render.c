@@ -80,7 +80,7 @@ int render(AppState state, Player *player)
         {
             for (int i = 0; i < MAX_PLAYERS; i++)
             {
-                movement(&(state->players[i]), state->players, state->enemies, state->deltaTime, state->world);
+                movement(&(state->players[i]), state->players, state->enemies, state->deltaTime, state->world, &(state->gameState));
             }
             animatePlayers(state->players, &(state->animationTime), state->framerate, &(state->computedEvent));
 

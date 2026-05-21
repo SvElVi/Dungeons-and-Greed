@@ -179,7 +179,8 @@ typedef enum GameState
     GAME_OVER,
     GAME_SERVER_SHUTDOWN,
     GAME_DEAD,
-    SERVER
+    SERVER,
+    GAME_NEXT_FLOOR
 } GameState;
 
 // Serverside state

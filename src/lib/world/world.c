@@ -354,6 +354,15 @@ bool generateRoom(Chunk* org, Chunk* c, int* wSize, Uint8* nrOfRooms, Uint8 fDir
             generateMirroredRoom(c, circleCubeRoom, genDir, 1, 1);
             break;
     }
+
+    dir = 0;
+    for(int i = 0; i < 4; i++) {
+        dir += genDir[i];
+    }
+
+    if(dir == 1 && c->tileType[24][24] == FLOOR && fDir != 5) {
+        c->tileType[24][24] = EXIT;
+    }
 }
 
 void generateDungeon(World w, Uint8* nrOfRooms) { //Room placements
@@ -526,6 +535,8 @@ void polishDungeon(World w) { //Fix tileset in dungeon
                                 tempS->tileType[y][x] = 40;
                             }
                         }
+                    } else if(chunks->tileType[y][x] == EXIT) {
+                        tempS->tileType[y][x] = 71;
                     }
                 }
             }
@@ -580,8 +591,8 @@ bool renderDungeon(AppState state, Player* player) {
     return 1;
 }
 
-bool tileCollision(World w, SDL_FRect futurePos, SDL_FRect hitbox, SpriteMargins marginType) {
-    int Wsize = (int)SDL_sqrt(w->size);
+bool tileCollision(World w, SDL_FRect futurePos, SDL_FRect hitbox, SpriteMargins marginType, GameState* gState, bool isPlayer) {
+    int Wsize = (int)SDL_sqrt(w->size), tile;
     Wsize *= CHUNK_SIZE*TILE_SIZE*RENDER_SCALE;
 
     Vector2D points[TILE_COLISION_POINTS], fChunk = {1};
@@ -625,9 +636,10 @@ bool tileCollision(World w, SDL_FRect futurePos, SDL_FRect hitbox, SpriteMargins
             Cptr = w->chunks + SDL_abs(fChunk.x + fChunk.y*(int)SDL_sqrt(w->size));
 
             if(Cptr >= w->chunks && Cptr <= (w->chunks+w->size-1)) { //Check boundries
-                if(Cptr->tileType[SDL_abs((int)points[i].y/(TILE_SIZE*RENDER_SCALE)%48)][SDL_abs((int)points[i].x/(TILE_SIZE*RENDER_SCALE)%48)] > 40) {
+                tile = Cptr->tileType[SDL_abs((int)points[i].y/(TILE_SIZE*RENDER_SCALE)%48)][SDL_abs((int)points[i].x/(TILE_SIZE*RENDER_SCALE)%48)];
+                if(tile > 40 && tile <= 70) {
                     return true;
-                }
+                } else if(isPlayer && tile == 71) *gState = GAME_NEXT_FLOOR;
             }
     }
 

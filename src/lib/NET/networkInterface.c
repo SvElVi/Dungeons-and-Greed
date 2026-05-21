@@ -199,8 +199,22 @@ NET_Datagram **netGetDgramContainer(NetworkInterface networkInterface)
     return networkInterface->udpPacket;
 }
 
-// OK
 void netSetDgramContainer(NetworkInterface networkInterface, void *dgram)
 {
     networkInterface->udpPacket = dgram;
+}
+
+NETPacket *createNetPacket(NetCommands command, int playerID, uint64_t uint64t) {
+    NETPacket* ptr = SDL_calloc(1, sizeof(NETPacket));
+    ptr->command = command;
+    ptr->PlayerID = playerID;
+    ptr->uint64 = uint64t;
+
+    return ptr;
+
+}
+
+void destoryNetPacket(NETPacket *ptr) {
+    SDL_free(ptr);
+    ptr = NULL;
 }

@@ -104,6 +104,7 @@ void clientNetStateLoop(AppState state)
                     break; 
                 case SERVER_SHUTDOWN:
                     state->gameState = GAME_SERVER_SHUTDOWN;
+                    state->onlineMode = false;
                     ingameTCPFlag = 1;
                     break;
                 }

@@ -23,7 +23,8 @@ typedef enum
     PLAYER_EXIT,
     PLAYER_EXIT_APPROVED,
     SERVER_SHUTDOWN,
-    PLAYER_DEAD
+    PLAYER_DEAD,
+    PLAYER_DISCONNECT
 } NetCommands;
 
 typedef struct
@@ -84,5 +85,9 @@ NET_Datagram **netGetDgramContainer(NetworkInterface networkInterface);
 void netSetDgramContainer(NetworkInterface networkInterface, void *);
 
 NET_Address *netGetServerIPForTX(NetworkInterface networkInterface);
+
+NETPacket *createNetPacket(NetCommands command, int playerID, uint64_t uint64t);
+
+void destoryNetPacket(NETPacket *ptr);
 
 #endif

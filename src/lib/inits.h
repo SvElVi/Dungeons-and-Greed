@@ -100,6 +100,7 @@ typedef struct
     Uint32 enemyCollisionTimer; // ms counter for character colliding with emeny. SYNC MULTIPLAYER
 
     int connected;
+    bool isConnected;
     bool classLock; // För att låsa klasser LOCAL
     // FOR SERVER
     NET_Address *ipAddress;

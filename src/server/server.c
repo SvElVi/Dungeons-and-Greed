@@ -55,7 +55,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once 
         SDL_snprintf(name, sizeof(name), "Player%d", i + 1);
         updatePlayer(&(state->players[i]), tempVec, CLASS_NONE, defaultHp, state->renderer);
         SDL_strlcpy(state->players[i].name, name, sizeof(state->players[i].name));
-        state->players[i].connected = false;
+        state->players[i].isConnected = false;
     }
 
     // enemy
@@ -160,6 +160,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
                     packet.command = UPDATE_WAITING_STATUS;
                     packet.intData = ++state->amountOfPlayers;
                     broadcastTCPToClients(state, &packet);
+                    state->players[currentPlayer].isConnected = true;
                     if (state->amountOfPlayers >= MAX_PLAYERS)
                     {
                         updateServerPlayerIP(state, packet.PlayerID, netGetStreamSocket(state->ptrNetworkInterface, currentPlayer));
@@ -202,7 +203,22 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
         break;
 
     case GAME_ONGOING:
-        for (int index = 0; index < MAX_PLAYERS; index++)
+        static int GAME_ONGOING_INDEX = 0;
+        NETPacket *ptrNetPacket = createNetPacket(-1, -1, 0);
+        readTCPData(ptrNetPacket, netGetStreamSocket(state->ptrNetworkInterface, GAME_ONGOING_INDEX));
+
+        switch (ptrNetPacket->command)
+        {
+        case PLAYER_DISCONNECT:
+            SDL_Log("Player %d disconnected!\n", ptrNetPacket->PlayerID);
+            state->players[ptrNetPacket->PlayerID].isConnected = false;
+            break;
+        }
+        destoryNetPacket(ptrNetPacket);
+        GAME_ONGOING_INDEX++;
+        if (GAME_ONGOING_INDEX >= MAX_PLAYERS)
+            GAME_ONGOING_INDEX = 0;
+        for (int i = 0; i < MAX_PLAYERS; i++)
         {
             checkForDatagram(state->ptrNetworkInterface, &packet);
             switch (packet.command)
@@ -226,7 +242,8 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
             {
                 broadcastTCPDeath(state, i);
             }
-            sendDatagram(state->ptrNetworkInterface, state->players[i].ipAddress, CLIENT_UDP_PORT, &broadcastPacket);
+            if (state->players[i].isConnected)
+                sendDatagram(state->ptrNetworkInterface, state->players[i].ipAddress, CLIENT_UDP_PORT, &broadcastPacket);
         }
         state->serverState = GAME_ONGOING;
         break;

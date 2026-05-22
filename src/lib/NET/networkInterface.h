@@ -23,7 +23,8 @@ typedef enum
     PLAYER_EXIT,
     PLAYER_EXIT_APPROVED,
     SERVER_SHUTDOWN,
-    PLAYER_DEAD
+    PLAYER_DEAD,
+    PLAYER_DISCONNECT
 } NetCommands;
 
 typedef struct
@@ -65,9 +66,11 @@ bool initAddress(NET_Address **adress, char *adr);
 
 NET_Address **netGetServerIP(NetworkInterface networkInterface);
 
-void netSetTCPClient(NetworkInterface networkInterface, NET_StreamSocket *streamSocket);
+void netSetTCPClient(NetworkInterface networkInterface, NET_StreamSocket *streamSocket, int playerID);
 
-NET_StreamSocket *netGetStreamSocket(NetworkInterface networkInterface);
+NET_StreamSocket *netGetStreamSocket(NetworkInterface networkInterface, int playerID);
+
+NET_StreamSocket **netGetStreamSocketPtP(NetworkInterface networkInterface, int playerID);
 
 void netSetTCPServer(NetworkInterface networkInterface, NET_Server *server);
 
@@ -82,5 +85,9 @@ NET_Datagram **netGetDgramContainer(NetworkInterface networkInterface);
 void netSetDgramContainer(NetworkInterface networkInterface, void *);
 
 NET_Address *netGetServerIPForTX(NetworkInterface networkInterface);
+
+NETPacket *createNetPacket(NetCommands command, int playerID, uint64_t uint64t);
+
+void destoryNetPacket(NETPacket *ptr);
 
 #endif

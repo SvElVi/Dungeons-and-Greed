@@ -13,7 +13,7 @@
 #define ANIMATION_TIME 4
 #define PLAYER_NAME_MAX 30
 
-#define MAX_ENEMIES 2
+#define MAX_ENEMIES 50
 #define SKELETON_SIZE 32
 #define ENEMY_AGGRO_RANGE 400
 #define ENEMY_ATTACK_RANGE 28
@@ -100,6 +100,7 @@ typedef struct
     Uint32 enemyCollisionTimer; // ms counter for character colliding with emeny. SYNC MULTIPLAYER
 
     int connected;
+    bool isConnected;
     bool classLock; // För att låsa klasser LOCAL
     // FOR SERVER
     NET_Address *ipAddress;
@@ -147,15 +148,6 @@ typedef struct
 
 } PlayerLocations;
 
-// Serverside players
-typedef struct
-{
-    int amountOfPlayers;
-    Player players[MAX_PLAYERS];
-    NET_StreamSocket *tcpClient[MAX_PLAYERS];
-
-} ConnectedPlayers;
-
 typedef struct
 {
     int amountOfPlayers;
@@ -188,7 +180,8 @@ typedef enum GameState
     GAME_OVER,
     GAME_SERVER_SHUTDOWN,
     GAME_DEAD,
-    SERVER
+    SERVER,
+    GAME_NEXT_FLOOR
 } GameState;
 
 // Serverside state
@@ -228,6 +221,7 @@ struct appState
     ServerState serverState;
     GameState gameState;
     bool onlineMode;
+    int amountOfPlayers;
     Menu mainMenu;
 
     Player players[MAX_PLAYERS]; // SEE STRUCT
@@ -245,7 +239,6 @@ struct appState
     // WORLD
     World world; // LOCAL
     int seed;
-    ConnectedPlayers connectedPlayers; // SERVER ONLY
 
     char hostIP[16];
     int hostIPLen;

@@ -1,4 +1,5 @@
 #include "enemy.h"
+#include "player.h"
 #include <math.h>
 
 #define ENEMY_SPEED 0.15f * RENDER_SCALE
@@ -27,6 +28,15 @@ void destoryEnemies(Enemies ptrEnemies) {
     SDL_free(ptrEnemies);
 }
 
+bool enemyCollision(SDL_FRect futurePos, Enemy enemies[MAX_ENEMIES], int local) {
+    for(int i = 0; i < MAX_ENEMIES;i++)
+    {
+        if(collision(futurePos, enemies[i].hitBox) && i != local){
+            return true;
+        }     
+    }
+    return false;
+}
 
 int nearestPlayer(Enemy *enemy, Player players[MAX_PLAYERS])
 {
@@ -55,56 +65,56 @@ static void syncEnemyHitbox(Enemy *enemy)
     enemy->hitBox.y = enemy->pos.y;
 }
 
-void enemyMovement(Enemy *enemy, Player players[MAX_PLAYERS], int deltatime, World world)
+void enemyMovement(Enemy enemies[MAX_ENEMIES], int currentEnemy, Player players[MAX_PLAYERS], int deltatime, World world)
 {
-    int target = nearestPlayer(enemy, players);
+    int target = nearestPlayer(&(enemies[currentEnemy]), players);
 
     if (target == -1)
     {
-        enemy->state = ENEMY_IDLE;
-        syncEnemyHitbox(enemy);
+        enemies[currentEnemy].state = ENEMY_IDLE;
+        syncEnemyHitbox(&enemies[currentEnemy]);
         return;
     }
 
-    float dx = players[target].pos.x - enemy->pos.x;
-    float dy = players[target].pos.y - enemy->pos.y;
+    float dx = players[target].pos.x - enemies[currentEnemy].pos.x;
+    float dy = players[target].pos.y - enemies[currentEnemy].pos.y;
     float distSq = dx * dx + dy * dy;
 
     if (distSq < (float)(ENEMY_ATTACK_RANGE * ENEMY_ATTACK_RANGE))
     {
-        enemy->state = ENEMY_ATTACK;
-        syncEnemyHitbox(enemy);
+        enemies[currentEnemy].state = ENEMY_ATTACK;
+        syncEnemyHitbox(&enemies[currentEnemy]);
         return;
     }
 
-    enemy->state = ENEMY_CHASE;
+    enemies[currentEnemy].state = ENEMY_CHASE;
 
     float dist = SDL_sqrtf(distSq);
     float normX = dx / dist;
     float normY = dy / dist;
 
     float speed = ENEMY_SPEED;
-    float nextX = enemy->pos.x + normX * deltatime * speed;
-    float nextY = enemy->pos.y + normY * deltatime * speed;
+    float nextX = enemies[currentEnemy].pos.x + normX * deltatime * speed;
+    float nextY = enemies[currentEnemy].pos.y + normY * deltatime * speed;
 
-    SDL_FRect futureHitBox = enemy->hitBox;
+    SDL_FRect futureHitBox = enemies[currentEnemy].hitBox;
     futureHitBox.x = nextX;
-    futureHitBox.y = enemy->pos.y;
+    futureHitBox.y = enemies[currentEnemy].pos.y;
 
-    if (!tileCollision(world, futureHitBox, enemy->hitBox, ENUM_MARGIN_SKELETON))
+    if (!tileCollision(world, futureHitBox, enemies[currentEnemy].hitBox, ENUM_MARGIN_SKELETON, 0, 0) && !enemyCollision(futureHitBox, enemies, currentEnemy))
     {
-        enemy->pos.x = nextX;
+        enemies[currentEnemy].pos.x = nextX;
     }
 
-    futureHitBox.x = enemy->pos.x;
+    futureHitBox.x = enemies[currentEnemy].pos.x;
     futureHitBox.y = nextY;
 
-    if (!tileCollision(world, futureHitBox, enemy->hitBox, ENUM_MARGIN_SKELETON))
+    if (!tileCollision(world, futureHitBox, enemies[currentEnemy].hitBox, ENUM_MARGIN_SKELETON, 0, 0) && !enemyCollision(futureHitBox, enemies, currentEnemy))
     {
-        enemy->pos.y = nextY;
+        enemies[currentEnemy].pos.y = nextY;
     }
 
-    syncEnemyHitbox(enemy);
+    syncEnemyHitbox(&(enemies[currentEnemy]));
 }
 
 void animateEnemies(Enemy enemies[MAX_ENEMIES], Uint8 *counter, Uint16 framerate, bool *flag)

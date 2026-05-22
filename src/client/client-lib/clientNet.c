@@ -1,6 +1,7 @@
 #include "clientNet.h"
 #define TCP_TIMEOUT 5000
 #define NET_DEBUG 1
+#define LOCAL_PLAYER_ID 0
 #define ALLOWED_SERVER_DISTANCE_OUT_OF_SYNC 600 // SQUARED !-! deltaX 300 !-! deltaY 300
 
 void clientNetStateLoop(AppState state)
@@ -36,7 +37,7 @@ void clientNetStateLoop(AppState state)
         break;
 
     case GAME_HANDSHAKE:
-        switch (NET_GetConnectionStatus(netGetStreamSocket(state->ptrNetworkInterface)))
+        switch (NET_GetConnectionStatus(netGetStreamSocket(state->ptrNetworkInterface, LOCAL_PLAYER_ID)))
         {
         case NET_SUCCESS:
             clientGameHandshake(state->ptrNetworkInterface);
@@ -51,7 +52,7 @@ void clientNetStateLoop(AppState state)
         break;
 
     case GAME_VERIFYING_HANDSHAKE:
-        if (readTCPData(&packet, netGetStreamSocket(state->ptrNetworkInterface)))
+        if (readTCPData(&packet, netGetStreamSocket(state->ptrNetworkInterface, LOCAL_PLAYER_ID)))
         {
 
             if (packet.command == APPROVED_PLAYER)
@@ -60,19 +61,19 @@ void clientNetStateLoop(AppState state)
                 state->curPlayerPtr = &(state->players[packet.PlayerID]);
                 state->curPlayerPtr->playerID = packet.PlayerID;
                 packet.command = CONFIRMING_RECIVED_PLAYER_ID;
-                sendTCPData(&packet, netGetStreamSocket(state->ptrNetworkInterface));
+                sendTCPData(&packet, netGetStreamSocket(state->ptrNetworkInterface, LOCAL_PLAYER_ID));
                 state->gameState = GAME_WAITING_FOR_OTHER_PLAYERS;
             }
         }
         break;
 
     case GAME_WAITING_FOR_OTHER_PLAYERS:
-        if (readTCPData(&packet, netGetStreamSocket(state->ptrNetworkInterface)))
+        if (readTCPData(&packet, netGetStreamSocket(state->ptrNetworkInterface, LOCAL_PLAYER_ID)))
         {
             switch (packet.command)
             {
             case UPDATE_WAITING_STATUS:
-                state->connectedPlayers.amountOfPlayers = packet.intData;
+                state->amountOfPlayers = packet.intData;
                 break;
 
             case SERVER_START_GAME:
@@ -90,7 +91,7 @@ void clientNetStateLoop(AppState state)
     case GAME_PLAYING:
         if (state->onlineMode)
         {
-            if (readTCPData(&inGameTCPPacket, netGetStreamSocket(state->ptrNetworkInterface)))
+            if (readTCPData(&inGameTCPPacket, netGetStreamSocket(state->ptrNetworkInterface, LOCAL_PLAYER_ID)))
             {
                 switch (inGameTCPPacket.command)
                 {
@@ -103,6 +104,7 @@ void clientNetStateLoop(AppState state)
                     break; 
                 case SERVER_SHUTDOWN:
                     state->gameState = GAME_SERVER_SHUTDOWN;
+                    state->onlineMode = false;
                     ingameTCPFlag = 1;
                     break;
                 }
@@ -138,14 +140,14 @@ void clientNetStateLoop(AppState state)
 void createTCPClient(NetworkInterface ptrNetworkInterface, int portNumber)
 {
     SDL_Log("Initializing a TCP stream socket...\n");
-    netSetTCPClient(ptrNetworkInterface, NET_CreateClient(*netGetServerIP(ptrNetworkInterface), portNumber));
+    netSetTCPClient(ptrNetworkInterface, NET_CreateClient(*netGetServerIP(ptrNetworkInterface), portNumber), LOCAL_PLAYER_ID);
 }
 
 void clientGameHandshake(NetworkInterface ptrNetworkInterface)
 {
     NETPacket packet = {REQUESTING_PLAYER_ID, 0};
 
-    sendTCPData(&packet, netGetStreamSocket(ptrNetworkInterface));
+    sendTCPData(&packet, netGetStreamSocket(ptrNetworkInterface, LOCAL_PLAYER_ID));
 }
 
 void updateMyLocation(AppState state)

@@ -2,13 +2,13 @@
 
 bool playersReady(AppState state)
 {
-    if(state->connectedPlayers.amountOfPlayers == 0)
+    if(state->amountOfPlayers == 0)
     {
         return false;
     }
-    for(int i = 0; i < state->connectedPlayers.amountOfPlayers; i++)
+    for(int i = 0; i < state->amountOfPlayers; i++)
     {
-        if(!state->connectedPlayers.players[i].classLock)
+        if(!state->players[i].classLock)
         {
             return false;
         }

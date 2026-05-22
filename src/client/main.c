@@ -1,5 +1,6 @@
 #define SDL_MAIN_USE_CALLBACKS 1 // Flag to use callbacks
 #define DEBUG 1
+#define LOCAL_PLAYER_ID 0
 
 #include <SDL3/SDL_main.h>
 #include "../lib/NET/networkInterface.h"
@@ -15,6 +16,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once 
 
     AppState state = createAppState();
     state->gameState = GAME_INIT;
+    state->amountOfPlayers = 0;
     state->mainMenu = (Menu){
         .menuOptions = {"Play", "Join", "Quit"},
         .selected = 0,
@@ -32,7 +34,6 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) // Runs once 
 
     state->ptrNetworkInterface = createNetworkInterface();
     allocUDPPacket(state->ptrNetworkInterface);
-    state->connectedPlayers.amountOfPlayers = 0;
 
     // -------- END NET --------
     state->running = true; // Custom flag to mark the program as running
@@ -75,7 +76,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
     {
         state->world = createWorld(5, state->seed, state->renderer); //(Uint64)SDL_rand(0)
 
-        createDungeon(state->world, 20, state, 1);
+        createDungeon(state->world, 5, state, 1);
         state->gameState = GAME_START;
     }
 
@@ -90,6 +91,11 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result) // Runs after returning A
     if (appstate != NULL)
     {
         AppState state = (AppState)appstate;
+        if (state->onlineMode) {
+            NETPacket* ptrNetPacket = createNetPacket(PLAYER_DISCONNECT, state->curPlayerPtr->playerID, 0);
+            sendTCPData(ptrNetPacket, netGetStreamSocket(state->ptrNetworkInterface, LOCAL_PLAYER_ID));
+            destoryNetPacket(ptrNetPacket);
+        }
 
         destoryUDPSocket(state->ptrNetworkInterface);
         destroyNetworkInterface(state->ptrNetworkInterface);

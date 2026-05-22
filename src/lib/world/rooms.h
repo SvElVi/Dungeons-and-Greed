@@ -23,7 +23,8 @@ typedef enum {
 typedef enum {
     BLANK,
     FLOOR,
-    WALL
+    WALL,
+    EXIT
 } TILE_TYPE;
 
 typedef struct {

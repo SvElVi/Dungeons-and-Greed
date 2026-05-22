@@ -46,7 +46,7 @@ int renderFrame(AppState state, Player *player)
 
     case GAME_WAITING_FOR_OTHER_PLAYERS:
         char tempStr[64];
-        snprintf(tempStr, 64, "Waiting for other players... %d of %d connected!", state->connectedPlayers.amountOfPlayers, MAX_PLAYERS);
+        snprintf(tempStr, 64, "Waiting for other players... %d of %d connected!", state->amountOfPlayers, MAX_PLAYERS);
         string_screen(state, tempStr);
         break;
 
@@ -60,6 +60,9 @@ int renderFrame(AppState state, Player *player)
 
     case GAME_DEAD:
         string_screen(state, "DEAD!");
+        break;
+    case GAME_NEXT_FLOOR:
+        string_screen(state, "You win");
         break;
     }
 
@@ -80,14 +83,14 @@ int render(AppState state, Player *player)
         {
             for (int i = 0; i < MAX_PLAYERS; i++)
             {
-                movement(&(state->players[i]), state->players, state->enemies, state->deltaTime, state->world);
+                movement(&(state->players[i]), state->players, state->enemies, state->deltaTime, state->world, &(state->gameState));
             }
             animatePlayers(state->players, &(state->animationTime), state->framerate, &(state->computedEvent));
 
             for (int i = 0; i < MAX_ENEMIES; i++)
             {
                 if (state->enemies[i].state != ENEMY_DEAD)
-                    enemyMovement(&state->enemies[i], state->players, state->deltaTime, state->world);
+                    enemyMovement(state->enemies, i, state->players, state->deltaTime, state->world);
             }
             playerEnemyCollision(state->curPlayerPtr, state->enemies, state->deltaTime);
             animateEnemies(state->enemies, &state->enemyAnimationTime, state->framerate, &state->computedEvent);

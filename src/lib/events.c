@@ -218,9 +218,9 @@ int checkEvents(AppState state, SDL_Event *event)
             state->gameState = GAME_MENY;
         }
     }
-    else if (state->gameState == GAME_DEAD)
+    else if (state->gameState == GAME_DEAD || state->gameState == GAME_NEXT_FLOOR)
     {
-        if (keylist[SDL_SCANCODE_ESCAPE])
+        if (keylist[SDL_SCANCODE_ESCAPE] || keylist[SDL_SCANCODE_ESCAPE])
         {
             state->gameState = GAME_MENY;
         }

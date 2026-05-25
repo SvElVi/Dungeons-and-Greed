@@ -76,7 +76,7 @@ SDL_AppResult SDL_AppIterate(void *appstate) // Superloop
     {
         state->world = createWorld(5, state->seed, state->renderer); //(Uint64)SDL_rand(0)
 
-        createDungeon(state->world, 5, state, 1);
+        createDungeon(state->world, 25, state, 1);
         state->gameState = GAME_START;
     }
 
